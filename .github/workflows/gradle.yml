@@ -29,33 +29,33 @@ jobs:
       run: chmod +x gradlew
       
     - name: Build with Gradle
-      run: ./gradlew build
+      run: ./gradlew clean build --exclude-task test
       
-    # - name: Login to DockerHub
-    #   uses: docker/login-action@v2
-    #   with:
-    #     username: ${{secrets.DOCKERHUB_USERNAME}}
-    #     password: ${{secrets.DOCKERHUB_TOKEN}}
+    - name: Login to DockerHub
+      uses: docker/login-action@v2
+      with:
+        username: ${{secrets.DOCKERHUB_USERNAME}}
+        password: ${{secrets.DOCKERHUB_TOKEN}}
       
-    # # Docker 이미지 빌드
-    # - name: Docker Image Build
-    #   run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_IMAGENAME }} .
+    # Docker 이미지 빌드
+    - name: Docker Image Build
+      run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_IMAGENAME }} .
 
-    # # DockerHub Push
-    # - name: DockerHub Push
-    #   run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_IMAGENAME }}
+    # DockerHub Push
+    - name: DockerHub Push
+      run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_IMAGENAME }}
       
-    # # EC2 인스턴스 접속 및 애플리케이션 실행
-    # - name: Application Run
-    #   uses: appleboy/ssh-action@v0.1.6
-    #   with:
-    #     host: ${{ secrets.EC2_HOST }}
-    #     username: ${{ secrets.EC2_USERNAME }}
-    #     key: ${{ secrets.EC2_KEY }}
+    # EC2 인스턴스 접속 및 애플리케이션 실행
+    - name: Application Run
+      uses: appleboy/ssh-action@v0.1.6
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USERNAME }}
+        key: ${{ secrets.EC2_KEY }}
 
-    #     script: |
-    #       sudo docker kill ${{ secrets.CONTAINER_NAME }}
-    #       sudo docker rm -f ${{ secrets.CONTAINER_NAME }}
-    #       sudo docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_IMAGENAME }}
-    #       sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_IMAGENAME }}
-    #       sudo docker run -p 8080:8080 --name ${{ secrets.CONTAINER_NAME }} -d ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_IMAGENAME }}
+        script: |
+          sudo docker kill ${{ secrets.CONTAINER_NAME }}
+          sudo docker rm -f ${{ secrets.CONTAINER_NAME }}
+          sudo docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_IMAGENAME }}
+          sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_IMAGENAME }}
+          sudo docker run -p 8080:8080 --name ${{ secrets.CONTAINER_NAME }} -d ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_IMAGENAME }}
