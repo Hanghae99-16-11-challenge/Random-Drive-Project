@@ -2,6 +2,7 @@ package com.example.randomdriveproject.controller;
 
 import com.example.randomdriveproject.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +26,10 @@ public class UserController {
     // 위 주소로 접속하면 , 아래 kakaoLogin 호출
     @GetMapping("/login")
     @ResponseBody
-    public ResponseEntity<String> loginCallback(HttpServletRequest request) throws Exception {
+    public ResponseEntity<String> loginCallback(HttpServletRequest request, HttpServletResponse response) throws Exception {
         userService.getKakaoInfo(request.getParameter("code"));
+        //response.addHeader();//토큰 전달
+        
         return ResponseEntity.ok(request.getParameter("code"));
     }//참고 : https://shxrecord.tistory.com/290
 }
