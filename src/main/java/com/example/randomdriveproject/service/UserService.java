@@ -6,6 +6,8 @@ import com.example.randomdriveproject.dto.KakaoTokenDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mysql.cj.xdevapi.JsonParser;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.boot.jackson.JsonObjectDeserializer;
@@ -19,6 +21,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,7 +33,7 @@ public class UserService {
     private final static String KAKAO_AUTH_URI = "https://kauth.kakao.com";
     private final static String KAKAO_API_URI = "https://kapi.kakao.com";
 
-    public  String getKaKaoLogin()
+    public  String getKaKaoLoginLink()
     {
         return "https://kauth.kakao.com/oauth/authorize" +
                 "?response_type=code" +
@@ -38,6 +41,69 @@ public class UserService {
                 "&redirect_uri=http://localhost:8080/api/auth/login";
     }
 
+    public void getKakaoLogin(String code, HttpServletResponse response) throws Exception
+    {
+        if (code == null) throw new Exception("Failed get authorization code");
+
+        String accessToken = "";
+        String refreshToken = "";
+
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-type", "application/x-www-form-urlencoded");
+
+            MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+            params.add("grant_type"   , "authorization_code");
+            params.add("client_id"    , "0c3c82e2bab1baa630c741b2c9f72e3c");
+            params.add("code"         , code);
+            params.add("redirect_uri" , "http://localhost:8080/api/auth/login");
+
+            RestTemplate restTemplate = new RestTemplate();
+            HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(params, headers);
+
+            ResponseEntity<String> Login_response = restTemplate.exchange(
+                    KAKAO_AUTH_URI + "/oauth/token",
+                    HttpMethod.POST,
+                    httpEntity,
+                    String.class
+            );
+
+
+            {
+
+                var temp = new KakaoTokenDto(Login_response.getBody());
+                log.info(temp.getAccess_token() + " / " + temp.getRefresh_token() + " / " + temp.getExpires_in());
+                //키값은 KakaoTokenDto 참고
+
+                accessToken = temp.getAccess_token();
+                refreshToken = temp.getRefresh_token();
+
+//                response.addHeader("access", accessToken);
+//                response.addHeader("refresh", refreshToken);
+            }
+
+            {
+                Cookie access_cookie = new Cookie("Authorization_Access", URLEncoder.encode(accessToken, "utf-8"));
+                access_cookie.setPath("/");
+                access_cookie.setHttpOnly(true);
+                access_cookie.setMaxAge(60 * 60 * 1000);
+                response.addCookie(access_cookie);
+
+                Cookie refresh_cookie = new Cookie("Authorization_Refresh", URLEncoder.encode(refreshToken, "utf-8"));
+                refresh_cookie.setPath("/");
+                refresh_cookie.setHttpOnly(true);
+                refresh_cookie.setMaxAge(60 * 60 * 1000);
+                response.addCookie(refresh_cookie);
+            }
+
+        }catch (Exception e)
+        {
+            log.error(e.getMessage() + e.getStackTrace());
+            throw  new Exception("API call failed" + e);
+        }
+
+    }
+    
     public KakaoDto getKakaoInfo(String code) throws Exception
     {
         if (code == null) throw new Exception("Failed get authorization code");
@@ -86,7 +152,7 @@ public class UserService {
         }
 
         return getUserInfoWithToken(accessToken);
-    }
+    }//로그인후 유저 정보 가져옴
 
     private void getVaildAccessToken(String accessToken) throws Exception {
         HttpHeaders headers = new HttpHeaders();
@@ -138,7 +204,7 @@ public class UserService {
     }
     //refreshToekn을 추가하여 , accessToken 를 재발급 받음
 
-    private KakaoDto getUserInfoWithToken(String accessToken) throws Exception
+    public KakaoDto getUserInfoWithToken(String accessToken) throws Exception
     {
         getVaildAccessToken(accessToken);
 
@@ -158,7 +224,7 @@ public class UserService {
         );
 
         return new KakaoDto(response);
-    }
+    }//getVaildAccessToken 가지고 있어 refreshToekn을 추가
 
     private String getAccessFormRefresh(String refreshToekn) throws JsonProcessingException {
         HttpHeaders headers = new HttpHeaders();
@@ -189,7 +255,8 @@ public class UserService {
         log.info("--> refreshed :" + data.get("access_token") + " / " + data.get("expires_in"));
 
         return (String) data.get("access_token");
-    }//------ 확인 필요
+    }
+    // accessToken 재발급 ------ 확인 필요
 
     private void doLogout(String accessToken, boolean unlink)
     {
