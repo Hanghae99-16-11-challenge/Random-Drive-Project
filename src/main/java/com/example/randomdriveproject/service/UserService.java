@@ -1,16 +1,13 @@
 package com.example.randomdriveproject.service;
 
-import com.example.randomdriveproject.dto.kakao.KakaoAccount;
 import com.example.randomdriveproject.dto.kakao.KakaoDto;
 import com.example.randomdriveproject.dto.KakaoTokenDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mysql.cj.xdevapi.JsonParser;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.boot.jackson.JsonObjectDeserializer;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -21,8 +18,8 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.HashMap;
 import java.util.Map;
 
 
@@ -32,6 +29,10 @@ public class UserService {
 
     private final static String KAKAO_AUTH_URI = "https://kauth.kakao.com";
     private final static String KAKAO_API_URI = "https://kapi.kakao.com";
+
+    public final static String AccessToken = "Authorization_Access";
+    public final static String RefreshToken = "Authorization_Refresh";
+
 
     public  String getKaKaoLoginLink()
     {
@@ -72,14 +73,10 @@ public class UserService {
             {
 
                 var temp = new KakaoTokenDto(Login_response.getBody());
-                log.info(temp.getAccess_token() + " / " + temp.getRefresh_token() + " / " + temp.getExpires_in());
-                //키값은 KakaoTokenDto 참고
 
                 accessToken = temp.getAccess_token();
                 refreshToken = temp.getRefresh_token();
 
-//                response.addHeader("access", accessToken);
-//                response.addHeader("refresh", refreshToken);
             }
 
             {
@@ -94,7 +91,7 @@ public class UserService {
                 refresh_cookie.setHttpOnly(true);
                 refresh_cookie.setMaxAge(60 * 60 * 1000);
                 response.addCookie(refresh_cookie);
-            }
+            }//Set Cookie
 
         }catch (Exception e)
         {
@@ -103,82 +100,31 @@ public class UserService {
         }
 
     }
-    
-    public KakaoDto getKakaoInfo(String code) throws Exception
-    {
-        if (code == null) throw new Exception("Failed get authorization code");
 
-        String accessToken = "";
-        String refreshToken = "";
-
-        try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("Content-type", "application/x-www-form-urlencoded");
-
-            MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-            params.add("grant_type"   , "authorization_code");
-            params.add("client_id"    , "0c3c82e2bab1baa630c741b2c9f72e3c");
-            params.add("code"         , code);
-            params.add("redirect_uri" , "http://localhost:8080/api/auth/login");
-
-            RestTemplate restTemplate = new RestTemplate();
-            HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(params, headers);
-
-            ResponseEntity<String> response = restTemplate.exchange(
-                    KAKAO_AUTH_URI + "/oauth/token",
-                    HttpMethod.POST,
-                    httpEntity,
-                    String.class
-            );
-
-
-            {
-
-                var temp = new KakaoTokenDto(response.getBody());
-                log.info(temp.getAccess_token() + " / " + temp.getRefresh_token() + " / " + temp.getExpires_in());
-                //키값은 KakaoTokenDto 참고
-
-                accessToken = temp.getAccess_token();
-                refreshToken = temp.getRefresh_token();
-
-
-            }
-
-
-        }catch (Exception e)
-        {
-            log.error(e.getMessage() + e.getStackTrace());
-            throw  new Exception("API call failed" + e);
-        }
-
-        return getUserInfoWithToken(accessToken);
-    }//로그인후 유저 정보 가져옴
-
-    private void getVaildAccessToken(String accessToken) throws Exception {
+    public void getValidAccessToken(String accessToken, HttpServletResponse response) throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + accessToken);
         
         try {
             RestTemplate rt = new RestTemplate();
             HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(headers);
-            ResponseEntity<String> response = rt.exchange(
+            ResponseEntity<String> validResponse = rt.exchange(
                     KAKAO_API_URI + "/v1/user/access_token_info",
                     HttpMethod.GET,
                     httpEntity,
                     String.class
             );
 
-            ObjectMapper objectMapper = new ObjectMapper();
-            Map<String, Object> data = objectMapper.readValue(response.getBody(), Map.class);
+//            ObjectMapper objectMapper = new ObjectMapper();
+//            Map<String, Object> data = objectMapper.readValue(validResponse.getBody(), Map.class);
+//            log.info("---> Vaild : " + data.get("id") + " : " + data.get("expires_in"));
             
         }catch (HttpClientErrorException e)
         {
-            log.error("Not Vaild Access : " + e.getMessage() + "\n" + e.getResponseBodyAsString() + "\n" + e);
 
             ObjectMapper objectMapper = new ObjectMapper();
             Map<String, Object> data = objectMapper.readValue(e.getResponseBodyAsString() , Map.class);
             int stateCode = (int) data.get("code");
-
 
             switch (stateCode)
             {
@@ -196,6 +142,7 @@ public class UserService {
                 }//호출값이 잘못됨
                 default:
                 {
+                    doLogout(accessToken, true, response);
                     throw new Exception(e.getMessage());
                 }//로그아웃 처리 권장
             }
@@ -204,9 +151,9 @@ public class UserService {
     }
     //refreshToekn을 추가하여 , accessToken 를 재발급 받음
 
-    public KakaoDto getUserInfoWithToken(String accessToken) throws Exception
+    public KakaoDto getUserInfoWithToken(String accessToken, HttpServletResponse response) throws Exception
     {
-        getVaildAccessToken(accessToken);
+        getValidAccessToken(accessToken, response);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + accessToken);
@@ -216,17 +163,17 @@ public class UserService {
         //HttpHeader 담기
         RestTemplate rt = new RestTemplate();
         HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(headers);
-        ResponseEntity<String> response = rt.exchange(
+        ResponseEntity<String> dataResponse = rt.exchange(
                 KAKAO_API_URI + "/v2/user/me",
                 HttpMethod.POST,
                 httpEntity,
                 String.class
         );
 
-        return new KakaoDto(response);
+        return new KakaoDto(dataResponse);
     }//getVaildAccessToken 가지고 있어 refreshToekn을 추가
 
-    private String getAccessFormRefresh(String refreshToekn) throws JsonProcessingException {
+    public String getAccessFormRefresh(String refreshToekn , HttpServletResponse response) throws JsonProcessingException, UnsupportedEncodingException {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
@@ -239,27 +186,33 @@ public class UserService {
         //HttpHeader 담기
         RestTemplate rt = new RestTemplate();
         HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(params, headers);
-        httpEntity.getBody().add("grant_type", "refresh_token");
+//            httpEntity.getBody().add("grant_type", "refresh_token");
 
-
-        ResponseEntity<String> response = rt.exchange(
-                KAKAO_API_URI + "/oauth/token",
+        ResponseEntity<String> tokenResponse = rt.exchange(
+                KAKAO_AUTH_URI + "/oauth/token",
                 HttpMethod.POST,
                 httpEntity,
                 String.class
         );
 
         ObjectMapper objectMapper = new ObjectMapper();
-        Map<String, Object> data = objectMapper.readValue(response.getBody(), Map.class);
+        Map<String, Object> data = objectMapper.readValue(tokenResponse.getBody(), Map.class);
 
-        log.info("--> refreshed :" + data.get("access_token") + " / " + data.get("expires_in"));
+        //log.info("--> refreshed :" + data.get("access_token") + " / " + data.get("expires_in"));
 
-        return (String) data.get("access_token");
+        String accessToken = (String) data.get("access_token");
+
+        Cookie access_cookie = new Cookie(AccessToken, URLEncoder.encode(accessToken, "utf-8"));
+        access_cookie.setPath("/");
+        access_cookie.setHttpOnly(true);
+        access_cookie.setMaxAge(60 * 60 * 1000);
+        response.addCookie(access_cookie);
+
+
+        return accessToken;
     }
-    // accessToken 재발급 ------ 확인 필요
 
-    private void doLogout(String accessToken, boolean unlink)
-    {
+    public void doLogout(String accessToken, boolean unlink, HttpServletResponse response) throws UnsupportedEncodingException {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + accessToken);
 
@@ -283,5 +236,19 @@ public class UserService {
                     String.class
             );
         }
-    }//------ 확인 필요
+
+        {
+            Cookie access_cookie = new Cookie("Authorization_Access", "");
+            access_cookie.setPath("/");
+            access_cookie.setHttpOnly(true);
+            access_cookie.setMaxAge(0);
+            response.addCookie(access_cookie);
+
+            Cookie refresh_cookie = new Cookie("Authorization_Refresh", "");
+            refresh_cookie.setPath("/");
+            refresh_cookie.setHttpOnly(true);
+            refresh_cookie.setMaxAge(0);
+            response.addCookie(refresh_cookie);
+        }//쿠키 비활성화
+    }
 }
