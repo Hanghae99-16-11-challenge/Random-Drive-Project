@@ -14,16 +14,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class HomeController {
     private final UserService userService;
 
-    @GetMapping("/")
-    public String hello(@CookieValue(required = false, value = "Authorization_Access") String access,
-                        Model model,
-                        HttpServletResponse response) throws Exception {
-        var user = userService.getUserInfoWithToken(access, response);
-
-        model.addAttribute("nickname", user.getKakao_account().getProfile().getNickname());
-        return "index";
-
-    }
+//    @GetMapping("/")
+//    public String hello(@CookieValue(required = false, value = "Authorization_Access") String access,
+//                        Model model,
+//                        HttpServletResponse response) throws Exception {
+//        var user = userService.getUserInfoWithToken(access, response);
+//
+//        model.addAttribute("nickname", user.getKakao_account().getProfile().getNickname());
+//        return "index";
+//
+//    }
     @GetMapping("/")
     public String home(Model model){
         model.addAttribute("message", "안녕하세요!");
