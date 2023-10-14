@@ -1,19 +1,15 @@
 package com.example.randomdriveproject.controller;
 
-import com.example.randomdriveproject.service.UserService;
+import com.example.randomdriveproject.service.RandomUserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 
 @Slf4j(topic = "User Controller")
 @RestController
@@ -21,7 +17,7 @@ import java.net.URLEncoder;
 @RequestMapping("/api/auth")
 public class UserController {
 
-    private final UserService userService;
+    private final RandomUserService userService;
 
 
     //https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=0c3c82e2bab1baa630c741b2c9f72e3c&redirect_uri=http://localhost:8080/api/auth/login
@@ -36,7 +32,7 @@ public class UserController {
     }
 
     @GetMapping("/logout")
-    public ResponseEntity<String> logout(@CookieValue(value = UserService.AccessToken)String access,
+    public ResponseEntity<String> logout(@CookieValue(value = RandomUserService.AccessToken)String access,
                                          HttpServletResponse response) throws Exception {
         userService.doLogout(access, true , response);
 
@@ -44,7 +40,7 @@ public class UserController {
     }
 
     @GetMapping("/regenerate")
-    public ResponseEntity<String> regenerateToken(@CookieValue(value = UserService.RefreshToken)String refresh,
+    public ResponseEntity<String> regenerateToken(@CookieValue(value = RandomUserService.RefreshToken)String refresh,
                                                   HttpServletResponse response) throws JsonProcessingException, UnsupportedEncodingException {
         userService.getAccessFormRefresh(refresh, response);
 

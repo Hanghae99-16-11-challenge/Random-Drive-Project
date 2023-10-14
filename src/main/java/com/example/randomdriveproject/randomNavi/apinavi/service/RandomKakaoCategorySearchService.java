@@ -1,7 +1,7 @@
 package com.example.randomdriveproject.randomNavi.apinavi.service;
 
 import com.example.randomdriveproject.randomNavi.api.dto.RandomKakaoApiResponseDto;
-import com.example.randomdriveproject.randomNavi.api.service.KakaoUriBuilderService;
+import com.example.randomdriveproject.randomNavi.api.service.RandomKakaoUriBuilderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,9 +16,9 @@ import java.net.URI;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class KakaoCategorySearchService { // 특정 카테고리 -> 약국
+public class RandomKakaoCategorySearchService { // 특정 카테고리 -> 약국
 
-    private final KakaoUriBuilderService kakaoUriBuilderService;
+    private final RandomKakaoUriBuilderService kakaoUriBuilderService;
 
     private final RestTemplate restTemplate;
 

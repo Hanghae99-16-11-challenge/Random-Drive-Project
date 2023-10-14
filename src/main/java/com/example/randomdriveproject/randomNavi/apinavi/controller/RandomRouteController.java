@@ -2,7 +2,7 @@ package com.example.randomdriveproject.randomNavi.apinavi.controller;
 
 
 import com.example.randomdriveproject.dto.kakao_navigation.KakaoRouteAllResponseDto;
-import com.example.randomdriveproject.randomNavi.apinavi.service.KakaoRouteSearchService;
+import com.example.randomdriveproject.randomNavi.apinavi.service.RandomKakaoRouteSearchService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,14 +16,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequiredArgsConstructor
 @Slf4j(topic = "RouteController")
-public class RouteController {
+public class RandomRouteController {
 
-    private final KakaoRouteSearchService kakaoRouteSearchService;
+    private final RandomKakaoRouteSearchService kakaoRouteSearchService;
 
     @Value("${kakao.rest.api.key}")
     private String kakaoRestApiKey;
 
-    @GetMapping("/map")
+    @GetMapping("/random-map")
     public String showMap(Model model) {
         model.addAttribute("kakaoRestApiKey", kakaoRestApiKey);
         return "index";

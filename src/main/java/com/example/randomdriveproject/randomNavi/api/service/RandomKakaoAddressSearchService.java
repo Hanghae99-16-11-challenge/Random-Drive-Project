@@ -16,10 +16,10 @@ import java.net.URI;
 @Slf4j(topic = "KakaoAddressSearchService")
 @Service
 @RequiredArgsConstructor
-public class KakaoAddressSearchService {
+public class RandomKakaoAddressSearchService {
 
     private final RestTemplate restTemplate;
-    private final KakaoUriBuilderService kakaoUriBuilderService;
+    private final RandomKakaoUriBuilderService kakaoUriBuilderService;
 
     @Value("${kakao.rest.api.key}")
     private String kakaoRestApiKey;

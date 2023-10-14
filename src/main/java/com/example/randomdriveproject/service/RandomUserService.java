@@ -25,7 +25,7 @@ import java.util.Map;
 
 @Slf4j(topic = "UserService")
 @Service
-public class UserService {
+public class RandomUserService {
 
     private final static String KAKAO_AUTH_URI = "https://kauth.kakao.com";
     private final static String KAKAO_API_URI = "https://kapi.kakao.com";

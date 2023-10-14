@@ -20,7 +20,7 @@ import java.net.URI;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class KakaoRouteSearchService {
+public class RandomkakaoRouteSearchService {
 
     private final RestTemplate restTemplate;
     private final KakaoUriBuilderService kakaoUriBuilderService;

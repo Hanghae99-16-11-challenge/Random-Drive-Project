@@ -3,7 +3,7 @@ package com.example.randomdriveproject.randomNavi.apinavi.service;
 import com.example.randomdriveproject.dto.kakao_navigation.KakaoRouteAllResponseDto;
 import com.example.randomdriveproject.randomNavi.api.dto.RandomDocumentDto;
 import com.example.randomdriveproject.randomNavi.api.dto.RandomKakaoApiResponseDto;
-import com.example.randomdriveproject.randomNavi.api.service.KakaoAddressSearchService;
+import com.example.randomdriveproject.randomNavi.api.service.RandomKakaoAddressSearchService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,11 +20,11 @@ import java.util.*;
 @Slf4j(topic = "KakaoRouteSearchService")
 @Service
 @RequiredArgsConstructor
-public class KakaoRouteSearchService {
+public class RandomKakaoRouteSearchService {
 
     private final RestTemplate restTemplate;
-    private final KakaoAddressSearchService kakaoAddressSearchService;
-    private final KakaoCategorySearchService kakaoCategorySearchService;
+    private final RandomKakaoAddressSearchService kakaoAddressSearchService;
+    private final RandomKakaoCategorySearchService kakaoCategorySearchService;
 
     @Value("${kakao.rest.api.key}")
     private String kakaoRestApiKey;

@@ -9,7 +9,7 @@ import java.net.URI;
 @Slf4j
 @Service
 // 카카오 요청 uri 만드는 곳
-public class KakaoUriBuilderService {
+public class RandomKakaoUriBuilderService {
 
     // 주소검색 api
     private static final String KAKAO_LOCAL_SEARCH_ADDRESS_URL = "https://dapi.kakao.com/v2/local/search/address.json";
