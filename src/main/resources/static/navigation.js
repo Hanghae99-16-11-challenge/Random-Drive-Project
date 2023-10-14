@@ -1,7 +1,4 @@
-
-
-
-document.getElementById('current-location').addEventListener('click', function() {
+function handleCurrentLocationClick() {
     navigator.geolocation.getCurrentPosition(function(position) {
         var lat = position.coords.latitude,
             lon = position.coords.longitude;
@@ -21,7 +18,11 @@ document.getElementById('current-location').addEventListener('click', function()
                 }
             });
     });
-});
+}
+document.getElementById('current-location').addEventListener('click', handleCurrentLocationClick);
+document.getElementById('random-current-location').addEventListener('click', handleCurrentLocationClick);
+document.getElementById('all-random-current-location').addEventListener('click', handleCurrentLocationClick);
+
 // 출발지 주소 검색 버튼----------------------------------------------------------------------------------------------------//
 document.getElementById('search-origin').addEventListener('click', function() {
     new daum.Postcode({
@@ -31,7 +32,15 @@ document.getElementById('search-origin').addEventListener('click', function() {
     }).open();
 });
 
-// 도착지 주소 검색 버튼----------------------------------------------------------------------------------------------------//
+// 출발지 주소 검색 버튼----------------------------------------------------------------------------------------------------//
+document.getElementById('search-origin').addEventListener('click', function() {
+    new daum.Postcode({
+        oncomplete: function(data) {
+            document.getElementById('originAddress').value = data.address;
+        }
+    }).open();
+});
+// 목적지 주소 검색 버튼----------------------------------------------------------------------------------------------------//
 document.getElementById('search-destination').addEventListener('click', function() {
     new daum.Postcode({
         oncomplete: function(data) {
@@ -40,14 +49,98 @@ document.getElementById('search-destination').addEventListener('click', function
     }).open();
 });
 
-// 사용자가 길 찾기 버튼을 눌렀을 때의 동작----------------------------------------------------------------------------------------------------//
-document.getElementById('search-form').addEventListener('submit', function(e) {
+// 반경 기반 랜덤 길찾기 출발지 주소 검색 버튼----------------------------------------------------------------------------------------------------//
+document.getElementById('all-random-search-origin').addEventListener('click', function() {
+    new daum.Postcode({
+        oncomplete: function(data) {
+            document.getElementById('all-random-originAddress').value = data.address;
+        }
+    }).open();
+});
+
+// 목적지,반경 기반 랜덤 길찾기 출발지 주소 검색 버튼----------------------------------------------------------------------------------------------------//
+document.getElementById('random-search-origin').addEventListener('click', function() {
+    new daum.Postcode({
+        oncomplete: function(data) {
+            document.getElementById('random-originAddress').value = data.address;
+        }
+    }).open();
+});
+// 목적지,반경 기반 랜덤 길찾기 목적지 주소 검색 버튼----------------------------------------------------------------------------------------------------//
+document.getElementById('random-search-destination').addEventListener('click', function() {
+    new daum.Postcode({
+        oncomplete: function(data) {
+            document.getElementById('random-destinationAddress').value = data.address;
+        }
+    }).open();
+});
+// 사용자가 반경기반 랜덤 길 찾기 버튼을 눌렀을 때의 동작----------------------------------------------------------------------------------------------------//
+document.getElementById('all-random-search-form').addEventListener('submit', function(e) {
     e.preventDefault(); // 기본 submit 동작을 막습니다.
 
-    var originAddress = document.getElementById('originAddress').value;
-    var destinationAddress = document.getElementById('destinationAddress').value;
+    var originAddress = document.getElementById('all-random-originAddress').value;
+    var redius = document.getElementById('all-random-redius').value;
 
-    fetch('/route?originAddress=' + originAddress  + '&destinationAddress=' + destinationAddress)
+    fetch('/all-random-route?originAddress=' + originAddress  + '&redius=' + redius)
+        .then(response => response.json())
+        .then(data => {
+            // data는 KakaoRouteAllResponseDto 객체
+            clearPolylines(); // 기존의 선들을 모두 제거
+
+            if (!map) {
+                map = new kakao.maps.Map(document.getElementById('map'), {
+                    level: 3
+                });
+            }
+
+            // 경로 정보(routes)의 각 섹션(section)별로 반복하여 처리합니다.
+            for (let route of data.routes) {
+                for (let section of route.sections) {
+
+                    // 각 섹션의 경계 상자(bound) 정보를 가져옵니다.
+                    let bound = section.bound;
+
+                    // 카카오 지도에 섹션을 표시합니다.
+                    var bounds = new kakao.maps.LatLngBounds(
+                        new kakao.maps.LatLng(bound.min_y, bound.min_x),
+                        new kakao.maps.LatLng(bound.max_y, bound.max_x)
+                    );
+
+                    map.setBounds(bounds);
+
+                    // polyline 생성
+                    for(let road of section.roads){
+                        let path = [];
+                        for(let i=0; i<road.vertexes.length; i+=2){
+                            console.log("vertexes: ", road.vertexes[i], road.vertexes[i+1]);
+                            path.push(new kakao.maps.LatLng(road.vertexes[i+1], road.vertexes[i]));
+                        }
+
+                        let polyline = new kakao.maps.Polyline({
+                            path: path,
+                            strokeWeight: 5,
+                            strokeColor: '#007bff',
+                            strokeOpacity: 0.7,
+                            strokeStyle: 'solid'
+                        });
+
+                        polyline.setMap(map);
+
+                        polylines.push(polyline); // 선을 배열에 추가
+                    }
+                }
+            }
+        });
+});
+// 사용자가 목적지기반 랜덤 길 찾기 버튼을 눌렀을 때의 동작----------------------------------------------------------------------------------------------------//
+document.getElementById('random-search-form').addEventListener('submit', function(e) {
+    e.preventDefault(); // 기본 submit 동작을 막습니다.
+
+    var originAddress = document.getElementById('random-originAddress').value;
+    var destinationAddress = document.getElementById('random-destinationAddress').value;
+    var redius = document.getElementById('random-redius').value;
+
+    fetch('/random-route?originAddress=' + originAddress  + '&destinationAddress=' + destinationAddress + '&redius=' + redius)
         .then(response => response.json())
         .then(data => {
             // data는 KakaoRouteAllResponseDto 객체
@@ -119,7 +212,6 @@ function clearPolylines() {
     }
     polylines = [];
 }
-
 
 // 현재 위치 마커 표시----------------------------------------------------------------------------------------------------------//
 // HTML5의 geolocation으로 사용할 수 있는지 확인합니다

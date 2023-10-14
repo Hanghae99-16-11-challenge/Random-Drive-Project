@@ -3,21 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <title>Kakao Route Search</title>
-  <link rel="stylesheet" href="/navigation.css">
+  <link rel="stylesheet" href="/css.css">
 </head>
 <body>
 
 <h1>Kakao Route Search</h1>
 
 <div id="map" style="width:1300px;height:900px;"></div> <!-- 지도가 표시될 영역 -->
-<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8718b48048bf8ca4325b869cb07bb294"></script> <!-- 카카오 지도 API -->
-<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8718b48048bf8ca4325b869cb07bb294&libraries=services,clusterer,drawing"></script>
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=c87b1c2e1d4bcdc3401e35160e8e7d95"></script> <!-- 카카오 지도 API -->
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=c87b1c2e1d4bcdc3401e35160e8e7d95&libraries=services,clusterer,drawing"></script>
 
-<!--타임리프 적용이 안됨.., 직접적으로 키값을 넣으면 동작-->
-<!--<script type="text/javascript" th:src="'//dapi.kakao.com/v2/maps/sdk.js?appkey=' + ${kakaoJavascriptApiKey}"></script>-->
-<!--<script type="text/javascript" th:src="'//dapi.kakao.com/v2/maps/sdk.js?appkey=' + ${kakaoJavascriptApiKey} + '&libraries=services,clusterer,drawing'"></script>-->
-
-
+<h3>기본 길찾기</h3>
 <form id="search-form">
   <label for="originAddress">출발지:</label><br>
   <input type="text" id="originAddress" name="originAddress"><button type='button' id='search-origin'>주소 검색</button><br>
@@ -29,11 +25,36 @@
   <button type='submit'>길 찾기</button>
 </form>
 
+<h3>반경 기반 랜덤 길찾기</h3>
+<form id="all-random-search-form">
+  <label for="all-random-originAddress">출발지:</label><br>
+  <input type="text" id="all-random-originAddress" name="all-random-originAddress"><button type='button' id='all-random-search-origin'>주소 검색</button><br>
+  <button type='button' id='all-random-current-location'>현재 위치를 추가하기</button><br>
 
-<script src="/js.js"></script> <!-- 여기에 실제 자바스크립트 파일 경로를 입력하세요 -->
+  <label for="all-random-redius">반경:</label><br>
+  <input type="text" id="all-random-redius" name="all-random-redius"><br>
+
+  <button type='submit'>길 찾기</button>
+</form>
+<br>
+<h3>목적지, 반경 기반 랜덤 길찾기</h3>
+<form id="random-search-form">
+  <label for="random-originAddress">출발지:</label><br>
+  <input type="text" id="random-originAddress" name="random-originAddress"><button type='button' id='random-search-origin'>주소 검색</button><br>
+  <button type='button' id='random-current-location'>현재 위치를 추가하기</button><br>
+
+  <label for="random-destinationAddress">목적지:</label><br>
+  <input type="text" id="random-destinationAddress" name="random-destinationAddress"><button type='button' id='random-search-destination'>주소 검색</button><br>
+
+  <label for="random-redius">반경:</label><br>
+  <input type="text" id="random-redius" name="random-redius"><br>
+
+  <button type='submit'>길 찾기</button>
+</form>
+
+
+<script src="/navigation.js"></script> <!-- 여기에 실제 자바스크립트 파일 경로를 입력하세요 -->
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script> <!-- 카카오 우편번호 서비스 -->
-<script src="/navigation.js"></script>
-
 
 </body>
 </html>
