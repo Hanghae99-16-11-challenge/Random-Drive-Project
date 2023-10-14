@@ -1,6 +1,6 @@
 package com.example.randomdriveproject.controller;
 
-import com.example.randomdriveproject.service.RandomUserService;
+import com.example.randomdriveproject.user.service.RandomUserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
