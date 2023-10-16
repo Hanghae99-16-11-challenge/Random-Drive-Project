@@ -5,6 +5,7 @@ import com.example.randomdriveproject.user.security.JwtAuthenticationFilter;
 import com.example.randomdriveproject.user.security.JwtAuthorizationFilter;
 import com.example.randomdriveproject.user.security.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+@Slf4j
 @Configuration
 @EnableWebSecurity // Spring Security 지원을 가능하게 함
 @RequiredArgsConstructor
@@ -51,6 +53,7 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
         // CSRF 설정
         http.csrf((csrf) -> csrf.disable());
 //        http.cors((cors) -> cors.configure(http));
