@@ -33,13 +33,8 @@ public class KakaoRouteSearchService {
     private String kakaoRestApiKey;
 
 
-    public KakaoRouteAllResponseDto requestRouteSearch(String originAddress, String destinationAddress, User user) {
+    public KakaoRouteAllResponseDto requestRouteSearch(String originAddress, String destinationAddress) {
         if (ObjectUtils.isEmpty(originAddress) || ObjectUtils.isEmpty(destinationAddress)) return null;
-
-        if (user == null){
-            throw new IllegalArgumentException("로그인 해주세요.");
-        }
-
 
         // 출발지와 도착지 주소를 각각 좌표로 변환
         DocumentDto origin = kakaoAddressSearchService.requestAddressSearch(originAddress).getDocumentDtoList().get(0);
