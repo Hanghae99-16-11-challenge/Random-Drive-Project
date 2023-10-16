@@ -4,6 +4,8 @@ import com.example.randomdriveproject.request.dto.KakaoRouteAllResponseDto;
 import com.example.randomdriveproject.request.dto.DocumentDto;
 import com.example.randomdriveproject.request.service.KakaoAddressSearchService;
 import com.example.randomdriveproject.request.service.KakaoUriBuilderService;
+import com.example.randomdriveproject.user.entity.User;
+import com.example.randomdriveproject.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,13 +27,19 @@ public class KakaoRouteSearchService {
     private final RestTemplate restTemplate;
     private final KakaoUriBuilderService kakaoUriBuilderService;
     private final KakaoAddressSearchService kakaoAddressSearchService;
+    private final UserRepository userRepository;
 
     @Value("${kakao.rest.api.key}")
     private String kakaoRestApiKey;
 
 
-    public KakaoRouteAllResponseDto requestRouteSearch(String originAddress, String destinationAddress) {
+    public KakaoRouteAllResponseDto requestRouteSearch(String originAddress, String destinationAddress, User user) {
         if (ObjectUtils.isEmpty(originAddress) || ObjectUtils.isEmpty(destinationAddress)) return null;
+
+        if (user == null){
+            throw new IllegalArgumentException("로그인 해주세요.");
+        }
+
 
         // 출발지와 도착지 주소를 각각 좌표로 변환
         DocumentDto origin = kakaoAddressSearchService.requestAddressSearch(originAddress).getDocumentDtoList().get(0);

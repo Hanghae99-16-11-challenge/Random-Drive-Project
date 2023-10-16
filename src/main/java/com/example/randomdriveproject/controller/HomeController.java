@@ -1,8 +1,10 @@
 package com.example.randomdriveproject.controller;
 
+import com.example.randomdriveproject.user.security.UserDetailsImpl;
 import com.example.randomdriveproject.user.service.RandomUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,7 +31,7 @@ public class HomeController {
     }
 
     @GetMapping("/navigation")
-    public String showNavigation() {
+    public String showNavigation(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return "navigation";
     }
 }
