@@ -16,7 +16,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 @Slf4j(topic = "JWT 검증 및 인가")
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
@@ -32,10 +31,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
 
-        //String tokenValue = jwtUtil.getJwtFromHeader(req);//-> JWT는 헤더가 아닌 토큰에 저장
-
-        String tokenValue = Arrays.stream(req.getCookies()).filter(cookie -> cookie.getName().equals(jwtUtil.AUTHORIZATION_HEADER))
-                .findFirst().get().getValue();
+        String tokenValue = jwtUtil.getJwtFromHeader(req);
 
         if (StringUtils.hasText(tokenValue)) {
 
@@ -52,9 +48,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 log.error(e.getMessage());
                 return;
             }
-        }else
-        {
-            log.error("Not has Token");
         }
 
         filterChain.doFilter(req, res);

@@ -95,8 +95,6 @@ document.getElementById('search-form').addEventListener('submit', function(e) {
 
             // 경로 정보(routes)의 각 섹션(section)별로 반복하여 처리합니다.
             for (let route of data.routes) {
-                if(route.sections == null)
-                    alert("길이 없음!");
                 for (let section of route.sections) {
 
                     // 각 섹션의 경계 상자(bound) 정보를 가져옵니다.
