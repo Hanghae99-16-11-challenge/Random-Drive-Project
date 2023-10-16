@@ -36,6 +36,7 @@ public class RouteController {
         if (response == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
+        System.out.println(response.getTransId()); // 체크용
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
