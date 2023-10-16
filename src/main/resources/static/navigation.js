@@ -87,7 +87,6 @@ document.getElementById('search-form').addEventListener('submit', function(e) {
         .then(data => {
             // data는 KakaoRouteAllResponseDto 객체
             clearPolylines(); // 기존의 선들을 모두 제거
-
             if (!map) {
                 map = new kakao.maps.Map(document.getElementById('map'), {
                     level: 3

@@ -2,8 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"
+            integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paginationjs/2.1.4/pagination.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/paginationjs/2.1.4/pagination.css"/>
 
+<!--    <link rel="stylesheet" href="/css/style.css">-->
+<!--    <script src="/js/basic.js"></script>-->
+    <title>네비 홈</title>
 </head>
 <body>
 <script type="text/javascript">
@@ -18,7 +29,9 @@
 
 <h2>로그인 페이지</h2>
 
-<a href="https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=0c3c82e2bab1baa630c741b2c9f72e3c&redirect_uri=http://localhost:8080/api/auth/login" class="kakao-login">카카오 로그인</a>
+<button id="login-id-btn" onclick="location.href='/api/user/login-page'">
+    로그인하기
+</button>
 
 <h1> hello </h1>
 <div>
