@@ -48,6 +48,9 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 log.error(e.getMessage());
                 return;
             }
+        }else
+        {
+            log.error("토큰 없음");
         }
 
         filterChain.doFilter(req, res);

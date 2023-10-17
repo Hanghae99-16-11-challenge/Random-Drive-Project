@@ -13,6 +13,8 @@ function handleCurrentLocationClick() {
             .then((data) => {
                 if (data.documents && data.documents.length > 0) {
                     document.getElementById('originAddress').value = data.documents[0].address_name;
+                    document.getElementById('all-random-originAddress').value = data.documents[0].address_name;
+                    document.getElementById('random-originAddress').value = data.documents[0].address_name;
                 } else {
                     throw new Error('Could not find address for this coordinates.');
                 }
@@ -87,6 +89,9 @@ document.getElementById('search-form').addEventListener('submit', function(e) {
         .then(data => {
             // data는 KakaoRouteAllResponseDto 객체
             clearPolylines(); // 기존의 선들을 모두 제거
+
+            calculateCurrectToPoint(data);
+
             if (!map) {
                 map = new kakao.maps.Map(document.getElementById('map'), {
                     level: 3
@@ -130,6 +135,10 @@ document.getElementById('search-form').addEventListener('submit', function(e) {
                     }
                 }
             }
+        })
+        .catch(except =>
+        {
+            alert("길을 찾지 못함");
         });
 });
 
@@ -146,6 +155,8 @@ document.getElementById('all-random-search-form').addEventListener('submit', fun
             // data는 KakaoRouteAllResponseDto 객체
             clearPolylines(); // 기존의 선들을 모두 제거
 
+            calculateCurrectToPoint(data);
+
             if (!map) {
                 map = new kakao.maps.Map(document.getElementById('map'), {
                     level: 3
@@ -189,6 +200,10 @@ document.getElementById('all-random-search-form').addEventListener('submit', fun
                     }
                 }
             }
+        })
+        .catch(except =>
+        {
+            alert("길을 찾지 못함");
         });
 });
 // 사용자가 목적지기반 랜덤 길 찾기 버튼을 눌렀을 때의 동작----------------------------------------------------------------------------------------------------//
@@ -248,6 +263,10 @@ document.getElementById('random-search-form').addEventListener('submit', functio
                     }
                 }
             }
+        })
+        .catch(except =>
+        {
+            alert("길을 찾지 못함");
         });
 });
 
