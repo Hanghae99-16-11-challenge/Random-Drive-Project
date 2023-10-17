@@ -34,4 +34,9 @@ public class HomeController {
     public String showNavigation(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return "navigation";
     }
+
+    @GetMapping("/histories")
+    public String showHistories(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return "history/histories";
+    }
 }

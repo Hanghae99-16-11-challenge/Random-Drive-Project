@@ -4,19 +4,21 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class HistoryResponseDto {
 
-    @JsonProperty("originName")
-    private String originName;
+    @JsonProperty("originAddress")
+    private String originAddress;
 
-    @JsonProperty("destinationName")
-    private String destinationName;
+    @JsonProperty("destinationAddress")
+    private String destinationAddress;
 
     @JsonProperty("duration")
     private int duration;
@@ -28,10 +30,10 @@ public class HistoryResponseDto {
     private LocalDateTime createdAt;
 
     @JsonProperty("bounds")
-    private Bound[] bounds;
+    private Bound bounds;
 
     @JsonProperty("roads")
-    private Road[] roads;
+    private Road roads;
 
     public static class Bound {
         @JsonProperty("min_x")
@@ -46,12 +48,23 @@ public class HistoryResponseDto {
         @JsonProperty("max_y")
         private double maxY;
 
+        public Bound(double minX, double minY, double maxX, double maxY) {
+            this.minX = minX;
+            this.minY = minY;
+            this.maxX = maxX;
+            this.maxY = maxY;
+        }
+
         // Getter, Setter, toString 등 필요한 메서드들은 생략
     }
 
     public static class Road {
         @JsonProperty("vertexes")
         private double[] vertexes;
+
+        public Road(double[] vertexes) {
+            this.vertexes = vertexes;
+        }
 
         // Getter, Setter, toString 등 필요한 메서드들은 생략
     }
