@@ -61,7 +61,7 @@ public class UserController {
     @ResponseBody
     public UserInfoDto getUserInfo(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         String username = userDetails.getUser().getUsername();
-        UserRoleEnum role = userDetails.getUser().getRole();
+        UserRoleEnum role = userDetails.getUser().getUserRole();
         boolean isAdmin = (role == UserRoleEnum.ADMIN);
 
         return new UserInfoDto(username, isAdmin);

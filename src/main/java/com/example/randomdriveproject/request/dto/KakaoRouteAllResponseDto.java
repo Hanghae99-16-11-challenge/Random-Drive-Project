@@ -30,6 +30,14 @@ public class KakaoRouteAllResponseDto {
         @JsonProperty("sections")
         private Section[] sections;
 
+        public Summary getSummary() {
+            return summary;
+        }
+
+        public Section[] getSections() {
+            return sections;
+        }
+
         // Getter, Setter, toString 등 필요한 메서드들은 생략
     }
 
@@ -58,6 +66,22 @@ public class KakaoRouteAllResponseDto {
         @JsonProperty("duration")
         private int duration;
 
+        public int getDistance() {
+            return distance;
+        }
+
+        public int getDuration() {
+            return duration;
+        }
+
+        public Location getOrigin() {
+            return origin;
+        }
+
+        public Location getDestination() {
+            return destination;
+        }
+
         // Getter, Setter, toString 등 필요한 메서드들은 생략
     }
 
@@ -70,6 +94,18 @@ public class KakaoRouteAllResponseDto {
 
         @JsonProperty("y")
         private double y;
+
+        public String getName() {
+            return name;
+        }
+
+        public double getX() {
+            return x;
+        }
+
+        public double getY() {
+            return y;
+        }
 
         // Getter, Setter, toString 등 필요한 메서드들은 생략
     }
@@ -86,6 +122,22 @@ public class KakaoRouteAllResponseDto {
 
         @JsonProperty("max_y")
         private double maxY;
+
+        public double getMinX() {
+            return minX;
+        }
+
+        public double getMinY() {
+            return minY;
+        }
+
+        public double getMaxX() {
+            return maxX;
+        }
+
+        public double getMaxY() {
+            return maxY;
+        }
 
         // Getter, Setter, toString 등 필요한 메서드들은 생략
     }
@@ -116,6 +168,14 @@ public class KakaoRouteAllResponseDto {
         @JsonProperty("guides")
         private Guide[] guides;
 
+        public BoundingBox getBound() {
+            return bound;
+        }
+
+        public Road[] getRoads() {
+            return roads;
+        }
+
         // Getter, Setter, toString 등 필요한 메서드들은 생략
     }
 
@@ -137,6 +197,10 @@ public class KakaoRouteAllResponseDto {
 
         @JsonProperty("vertexes")
         private double[] vertexes;
+
+        public double[] getVertexes() {
+            return vertexes;
+        }
 
         // Getter, Setter, toString 등 필요한 메서드들은 생략
     }
