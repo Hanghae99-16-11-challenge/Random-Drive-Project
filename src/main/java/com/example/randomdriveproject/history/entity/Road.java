@@ -15,7 +15,7 @@ public class Road {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "vertexes", nullable = false, length = 6000)
+    @Column(name = "vertexes", nullable = false, length = 20000)
     private String vertexes;
 
     @ManyToOne(fetch = FetchType.LAZY)

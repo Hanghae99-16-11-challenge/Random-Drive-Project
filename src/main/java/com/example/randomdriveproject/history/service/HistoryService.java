@@ -13,6 +13,7 @@ import com.example.randomdriveproject.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,15 +38,23 @@ public class HistoryService {
             KakaoRouteAllResponseDto.BoundingBox bound = section.getBound();
             Bound boundEntity = new Bound(bound.getMinX(), bound.getMinY(), bound.getMaxX(), bound.getMaxY(),route);
 
-            // Road 객체 생성 및 설정
-            KakaoRouteAllResponseDto.Road roadDto = section.getRoads()[0]; // 첫 번째 Road를 사용하겠습니다.
-            String vertexesString = Arrays.stream(roadDto.getVertexes()).mapToObj(String::valueOf).collect(Collectors.joining(" "));
-            Road roadEntity = new Road(vertexesString, route);
-
             // RouteRepository를 사용하여 Route 저장
             routeRepository.save(route);
             boundRepository.save(boundEntity);
-            roadRepository.save(roadEntity);
+
+            // Road 객체 생성 및 설정
+            KakaoRouteAllResponseDto.Section[] sections = routeInfo.getSections();
+
+            // for문 돌면서 모든 Road의 vertexes를 vertexString에 띄어쓰기로 구분해서 넣어라
+            for (KakaoRouteAllResponseDto.Section allSection : sections) {
+                KakaoRouteAllResponseDto.Road[] roads = allSection.getRoads();
+                for (KakaoRouteAllResponseDto.Road roadDto : roads) {
+                    String vertexesString = "";
+                    vertexesString += Arrays.stream(roadDto.getVertexes()).mapToObj(String::valueOf).collect(Collectors.joining(" "));
+                    Road roadEntity = new Road(vertexesString, route);
+                    roadRepository.save(roadEntity);
+                }
+            }
         }
     }
 
@@ -75,11 +84,24 @@ public class HistoryService {
 
         // Bound, Road 정보 가져오기
         Bound bound = route.getBounds().get(0); // 예시로 첫 번째 Bound 가져옴
-        Road road = route.getRoads().get(0); // 예시로 첫 번째 Road 가져옴
+        List<Road> roads = route.getRoads();
 
         // HistoryResponseDto 객체 생성 및 설정
         HistoryResponseDto.Bound boundDto = new HistoryResponseDto.Bound(bound.getMinX(), bound.getMinY(), bound.getMaxX(), bound.getMaxY());
-        double[] vertexArray = convertStringToList(road.getVertexes()); // Road의 vertexes를 double 배열로 변환
+        // 모든 Road의 vertexes를 저장할 리스트 초기화
+        List<Double> allVertices = new ArrayList<>();
+
+        // 모든 Road의 vertexes를 리스트에 추가
+        for (Road road : roads) {
+            double[] vertices = convertStringToList(road.getVertexes());
+            for (double vertex : vertices) {
+                allVertices.add(vertex);
+            }
+        }
+
+        // 리스트를 배열로 변환
+        double[] vertexArray = allVertices.stream().mapToDouble(Double::doubleValue).toArray();
+
         HistoryResponseDto.Road roadDto = new HistoryResponseDto.Road(vertexArray);
 
         HistoryResponseDto responseDto = new HistoryResponseDto();
