@@ -15,6 +15,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
@@ -34,7 +35,15 @@ public class KakaoRouteSearchService {
 
 
     public KakaoRouteAllResponseDto requestRouteSearch(String originAddress, String destinationAddress) {
+//        String username = user.getUsername();
+
         if (ObjectUtils.isEmpty(originAddress) || ObjectUtils.isEmpty(destinationAddress)) return null;
+        System.out.println("호출준비");
+
+        // 사용자 인증 정보 확인
+//        if(!username.equals(userRepository.findByUsername(username))){
+//            throw new IllegalArgumentException("잘못된토큰 정보");
+//        }
 
         // 출발지와 도착지 주소를 각각 좌표로 변환
         DocumentDto origin = kakaoAddressSearchService.requestAddressSearch(originAddress).getDocumentDtoList().get(0);

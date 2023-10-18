@@ -30,8 +30,7 @@ public class RouteController {
 
     @GetMapping("/route")
     public ResponseEntity<KakaoRouteAllResponseDto> getRoute(@RequestParam String originAddress,
-                                                             @RequestParam String destinationAddress
-                                                             ) {
+                                                             @RequestParam String destinationAddress) {
         KakaoRouteAllResponseDto response = kakaoRouteSearchService.requestRouteSearch(originAddress, destinationAddress);
         if (response == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
