@@ -22,6 +22,9 @@
 
 
 <!--<h1> hello </h1>-->
+<button id="logout-id-btn" onclick="logout()">
+    로그아웃하기
+</button>
 <div>
 
     <h1 class="display-5 fw-bolder text-white mb-2">Navigation</h1>
@@ -33,9 +36,19 @@
     </div>
 </div>
 
+
+
 <script src="/home.js"></script>
 </body>
 <script type="text/javascript">
 
+</script>
+<script>
+    function logout() {
+        // 토큰 삭제
+        Cookies.remove('Authorization', {path: '/'});
+        // window.location.reload(); // 현재 페이지 리로드
+        window.location.href = '/api/user/login-page';
+    }
 </script>
 </html>
