@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -33,7 +35,7 @@ public class HistoryResponseDto {
     private Bound bounds;
 
     @JsonProperty("roads")
-    private Road roads;
+    private List<Road> roads = new ArrayList<>();
 
     public static class Bound {
         @JsonProperty("min_x")

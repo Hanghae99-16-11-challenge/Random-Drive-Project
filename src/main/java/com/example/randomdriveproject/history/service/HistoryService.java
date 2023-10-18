@@ -88,21 +88,6 @@ public class HistoryService {
 
         // HistoryResponseDto 객체 생성 및 설정
         HistoryResponseDto.Bound boundDto = new HistoryResponseDto.Bound(bound.getMinX(), bound.getMinY(), bound.getMaxX(), bound.getMaxY());
-        // 모든 Road의 vertexes를 저장할 리스트 초기화
-        List<Double> allVertices = new ArrayList<>();
-
-        // 모든 Road의 vertexes를 리스트에 추가
-        for (Road road : roads) {
-            double[] vertices = convertStringToList(road.getVertexes());
-            for (double vertex : vertices) {
-                allVertices.add(vertex);
-            }
-        }
-
-        // 리스트를 배열로 변환
-        double[] vertexArray = allVertices.stream().mapToDouble(Double::doubleValue).toArray();
-
-        HistoryResponseDto.Road roadDto = new HistoryResponseDto.Road(vertexArray);
 
         HistoryResponseDto responseDto = new HistoryResponseDto();
         responseDto.setOriginAddress(route.getOriginAddress());
@@ -111,7 +96,11 @@ public class HistoryService {
         responseDto.setDistance(route.getDistance());
         responseDto.setCreatedAt(route.getCreatedAt());
         responseDto.setBounds(boundDto);
-        responseDto.setRoads(roadDto);
+
+        for (Road road : roads) {
+            double[] vertices = convertStringToList(road.getVertexes());
+            responseDto.getRoads().add(new HistoryResponseDto.Road(vertices));
+        }
 
         return responseDto;
     }

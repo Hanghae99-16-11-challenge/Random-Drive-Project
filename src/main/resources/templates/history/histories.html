@@ -19,6 +19,7 @@
         <th>Duration</th>
         <th>Distance</th>
         <th>Created At</th>
+        <th>Actions</th>
     </tr>
     </thead>
     <tbody id="historyTableBody">
@@ -83,9 +84,25 @@
                 <td>${history.duration}</td>
                 <td>${history.distance}</td>
                 <td>${history.createdAt}</td>
+                <td></td> <!-- Actions 열의 빈 칸 -->
             `;
+
+            // 상세 정보 버튼을 생성하고 Actions 열에 추가
+            const detailButton = addDetailButton(history.route_id);
+            row.lastElementChild.appendChild(detailButton);
+
             tbody.appendChild(row);
         });
+    }
+
+    function addDetailButton(routeId) {
+        const button = document.createElement('button');
+        button.textContent = '상세 정보 보기';
+        button.addEventListener('click', function() {
+            // 상세 정보 페이지로 이동
+            window.location.href = `/history/${routeId}`;
+        });
+        return button;
     }
 </script>
 
