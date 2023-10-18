@@ -24,7 +24,7 @@ function handleCurrentLocationClick() {
         fetch(
             'https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x=' + lon + '&y=' + lat,
             {
-                headers: { Authorization: 'KakaoAK 4752e5a5b955f574af7718613891f796' },
+                headers: { Authorization: 'KakaoAK 8718b48048bf8ca4325b869cb07bb294' },
             }
         )
             .then((response) => response.json())
@@ -110,6 +110,7 @@ document.getElementById('search-form').addEventListener('submit', function(e) {
 
     var originAddress = document.getElementById('originAddress').value;
     var destinationAddress = document.getElementById('destinationAddress').value;
+
 
     fetch('/route?originAddress=' + originAddress  + '&destinationAddress=' + destinationAddress)
         .then(response => response.json())

@@ -1,6 +1,7 @@
 package com.example.randomdriveproject.config;
 
 import com.example.randomdriveproject.user.jwt.JwtUtil;
+import com.example.randomdriveproject.user.security.CustomLogoutSuccessHandler;
 import com.example.randomdriveproject.user.security.JwtAuthenticationFilter;
 import com.example.randomdriveproject.user.security.JwtAuthorizationFilter;
 import com.example.randomdriveproject.user.security.UserDetailsServiceImpl;
@@ -8,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -26,6 +28,7 @@ public class WebSecurityConfig {
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
+    private final CustomLogoutSuccessHandler customLogoutSuccessHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -63,16 +66,35 @@ public class WebSecurityConfig {
         http.authorizeHttpRequests((authorizeHttpRequests) ->
                 authorizeHttpRequests
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용 설정
-                        .requestMatchers("/**").permitAll() // 메인 페이지 요청 허가
-                        .requestMatchers("/api/user/**").permitAll() // '/api/user/'로 시작하는 요청 모두 접근 허가
-                        .requestMatchers("/navigation").permitAll()
-                        .anyRequest().authenticated() // 그 외 모든 요청 인증처리
+//                        .requestMatchers("/").permitAll() // 메인 페이지 요청 허가
+//                        .requestMatchers("/navigation.js").permitAll() // 메인 페이지 요청 허가
+//                        .requestMatchers("/navigation").permitAll() // 메인 페이지 요청 허가
+//                        .requestMatchers("/api/user/**").permitAll() // '/api/user/'로 시작하는 요청 모두 접근 허가
+//                        .anyRequest().authenticated() // 그 외 모든 요청 인증처리
+//                        .requestMatchers("/route/**").authenticated()
+                        .requestMatchers("/").authenticated()
+                        .anyRequest().permitAll()
+
         );
 
         http.formLogin((formLogin) ->
                 formLogin
                         .loginPage("/api/user/login-page").permitAll()
+                        .defaultSuccessUrl("/home", true) // 로그인 성공 후 이동할 페이지
+                        .failureUrl("/api/user/login-page?error") // 로그인 실패 시 명시적으로 에러 파라미터 추가
         );
+
+        // 로그아웃 처리 추가 부분
+        http.logout(logout -> {
+            logout.logoutUrl("/api/auth/logout")
+                    .logoutSuccessUrl("/api/user/login-page") // 로그아웃 성공 후 이동할 페이지
+                    .logoutSuccessHandler(customLogoutSuccessHandler)
+                    .invalidateHttpSession(true)
+                    .deleteCookies(JwtUtil.AUTHORIZATION_HEADER);
+
+
+        });
+
 
         // 필터 관리
         http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
