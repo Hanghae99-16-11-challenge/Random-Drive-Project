@@ -1,4 +1,4 @@
-var pathData;
+var pathData;//마지막 길 찾은 정보 - 네비게이션 디버깅에 쓰임
 
 function handleCurrentLocationClick() {
     navigator.geolocation.getCurrentPosition(function(position) {
