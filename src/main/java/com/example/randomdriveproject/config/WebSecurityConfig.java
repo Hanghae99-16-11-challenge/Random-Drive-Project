@@ -1,6 +1,7 @@
 package com.example.randomdriveproject.config;
 
 import com.example.randomdriveproject.user.jwt.JwtUtil;
+import com.example.randomdriveproject.user.security.CustomLogoutSuccessHandler;
 import com.example.randomdriveproject.user.security.JwtAuthenticationFilter;
 import com.example.randomdriveproject.user.security.JwtAuthorizationFilter;
 import com.example.randomdriveproject.user.security.UserDetailsServiceImpl;
@@ -26,6 +27,7 @@ public class WebSecurityConfig {
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
+    private final CustomLogoutSuccessHandler customLogoutSuccessHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -76,6 +78,15 @@ public class WebSecurityConfig {
                 formLogin
                         .loginPage("/api/user/login-page").permitAll()
         );
+
+        // 로그아웃 처리 추가 부분
+        http.logout(logout -> {
+            logout.logoutUrl("/api/auth/logout")
+                    .logoutSuccessHandler(customLogoutSuccessHandler)
+                    .invalidateHttpSession(true)
+                    .deleteCookies(JwtUtil.AUTHORIZATION_HEADER);
+        });
+
 
         // 필터 관리
         http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);

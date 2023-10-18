@@ -19,25 +19,36 @@
 <body>
 <script type="text/javascript">
 </script>
+<script>
+    function logout() {
+        // 토큰 삭제
+        Cookies.remove('Authorization', {path: '/'});
+        window.location.reload(); // 현재 페이지 리로드
+    }
+</script>
 
 
-<h3 th:text="${nickname}">NickName</h3>
-
-<a href="http://localhost:8080/api/auth/logout">로그아웃</a>
-<a href="http://localhost:8080/api/auth/regenerate">재발급</a>
-
+<!--<h3 th:text="${nickname}">NickName</h3>-->
+<!--<a href="http://localhost:8080/api/auth/logout">로그아웃</a>-->
+<!--<a href="http://localhost:8080/api/auth/regenerate">재발급</a>-->
 
 <h2>로그인 페이지</h2>
+<div>
+    <button id="login-id-btn" onclick="location.href='/api/user/login-page'">
+        로그인하기
+    </button>
+    <button id="logout-id-btn" onclick="logout()">
+        로그아웃하기
+    </button>
 
-<button id="login-id-btn" onclick="location.href='/api/user/login-page'">
-    로그인하기
-</button>
+</div>
 
-<h1> hello </h1>
+
+<!--<h1> hello </h1>-->
 <div>
 
     <h1 class="display-5 fw-bolder text-white mb-2">Navigation</h1>
-    <p class="lead fw-normal text-white-50 mb-4">기본 길찾기 기능 <br></p>
+    <p class="lead fw-normal text-white-50 mb-4">길찾기 & 랜덤 길찾기 기능 <br></p>
     <div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
 <!--        <a class="btn btn-outline-light btn-lg px-4" href="/navigation" onclick="sendRequestWithToken()">navigation</a>-->
 <!--        <a class="btn btn-outline-light btn-lg px-4" href="javascript:void(0);" onclick="sendRequestWithToken(event)">navigation</a>-->
