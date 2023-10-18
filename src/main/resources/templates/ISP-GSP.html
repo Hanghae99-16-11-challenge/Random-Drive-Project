@@ -44,10 +44,10 @@
 
 
         // ISP 위치 정보 가져오기
-        $.getJSON("https://ipinfo.io/json", function(data) {
-            // 위치 정보를 표시하기
-            $("#location").html("ISP 위치 정보: " + data.city + ", " + data.country + " , " + data.loc);
-        });
+        // $.getJSON("https://ipinfo.io/json", function(data) {
+        //     // 위치 정보를 표시하기
+        //     $("#location").html("ISP 위치 정보: " + data.city + ", " + data.country + " , " + data.loc);
+        // });
 
         // GPS 위치 정보 가져오기
         navigator.geolocation.getCurrentPosition(function(position) {
@@ -61,6 +61,7 @@
          getPosition_Height();//완료 시간이 제멋대로인데 오래걸림 , 정확도 높은 버전
 
     }//비동기 처리 방식으로 해야되는데
+
 
     position();
 

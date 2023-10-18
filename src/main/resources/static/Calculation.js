@@ -31,9 +31,14 @@ function calculateCurrectToPoint(data)
         var C_lon = position.coords.longitude;
 
         //response.getRoutes()[0].getSummary().getDuration()
+        let spend = data.routes[0].summary.duration;
+
         alert("현제위치와 출발지간의 직선거리 : " + calculateDistance(C_lat, C_lon, let_ori, lon_ori) + "km" +
             "\n현제위치와 도착지 간의 직선거리 : " + calculateDistance(C_lat, C_lon, lat_des, lon_des) + "km" +
-            "\n경로 길이 : " + data.routes[0].summary.distance +"m");
+            "\n경로 길이 : " + data.routes[0].summary.distance +"m , 소요 시간 : " +
+            Math.floor(spend / 60) + "분" + (spend - (Math.floor(spend / 60) * 60)) + "초");
+
+        //"m / 소요 시간 : " + duration + " -> " + (duration / 60) + "m" + (duration - ((duration/60) * 60)) + "s"
 
     });
 

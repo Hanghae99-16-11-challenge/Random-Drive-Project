@@ -45,6 +45,9 @@ public class PathUtil {
         //navigator.geolocation.getCurrentPosition 문제 : 아마 노트북이라 고도 , 방향 , 속도 측정 불가 + 오차가 450m
             // 정확도 높혀도 마찬가지
         //
+
+        //  "/all-random-route" -> 일정 반경내에서 인기순으로 정렬된 관광 명소를 랜덤으로 뽑아 목적지와 도착지를 정함
+        //
     }
 
     public static double calculateDistance(double lat1, double lon1, double lat2, double lon2) {

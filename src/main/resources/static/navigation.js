@@ -1,3 +1,5 @@
+var pathData;
+
 function handleCurrentLocationClick() {
     navigator.geolocation.getCurrentPosition(function(position) {
         var lat = position.coords.latitude,
@@ -91,6 +93,7 @@ document.getElementById('search-form').addEventListener('submit', function(e) {
             clearPolylines(); // 기존의 선들을 모두 제거
 
             calculateCurrectToPoint(data);
+            pathData = data;
 
             if (!map) {
                 map = new kakao.maps.Map(document.getElementById('map'), {
@@ -156,6 +159,7 @@ document.getElementById('all-random-search-form').addEventListener('submit', fun
             clearPolylines(); // 기존의 선들을 모두 제거
 
             calculateCurrectToPoint(data);
+            pathData = data;
 
             if (!map) {
                 map = new kakao.maps.Map(document.getElementById('map'), {
@@ -219,6 +223,8 @@ document.getElementById('random-search-form').addEventListener('submit', functio
         .then(data => {
             // data는 KakaoRouteAllResponseDto 객체
             clearPolylines(); // 기존의 선들을 모두 제거
+
+            pathData = data;
 
             if (!map) {
                 map = new kakao.maps.Map(document.getElementById('map'), {
@@ -340,4 +346,24 @@ function displayMarker(locPosition, message) {
 
     // 지도 중심좌표를 접속위치로 변경합니다
     map.setCenter(locPosition);
+}
+
+function startNavigation() {
+    //endName, endX, endY, startX, startY, viaPoint
+    var origin = pathData.routes[0].summary.origin;
+    var destination = pathData.routes[0].summary.destination;
+
+    Kakao.Navi.start({//======== Kakao.Navi 가 존재 하지 않음!
+        name: "목적지",
+        x: destination.x,
+        y: destination.y,
+        // coordType: 'wgs84', //(katec)
+        sX: origin.x,
+        sY: origin.y,
+        // viaPoints: viaPoint
+    });
+
+
+    alert("--> 길안내 : (" + origin.y +" , " + origin.x + ") ~ ("
+        + destination.y + " , " + destination.x + ")");
 }
