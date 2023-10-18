@@ -1,12 +1,15 @@
 package com.example.randomdriveproject.user.security;
 
+import com.example.randomdriveproject.user.dto.MessageResponseDto;
 import com.example.randomdriveproject.user.jwt.JwtUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -16,8 +19,10 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 @Slf4j(topic = "JWT 검증 및 인가")
+//authfilter,loggingfilter 대신 편리하게 사용
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
@@ -31,12 +36,22 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
 
+//        String tokenValue = jwtUtil.getTokenFromRequest(req);
         String tokenValue = jwtUtil.getJwtFromHeader(req);
 
-        if (StringUtils.hasText(tokenValue)) {
+        // 오류 메세지
+        MessageResponseDto responseDto = new MessageResponseDto("토큰이 유효하지 않습니다.", 400);
+        // 응답 데이터 설정
+        res.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        res.setCharacterEncoding(StandardCharsets.UTF_8.toString());
+        // JSON 변환 후 출력
+        ObjectMapper objectMapper = new ObjectMapper();
 
+        if (StringUtils.hasText(tokenValue)) {
+            // JWT 토큰 substring
             if (!jwtUtil.validateToken(tokenValue)) {
                 log.error("Token Error");
+                objectMapper.writeValue(res.getWriter(), responseDto);
                 return;
             }
 
@@ -46,6 +61,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 setAuthentication(info.getSubject());
             } catch (Exception e) {
                 log.error(e.getMessage());
+                objectMapper.writeValue(res.getWriter(), responseDto);
                 return;
             }
         }

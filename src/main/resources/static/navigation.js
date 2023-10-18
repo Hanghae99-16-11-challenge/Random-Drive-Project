@@ -1,3 +1,21 @@
+const host = 'http://' + window.location.host;
+// Header에서 Token 가져오기
+function getToken() {
+
+    let auth = Cookies.get('Authorization');
+
+    if(auth === undefined) {
+        return '';
+    }
+
+    // kakao 로그인 사용한 경우 Bearer 추가
+    if(auth.indexOf('Bearer') === -1 && auth !== ''){
+        auth = 'Bearer ' + auth;
+    }
+    return auth;
+}
+
+// 사용자가 현재 내 위치 버튼을 클릭했을 때 동작
 function handleCurrentLocationClick() {
     navigator.geolocation.getCurrentPosition(function(position) {
         var lat = position.coords.latitude,
@@ -79,6 +97,17 @@ document.getElementById('random-search-destination').addEventListener('click', f
 document.getElementById('search-form').addEventListener('submit', function(e) {
     e.preventDefault(); // 기본 submit 동작을 막습니다.
 
+    const auth = getToken();
+
+    if (auth !== undefined && auth !== '') {
+        $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+            jqXHR.setRequestHeader('Authorization', auth);
+        });
+    } else {
+        window.location.href = host + '/api/user/login-page';
+        return;
+    }
+
     var originAddress = document.getElementById('originAddress').value;
     var destinationAddress = document.getElementById('destinationAddress').value;
 
@@ -130,6 +159,46 @@ document.getElementById('search-form').addEventListener('submit', function(e) {
                     }
                 }
             }
+
+            // "아니오" 버튼 생성
+            let noButton = document.createElement('button');
+            noButton.textContent = '아니오';
+            document.getElementById('search-form').insertAdjacentElement('afterend', noButton);
+            noButton.addEventListener('click', function() {
+                // 여기에 "아니오" 버튼을 눌렀을 때 실행할 동작 추가 가능
+                confirmationMessage.remove(); // 문구와 버튼 제거
+                yesButton.remove();
+                noButton.remove();
+            });
+
+            // "예" 버튼 생성
+            let yesButton = document.createElement('button');
+            yesButton.textContent = '예';
+            document.getElementById('search-form').insertAdjacentElement('afterend', yesButton);
+            yesButton.addEventListener('click', function() {
+
+                fetch('/api/routes', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': auth // 인증 토큰을 Authorization 헤더에 추가
+                    },
+                    body: JSON.stringify({
+                        requestData: data, // KakaoRouteAllResponseDto 객체
+                        originAddress: originAddress,
+                        destinationAddress: destinationAddress
+                    })
+                })
+
+                confirmationMessage.remove(); // 문구와 버튼 제거
+                yesButton.remove();
+                noButton.remove();
+            });
+
+            // "해당 경로로 안내해 드릴까요?" 문구 표시
+            let confirmationMessage = document.createElement('p');
+            confirmationMessage.textContent = '해당 경로로 안내해 드릴까요?';
+            document.getElementById('search-form').insertAdjacentElement('afterend', confirmationMessage);
         });
 });
 

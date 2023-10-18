@@ -8,6 +8,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
 @Slf4j(topic = "Home Controller")
 @Controller
 @RequiredArgsConstructor
@@ -33,5 +35,17 @@ public class HomeController {
     @GetMapping("/navigation")
     public String showNavigation(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return "navigation";
+    }
+
+    @GetMapping("/histories")
+    public String showHistories(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return "history/histories";
+    }
+
+    @GetMapping("/history/{routeId}")
+    public String showHistoryDetail(@PathVariable Long routeId, Model model) {
+        model.addAttribute("routeId", routeId);
+
+        return "history/historyDetail";
     }
 }
