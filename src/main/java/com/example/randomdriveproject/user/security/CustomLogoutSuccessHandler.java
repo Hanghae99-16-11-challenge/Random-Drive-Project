@@ -30,6 +30,7 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json;charset=UTF-8");
         objectMapper.writeValue(response.getWriter(), responseBody);
+//        response.sendRedirect("/api/user/login-page"); // 로그인 페이지 URI로 변경
     }
 }
 

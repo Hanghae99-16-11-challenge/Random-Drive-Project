@@ -26,7 +26,7 @@ public class RandomRouteController {
     @GetMapping("/random-map")
     public String showMap(Model model) {
         model.addAttribute("kakaoRestApiKey", kakaoRestApiKey);
-        return "index";
+        return "home";
     }
 
     @GetMapping("/all-random-route")
