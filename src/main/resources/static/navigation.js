@@ -207,6 +207,17 @@ document.getElementById('search-form').addEventListener('submit', function(e) {
 document.getElementById('all-random-search-form').addEventListener('submit', function(e) {
     e.preventDefault(); // 기본 submit 동작을 막습니다.
 
+    const auth = getToken();
+
+    if (auth !== undefined && auth !== '') {
+        $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+            jqXHR.setRequestHeader('Authorization', auth);
+        });
+    } else {
+        window.location.href = host + '/api/user/login-page';
+        return;
+    }
+
     var originAddress = document.getElementById('all-random-originAddress').value;
     var redius = document.getElementById('all-random-redius').value;
 
@@ -259,11 +270,62 @@ document.getElementById('all-random-search-form').addEventListener('submit', fun
                     }
                 }
             }
+
+            // "아니오" 버튼 생성
+            let noButton = document.createElement('button');
+            noButton.textContent = '아니오';
+            document.getElementById('all-random-search-form').insertAdjacentElement('afterend', noButton);
+            noButton.addEventListener('click', function() {
+                // 여기에 "아니오" 버튼을 눌렀을 때 실행할 동작 추가 가능
+                confirmationMessage.remove(); // 문구와 버튼 제거
+                yesButton.remove();
+                noButton.remove();
+            });
+
+            // "예" 버튼 생성
+            let yesButton = document.createElement('button');
+            yesButton.textContent = '예';
+            document.getElementById('all-random-search-form').insertAdjacentElement('afterend', yesButton);
+            yesButton.addEventListener('click', function() {
+
+                fetch('/api/routes', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': auth // 인증 토큰을 Authorization 헤더에 추가
+                    },
+                    body: JSON.stringify({
+                        requestData: data, // KakaoRouteAllResponseDto 객체
+                        originAddress: originAddress,
+                        destinationAddress: "무작위 주소"
+                    })
+                })
+
+                confirmationMessage.remove(); // 문구와 버튼 제거
+                yesButton.remove();
+                noButton.remove();
+            });
+
+            // "해당 경로로 안내해 드릴까요?" 문구 표시
+            let confirmationMessage = document.createElement('p');
+            confirmationMessage.textContent = '해당 경로로 안내해 드릴까요?';
+            document.getElementById('all-random-search-form').insertAdjacentElement('afterend', confirmationMessage);
         });
 });
 // 사용자가 목적지기반 랜덤 길 찾기 버튼을 눌렀을 때의 동작----------------------------------------------------------------------------------------------------//
 document.getElementById('random-search-form').addEventListener('submit', function(e) {
     e.preventDefault(); // 기본 submit 동작을 막습니다.
+
+    const auth = getToken();
+
+    if (auth !== undefined && auth !== '') {
+        $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+            jqXHR.setRequestHeader('Authorization', auth);
+        });
+    } else {
+        window.location.href = host + '/api/user/login-page';
+        return;
+    }
 
     var originAddress = document.getElementById('random-originAddress').value;
     var destinationAddress = document.getElementById('random-destinationAddress').value;
@@ -318,6 +380,46 @@ document.getElementById('random-search-form').addEventListener('submit', functio
                     }
                 }
             }
+
+            // "아니오" 버튼 생성
+            let noButton = document.createElement('button');
+            noButton.textContent = '아니오';
+            document.getElementById('random-search-form').insertAdjacentElement('afterend', noButton);
+            noButton.addEventListener('click', function() {
+                // 여기에 "아니오" 버튼을 눌렀을 때 실행할 동작 추가 가능
+                confirmationMessage.remove(); // 문구와 버튼 제거
+                yesButton.remove();
+                noButton.remove();
+            });
+
+            // "예" 버튼 생성
+            let yesButton = document.createElement('button');
+            yesButton.textContent = '예';
+            document.getElementById('random-search-form').insertAdjacentElement('afterend', yesButton);
+            yesButton.addEventListener('click', function() {
+
+                fetch('/api/routes', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': auth // 인증 토큰을 Authorization 헤더에 추가
+                    },
+                    body: JSON.stringify({
+                        requestData: data, // KakaoRouteAllResponseDto 객체
+                        originAddress: originAddress,
+                        destinationAddress: destinationAddress
+                    })
+                })
+
+                confirmationMessage.remove(); // 문구와 버튼 제거
+                yesButton.remove();
+                noButton.remove();
+            });
+
+            // "해당 경로로 안내해 드릴까요?" 문구 표시
+            let confirmationMessage = document.createElement('p');
+            confirmationMessage.textContent = '해당 경로로 안내해 드릴까요?';
+            document.getElementById('random-search-form').insertAdjacentElement('afterend', confirmationMessage);
         });
 });
 
