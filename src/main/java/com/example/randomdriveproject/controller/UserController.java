@@ -8,6 +8,8 @@ import com.example.randomdriveproject.user.security.UserDetailsImpl;
 import com.example.randomdriveproject.user.service.KakaoService;
 import com.example.randomdriveproject.user.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -25,6 +27,9 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/api")
+@Tag(name = "User Controller", description = "카카오로 로그인 & 회원가입")
+//https://adjh54.tistory.com/m/72
+//http://localhost:8080/swagger-ui/index.html#/
 public class UserController {
 
     private final UserService userService;
@@ -51,6 +56,7 @@ public class UserController {
 //    }
 
     @PostMapping("/user/signup")
+    @Operation(summary = "회원가입", description = "회원가입 화면을 출력합니다.")
     public String signup(@Valid SignupRequestDto requestDto, BindingResult bindingResult) {
         // Validation 예외처리
         List<FieldError> fieldErrors = bindingResult.getFieldErrors();
@@ -68,6 +74,7 @@ public class UserController {
 
     // 회원 관련 정보 받기
     @GetMapping("/user-info")
+    @Operation(summary = "회원 정보 가져오기", description = "회원 정보를 가져옵니다.")
     @ResponseBody
     public UserInfoDto getUserInfo(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         String username = userDetails.getUser().getUsername();
@@ -86,6 +93,7 @@ public class UserController {
 //    }
 
     @GetMapping("/user/kakao/callback")
+    @Operation(summary = "카카오 로그인", description = "카카오로 로그인 합니다.")
     public String kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
         String token = kakaoService.kakaoLogin(code);
 
