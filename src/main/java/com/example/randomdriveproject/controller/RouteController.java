@@ -3,6 +3,7 @@ package com.example.randomdriveproject.controller;
 import com.example.randomdriveproject.navigation.basic.service.KakaoRouteSearchService;
 import com.example.randomdriveproject.request.dto.KakaoRouteAllResponseDto;
 import com.example.randomdriveproject.user.security.UserDetailsImpl;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -13,8 +14,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+@Tag(name = "Route Controller", description = "일반 네비게이션")
 @Controller
 @RequiredArgsConstructor
+
 public class RouteController {
 
     private final KakaoRouteSearchService kakaoRouteSearchService;

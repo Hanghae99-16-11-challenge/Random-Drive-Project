@@ -1,6 +1,7 @@
 package com.example.randomdriveproject.user.entity;
 
 import com.example.randomdriveproject.history.entity.Route;
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,6 +9,7 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 
 @Entity
