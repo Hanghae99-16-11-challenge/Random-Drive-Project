@@ -3,6 +3,7 @@ package com.example.randomdriveproject.controller;
 import com.example.randomdriveproject.navigation.basic.service.KakaoRouteSearchService;
 import com.example.randomdriveproject.request.dto.KakaoRouteAllResponseDto;
 import com.example.randomdriveproject.user.security.UserDetailsImpl;
+import com.example.randomdriveproject.util.PathUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -32,6 +33,9 @@ public class RouteController {
     public ResponseEntity<KakaoRouteAllResponseDto> getRoute(@RequestParam String originAddress,
                                                              @RequestParam String destinationAddress) {
         KakaoRouteAllResponseDto response = kakaoRouteSearchService.requestRouteSearch(originAddress, destinationAddress);
+
+        PathUtil.PathInfo(response, "RouteController");
+
         if (response == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }

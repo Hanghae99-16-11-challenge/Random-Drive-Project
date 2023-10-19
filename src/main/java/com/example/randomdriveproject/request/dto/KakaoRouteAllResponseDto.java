@@ -17,6 +17,7 @@ public class KakaoRouteAllResponseDto {
     @JsonProperty("routes")
     private RouteInfo[] routes;
 
+    @Getter
     public static class RouteInfo {
         @JsonProperty("result_code")
         private int resultCode;
@@ -41,6 +42,7 @@ public class KakaoRouteAllResponseDto {
         // Getter, Setter, toString 등 필요한 메서드들은 생략
     }
 
+    @Getter
     public static class Summary {
         @JsonProperty("origin")
         private Location origin;
@@ -85,6 +87,7 @@ public class KakaoRouteAllResponseDto {
         // Getter, Setter, toString 등 필요한 메서드들은 생략
     }
 
+    @Getter
     public static class Location {
         @JsonProperty("name")
         private String name;
@@ -152,6 +155,7 @@ public class KakaoRouteAllResponseDto {
         // Getter, Setter, toString 등 필요한 메서드들은 생략
     }
 
+    @Getter
     public static class Section {
         @JsonProperty("distance")
         private int distance;
@@ -218,6 +222,7 @@ public class KakaoRouteAllResponseDto {
         // Getter, Setter, toString 등 필요한 메서드들은 생략
     }
 
+    @Getter
     public static class Guide {
         @JsonProperty("name")
         private String name;

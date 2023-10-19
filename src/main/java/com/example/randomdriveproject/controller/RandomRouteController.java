@@ -3,6 +3,7 @@ package com.example.randomdriveproject.controller;
 
 import com.example.randomdriveproject.request.dto.KakaoRouteAllResponseDto;
 import com.example.randomdriveproject.navigation.random.service.RandomKakaoRouteSearchService;
+import com.example.randomdriveproject.util.PathUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,6 +33,9 @@ public class RandomRouteController {
     @GetMapping("/all-random-route")
     public ResponseEntity<KakaoRouteAllResponseDto> getRandomWays(@RequestParam String originAddress, @RequestParam Integer redius) {
         KakaoRouteAllResponseDto response = kakaoRouteSearchService.requestRandomWays(originAddress,redius);
+
+        PathUtil.PathInfo(response, "RandomRouteController - all-random-route");
+
         if (response == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 적절한 HTTP 상태 코드로 응답
         }
@@ -41,6 +45,9 @@ public class RandomRouteController {
     @GetMapping("/random-route")
     public ResponseEntity<KakaoRouteAllResponseDto> getRandomWay(@RequestParam String originAddress,@RequestParam String destinationAddress, @RequestParam Integer redius) {
         KakaoRouteAllResponseDto response = kakaoRouteSearchService.requestRamdomWay(originAddress,destinationAddress,redius);
+
+        PathUtil.PathInfo(response , "RandomRouteController - random-route");
+
         if (response == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 적절한 HTTP 상태 코드로 응답
         }
