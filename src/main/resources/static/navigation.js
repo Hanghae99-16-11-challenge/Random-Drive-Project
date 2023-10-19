@@ -16,7 +16,6 @@ function getToken() {
 }
 
 // 사용자가 현재 내 위치 버튼을 클릭했을 때 동작
-var pathData;//마지막 길 찾은 정보 - 네비게이션 디버깅에 쓰임
 
 function handleCurrentLocationClick() {
     navigator.geolocation.getCurrentPosition(function(position) {
@@ -124,6 +123,7 @@ document.getElementById('search-form').addEventListener('submit', function(e) {
 
             calculateCurrectToPoint(data);
             pathData = data;
+            startNavi();
 
             if (!map) {
                 map = new kakao.maps.Map(document.getElementById('map'), {
@@ -241,6 +241,7 @@ document.getElementById('all-random-search-form').addEventListener('submit', fun
 
             calculateCurrectToPoint(data);
             pathData = data;
+            startNavi();
 
             if (!map) {
                 map = new kakao.maps.Map(document.getElementById('map'), {
@@ -356,6 +357,7 @@ document.getElementById('random-search-form').addEventListener('submit', functio
             clearPolylines(); // 기존의 선들을 모두 제거
 
             pathData = data;
+            startNavi();
 
             if (!map) {
                 map = new kakao.maps.Map(document.getElementById('map'), {
