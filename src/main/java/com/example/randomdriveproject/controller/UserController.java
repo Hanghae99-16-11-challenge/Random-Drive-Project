@@ -101,6 +101,6 @@ public class UserController {
         cookie.setPath("/");
         response.addCookie(cookie); // 브라우저에 자동적으로 setting 됨
 
-        return  "redirect:/home"; // 메인 페이지로 보내주기
+        return  "redirect:/api/home"; // 메인 페이지로 보내주기
     }
 }

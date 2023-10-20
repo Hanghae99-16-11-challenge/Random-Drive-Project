@@ -80,7 +80,7 @@ public class WebSecurityConfig {
         http.formLogin((formLogin) ->
                 formLogin
                         .loginPage("/api/user/login-page").permitAll()
-                        .defaultSuccessUrl("/home", true) // 로그인 성공 후 이동할 페이지
+                        .defaultSuccessUrl("/api/home", true) // 로그인 성공 후 이동할 페이지, 카카오 로그인이 안될때 확인해보기
                         .failureUrl("/api/user/login-page?error") // 로그인 실패 시 명시적으로 에러 파라미터 추가
         );
 
