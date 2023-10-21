@@ -135,8 +135,65 @@ kakao.maps.event.addListener(map, 'click', function (mouseEvent)
             getNextGuidPoint(true);
             getGuidPoint(true);
         }
+
+
+        // pathData.routes[0].sections[0].roads[0].vertexes[1] -> lat (길 기준)
+
+        leftDistance(latlng, point);
+        // 도착까지 남은 거리 계산
+
     }
 });
+
+function leftDistance(latlng)
+{
+
+    var leftDis = 0;
+    var linePath = [];
+    clearPolylines();
+
+    for (var sec = naviInfo_SectionIndex; sec < pathData.routes[0].sections.length; sec++)
+    {
+        console.log("> Find : " + sec + " / " + guid + " // " + "Now : " + naviInfo_SectionIndex + " / " + naviInfo_GuidIndex
+            +" / Length : " + pathData.routes[0].sections.length + " / " + pathData.routes[0].sections[sec].guides.length);
+
+        for (var guid = 1; guid < pathData.routes[0].sections[sec].guides.length; guid++)
+        {
+            if (sec === naviInfo_SectionIndex && guid < naviInfo_GuidIndex)
+            {
+                continue;
+            }
+            else if (sec === naviInfo_SectionIndex && guid === naviInfo_GuidIndex)
+            {
+                var Ldata = pathData.routes[0].sections[naviInfo_SectionIndex].guides[naviInfo_GuidIndex];
+
+                leftDis += (calculateDistance(latlng.getLat(), latlng.getLng(), Ldata.y, Ldata.x) * 1000);//현제 경로의 남은 경로
+
+                linePath.push(new kakao.maps.LatLng(Ldata.y, Ldata.x));
+                continue;
+            }
+
+            var Ldata = pathData.routes[0].sections[sec].guides[guid];
+
+            leftDis += Ldata.distance;
+
+            linePath.push(new kakao.maps.LatLng(Ldata.y, Ldata.x));
+        }
+    }
+
+
+    let polyline = new kakao.maps.Polyline({
+        path: linePath,
+        strokeWeight: 5,
+        strokeColor: '#007bff',
+        strokeOpacity: 0.7,
+        strokeStyle: 'solid'
+    });
+
+    polyline.setMap(map);
+
+    polylines.push(polyline); // 선을 배열에 추가
+}
 
 function startNavi()
 {
@@ -217,7 +274,8 @@ function getNextGuidPoint(add = true)
         {
             if (add)
             {
-                naviInfo_SectionIndex = naviInfo_SectionIndex + 1;
+                console.log("add");
+                // naviInfo_SectionIndex = naviInfo_SectionIndex + 1;/xxx
                 naviInfo_GuidIndex = naviInfo_GuidIndex + 1;
             }
 
@@ -228,6 +286,10 @@ function getNextGuidPoint(add = true)
         else if (((naviInfo_GuidIndex + 1) > (pathData.routes[0].sections[LastSectionIdex].guides.length - 1)))
         {
             // console.log("이미 목적지 입니다");
+            // naviInfo_SectionIndex = naviInfo_SectionIndex + 1;
+            // naviInfo_GuidIndex = naviInfo_GuidIndex + 1;
+
+            console.log("end");
             naviInfo_State = 0;
             return 0;
         }
@@ -237,6 +299,7 @@ function getNextGuidPoint(add = true)
     {
         if (add)
         {
+            console.log("added");
             naviInfo_SectionIndex = naviInfo_SectionIndex + 1;
             naviInfo_GuidIndex = 1;
         }
@@ -248,6 +311,7 @@ function getNextGuidPoint(add = true)
     {
         if (add)
         {
+            console.log("added");
             naviInfo_GuidIndex = naviInfo_GuidIndex + 1;
         }
 
