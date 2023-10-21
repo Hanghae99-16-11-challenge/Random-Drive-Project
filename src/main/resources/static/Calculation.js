@@ -78,7 +78,6 @@ function updateMap(mouseEvent)
     // console.log(message);
 
     update(latlng.Ma, latlng.La);
-
 }
 
 function update(lat, lng)
@@ -101,7 +100,7 @@ function update(lat, lng)
             data: pathData.routes[0].sections[0].guides[0],
             squaredLength: -1
         }
-
+        panTo(lat, lng);//화면 이동
 
         for (var sec = 0; sec < pathData.routes[0].sections.length; sec++)
         {
@@ -139,6 +138,10 @@ function update(lat, lng)
             getGuidPoint(true);
         }
 
+        if (naviInfo_State === 0)
+        {
+            stopNavi();
+        }
 
         // pathData.routes[0].sections[0].roads[0].vertexes[1] -> lat (길 기준)
 
@@ -153,12 +156,16 @@ function update(lat, lng)
             var currectPos = pathData.routes[0].sections[naviInfo_SectionIndex].roads[Math.max(0, naviInfo_GuidIndex - 1)];
 
             currectPathLine.push(new kakao.maps.LatLng(lat, lng));
-            for(let i = 0; i < currectPos.vertexes.length; i += 2)
+
+            if (currectPos != null)
             {
-                if (calculateDistance(currectPos.vertexes[1], currectPos.vertexes[0], currectPos.vertexes[i + 1], currectPos.vertexes[i])
-                    > calculateDistance(currectPos.vertexes[1], currectPos.vertexes[0], lat, lng))
+                for(let i = 0; i < currectPos.vertexes.length; i += 2)
                 {
-                    currectPathLine.push(new kakao.maps.LatLng(currectPos.vertexes[i + 1], currectPos.vertexes[i]));
+                    if (calculateDistance(currectPos.vertexes[1], currectPos.vertexes[0], currectPos.vertexes[i + 1], currectPos.vertexes[i])
+                        > calculateDistance(currectPos.vertexes[1], currectPos.vertexes[0], lat, lng))
+                    {
+                        currectPathLine.push(new kakao.maps.LatLng(currectPos.vertexes[i + 1], currectPos.vertexes[i]));
+                    }
                 }
             }
 
@@ -280,10 +287,13 @@ function leftDistance_road(lat, lng)
     {
         var currectPath = pathData.routes[0].sections[naviInfo_SectionIndex].roads[naviInfo_GuidIndex - 1];
         var nextPath = pathData.routes[0].sections[naviInfo_SectionIndex].roads[naviInfo_GuidIndex];
-        var nextLineDis = calculateDistance(currectPath.vertexes[1], currectPath.vertexes[0], nextPath.vertexes[1], nextPath.vertexes[0]) * 1000;
 
+        if (nextPath != null)
+        {
+            var nextLineDis = calculateDistance(currectPath.vertexes[1], currectPath.vertexes[0], nextPath.vertexes[1], nextPath.vertexes[0]) * 1000;
 
-        pathLeftDuration = leftDur + (currectPath.duration * (leftNextPointDis/nextLineDis));
+            pathLeftDuration = leftDur + (currectPath.duration * (leftNextPointDis/nextLineDis));
+        }
     }
     console.log("==> 목적지 도착까지 남은 거리 : " + pathLeftDistance.toFixed(2) + "m / 남은 시간 : " + pathLeftDuration.toFixed(2) + "s");
 
@@ -309,6 +319,19 @@ function startNavi()
     getNextGuidPoint(false);
     getGuidPoint();
     startCorutine();
+}
+function stopNavi()
+{
+    naviInfo_SectionIndex = 0;
+    naviInfo_GuidIndex = 1;
+    naviInfo_State = -1;
+
+    positionMark.setMap(null);
+    positionText.close();
+    naviInfoMark.setMap(null);
+    naviInfoText.close();
+
+    clearPolylines();
 }
 
 //네비게이션 안내 초기화
@@ -447,4 +470,13 @@ function positionCoroutine()
         EditMark(positionMark, positionText, position.coords.latitude, position.coords.longitude, '클릭한 위치');
         console.log("위치 업데이트");
     });
+}
+
+function panTo(lat , lng) {
+    // 이동할 위도 경도 위치를 생성합니다
+    var moveLatLon = new kakao.maps.LatLng(lat, lng);
+
+    // 지도 중심을 부드럽게 이동시킵니다
+    // 만약 이동할 거리가 지도 화면보다 크면 부드러운 효과 없이 이동합니다
+    map.panTo(moveLatLon);
 }
