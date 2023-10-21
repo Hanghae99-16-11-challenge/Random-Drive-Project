@@ -66,18 +66,27 @@ function EditMark(mark , infoWin , lat, log, text)
 }
 
 //navigation.html 지도 클릭시 작동
-kakao.maps.event.addListener(map, 'click', function (mouseEvent)
+kakao.maps.event.addListener(map, 'click', updateMap);
+
+function updateMap(mouseEvent)
+{
+    // 클릭한 위도, 경도 정보를 가져옵니다
+    var latlng = mouseEvent.latLng;
+
+    // var message = '클릭한 위치의 위도는 ' + latlng.La + ' 이고, ';
+    // message += '경도는 ' + latlng.Ma + ' 입니다';
+    // console.log(message);
+
+    update(latlng.Ma, latlng.La);
+
+}
+
+function update(lat, lng)
 {
     //navigation.html 지도 클릭시 작동
     //\n 클릭한 위도, 경도 정보를 가져옵니다
-    var latlng = mouseEvent.latLng;
-    var message = '클릭한 위치의 위도는 ' + latlng.getLat() + ' 이고, ';
-    message += '경도는 ' + latlng.getLng() + ' 입니다';
 
-    console.log(message);
-
-
-    EditMark(positionMark, positionText, latlng.getLat(), latlng.getLng(), '클릭한 위치');
+    EditMark(positionMark, positionText, lat, lng, '클릭한 위치');
 
     if(pathData == null)
     {
@@ -93,7 +102,6 @@ kakao.maps.event.addListener(map, 'click', function (mouseEvent)
             squaredLength: -1
         }
 
-        // console.log("구간 갯수 : " + pathData.routes[0].sections.length);
 
         for (var sec = 0; sec < pathData.routes[0].sections.length; sec++)
         {
@@ -104,10 +112,10 @@ kakao.maps.event.addListener(map, 'click', function (mouseEvent)
                 if (closeData.squaredLength < 0)
                 {
                     closeData.data = guidData;
-                    closeData.squaredLength = calculateDistance(latlng.getLat(), latlng.getLng(), guidData.y, guidData.x);
+                    closeData.squaredLength = calculateDistance(lat, lng, guidData.y, guidData.x);
                 }else
                 {
-                    var tempPoint = calculateDistance(latlng.getLat(), latlng.getLng(), guidData.y, guidData.x);
+                    var tempPoint = calculateDistance(lat, lng, guidData.y, guidData.x);
 
                     if (closeData.squaredLength > tempPoint)
                     {
@@ -120,17 +128,12 @@ kakao.maps.event.addListener(map, 'click', function (mouseEvent)
         }// 클릭한 지점에서 가장 가까운 안내 지점
 
 
-        console.log('가장 가까운 안내 지점 (' + (closeData.squaredLength * 1000).toFixed(2) + 'm)');
-        // EditMark(naviInfoMark, naviInfoText, closeData.data.y, closeData.data.x, '가장 가까운 안내 지점 (' + (closeData.squaredLength * 1000).toFixed(2) + 'm)');
-
-        //----- 마지막 안내 지점을 저장해서 (기본값 0) , 다음 안내 지점에 근접하면 마지막 안내지점 인덱스 증가해 다음 안내 보여줌
-
         var point = getGuidPoint(true);
 
-        console.log("다음 안내지점 => " + point.y + " , " + point.x + " => " + calculateDistance(latlng.getLat(), latlng.getLng(), point.y, point.x));
+        console.log("다음 안내지점 => " + point.y + " , " + point.x + " => " + calculateDistance(lat, lng, point.y, point.x));
 
         //20m 이내로 접근한다면 다음 안내
-        if (calculateDistance(latlng.getLat(), latlng.getLng(), point.y, point.x) < (20 * 0.001))
+        if (calculateDistance(lat, lng, point.y, point.x) < (20 * 0.001))
         {
             getNextGuidPoint(true);
             getGuidPoint(true);
@@ -139,10 +142,8 @@ kakao.maps.event.addListener(map, 'click', function (mouseEvent)
 
         // pathData.routes[0].sections[0].roads[0].vertexes[1] -> lat (길 기준)
 
-        var linePath_Calculate = leftDistance_road(latlng);
+        var linePath_Calculate = leftDistance_road(lat, lng);
         var currectPathLine = [];
-
-        // 도착까지 남은 거리 계산
 
         {
             //현재 도로 의 vertexes 를 완벽하게 측정x 이므로
@@ -151,11 +152,11 @@ kakao.maps.event.addListener(map, 'click', function (mouseEvent)
 
             var currectPos = pathData.routes[0].sections[naviInfo_SectionIndex].roads[Math.max(0, naviInfo_GuidIndex - 1)];
 
-            currectPathLine.push(new kakao.maps.LatLng(latlng.getLat(), latlng.getLng()));
+            currectPathLine.push(new kakao.maps.LatLng(lat, lng));
             for(let i = 0; i < currectPos.vertexes.length; i += 2)
             {
                 if (calculateDistance(currectPos.vertexes[1], currectPos.vertexes[0], currectPos.vertexes[i + 1], currectPos.vertexes[i])
-                    > calculateDistance(currectPos.vertexes[1], currectPos.vertexes[0], latlng.getLat(), latlng.getLng()))
+                    > calculateDistance(currectPos.vertexes[1], currectPos.vertexes[0], lat, lng))
                 {
                     currectPathLine.push(new kakao.maps.LatLng(currectPos.vertexes[i + 1], currectPos.vertexes[i]));
                 }
@@ -175,9 +176,9 @@ kakao.maps.event.addListener(map, 'click', function (mouseEvent)
         }
 
     }
-});
+}
 
-function leftDistance(latlng)
+function leftDistance(lat, lng)
 {
 
     var leftDis = 0;
@@ -199,7 +200,7 @@ function leftDistance(latlng)
             {
                 var Ldata = pathData.routes[0].sections[naviInfo_SectionIndex].guides[naviInfo_GuidIndex];
 
-                leftDis += (calculateDistance(latlng.getLat(), latlng.getLng(), Ldata.y, Ldata.x) * 1000);//현제 경로의 남은 경로
+                leftDis += (calculateDistance(lat, lng, Ldata.y, Ldata.x) * 1000);//현제 경로의 남은 경로
 
                 linePath.push(new kakao.maps.LatLng(Ldata.y, Ldata.x));
                 continue;
@@ -226,17 +227,19 @@ function leftDistance(latlng)
 
     polylines.push(polyline); // 선을 배열에 추가
 }
-function leftDistance_road(latlng)
+function leftDistance_road(lat, lng)
 {
 
     var leftDis = 0;
+    var leftDur = 0;
+
     var linePath = [];
     clearPolylines();
 
     for (var sec = naviInfo_SectionIndex; sec < pathData.routes[0].sections.length; sec++)
     {
-        console.log("> Find : " + sec + " / " + guid + " // " + "Now : " + naviInfo_SectionIndex + " / " + naviInfo_GuidIndex
-            +" / Length : " + pathData.routes[0].sections.length + " / " + pathData.routes[0].sections[sec].roads.length);
+        // console.log("> Find : " + sec + " / " + guid + " // " + "Now : " + naviInfo_SectionIndex + " / " + naviInfo_GuidIndex
+        //     +" / Length : " + pathData.routes[0].sections.length + " / " + pathData.routes[0].sections[sec].roads.length);
 
         for (var guid = 1; guid < pathData.routes[0].sections[sec].roads.length; guid++)
         {
@@ -250,13 +253,14 @@ function leftDistance_road(latlng)
             {
                 currectPos = pathData.routes[0].sections[naviInfo_SectionIndex].roads[naviInfo_GuidIndex];
 
-                leftDis += (calculateDistance(latlng.getLat(), latlng.getLng(), currectPos.vertexes[1], currectPos.vertexes[0]) * 1000);//현제 경로의 남은 경로
-
+                leftDis += pathData.routes[0].sections[sec].roads[guid].distance;
+                leftDur += pathData.routes[0].sections[sec].roads[guid].duration;
             }else
             {
                 currectPos = pathData.routes[0].sections[sec].roads[guid];
 
-                leftDis += currectPos.distance;
+                leftDis += pathData.routes[0].sections[sec].roads[guid].distance;
+                leftDur += pathData.routes[0].sections[sec].roads[guid].duration;
             }
 
             for(let i = 0; i < currectPos.vertexes.length; i += 2)
@@ -268,6 +272,20 @@ function leftDistance_road(latlng)
         }
     }
 
+    var point = getGuidPoint(false);
+    var leftNextPointDis = (calculateDistance(lat, lng, point.y, point.x) * 1000);
+    pathLeftDistance = leftDis + leftNextPointDis;
+
+    //이전 지점과 다음지점의 직전거리를 계산해 , 다음 안내지점까지 남은거리 와의 비율으로 도착까지 남은 시간 예측
+    {
+        var currectPath = pathData.routes[0].sections[naviInfo_SectionIndex].roads[naviInfo_GuidIndex - 1];
+        var nextPath = pathData.routes[0].sections[naviInfo_SectionIndex].roads[naviInfo_GuidIndex];
+        var nextLineDis = calculateDistance(currectPath.vertexes[1], currectPath.vertexes[0], nextPath.vertexes[1], nextPath.vertexes[0]) * 1000;
+
+
+        pathLeftDuration = leftDur + (currectPath.duration * (leftNextPointDis/nextLineDis));
+    }
+    console.log("==> 목적지 도착까지 남은 거리 : " + pathLeftDistance.toFixed(2) + "m / 남은 시간 : " + pathLeftDuration.toFixed(2) + "s");
 
     let polyline = new kakao.maps.Polyline({
         path: linePath,
@@ -281,6 +299,8 @@ function leftDistance_road(latlng)
 
     polylines.push(polyline); // 선을 배열에 추가
 
+    // 그러니  routes -> 경로 / section -> 다음 경유지까지의 구간 / guid -> 다음 안내 / road -> 도로 / road.vertexes -> (지도 그리기용) 직선 거리
+    //  (naviInfo_SectionIndex, naviInfo_GuidIndex) 은 다음 안내 지점부터의 길
     return linePath;
 }
 
