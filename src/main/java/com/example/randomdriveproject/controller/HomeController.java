@@ -61,4 +61,17 @@ public class HomeController {
 
         return "history/historyDetail";
     }
+
+    @GetMapping("/navi/{type}/{routeId}/{originAddress}/{destinationAddress}/{redius}")
+    @Operation(summary = "네비게이션", description = "네비게이션 화면을 출력합니다.")
+    public String showNavi(@PathVariable Long routeId,@PathVariable String type,
+                           @PathVariable String originAddress,@PathVariable String destinationAddress,
+                           @PathVariable int redius, Model model) {
+        model.addAttribute("routeId", routeId);
+        model.addAttribute("type", type);
+        model.addAttribute("originAddress", originAddress);
+        model.addAttribute("destinationAddress", destinationAddress);
+        model.addAttribute("redius", redius);
+        return "navi";
+    }
 }
