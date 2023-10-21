@@ -139,8 +139,40 @@ kakao.maps.event.addListener(map, 'click', function (mouseEvent)
 
         // pathData.routes[0].sections[0].roads[0].vertexes[1] -> lat (길 기준)
 
-        leftDistance(latlng, point);
+        var linePath_Calculate = leftDistance_road(latlng);
+        var currectPathLine = [];
+
         // 도착까지 남은 거리 계산
+
+        {
+            //현재 도로 의 vertexes 를 완벽하게 측정x 이므로
+            // 도로 시작점 과 도로vertex 거리 , 도로 시작점과 현제지점 의 거리 비교해
+            // 도로 시작점과 현제지점 의 거리 보다 가장 먼저 큰 길이 나온 지점을 안내
+
+            var currectPos = pathData.routes[0].sections[naviInfo_SectionIndex].roads[Math.max(0, naviInfo_GuidIndex - 1)];
+
+            currectPathLine.push(new kakao.maps.LatLng(latlng.getLat(), latlng.getLng()));
+            for(let i = 0; i < currectPos.vertexes.length; i += 2)
+            {
+                if (calculateDistance(currectPos.vertexes[1], currectPos.vertexes[0], currectPos.vertexes[i + 1], currectPos.vertexes[i])
+                    > calculateDistance(currectPos.vertexes[1], currectPos.vertexes[0], latlng.getLat(), latlng.getLng()))
+                {
+                    currectPathLine.push(new kakao.maps.LatLng(currectPos.vertexes[i + 1], currectPos.vertexes[i]));
+                }
+            }
+
+            let polyline = new kakao.maps.Polyline({
+                path: currectPathLine.concat(linePath_Calculate),
+                strokeWeight: 5,
+                strokeColor: '#007bff',
+                strokeOpacity: 0.7,
+                strokeStyle: 'solid'
+            });
+
+            polyline.setMap(map);
+
+            polylines.push(polyline); // 선을 배열에 추가
+        }
 
     }
 });
@@ -194,11 +226,69 @@ function leftDistance(latlng)
 
     polylines.push(polyline); // 선을 배열에 추가
 }
+function leftDistance_road(latlng)
+{
+
+    var leftDis = 0;
+    var linePath = [];
+    clearPolylines();
+
+    for (var sec = naviInfo_SectionIndex; sec < pathData.routes[0].sections.length; sec++)
+    {
+        console.log("> Find : " + sec + " / " + guid + " // " + "Now : " + naviInfo_SectionIndex + " / " + naviInfo_GuidIndex
+            +" / Length : " + pathData.routes[0].sections.length + " / " + pathData.routes[0].sections[sec].roads.length);
+
+        for (var guid = 1; guid < pathData.routes[0].sections[sec].roads.length; guid++)
+        {
+            var currectPos;
+
+            if (sec === naviInfo_SectionIndex && guid < naviInfo_GuidIndex)
+            {
+                continue;
+            }
+            else if (sec === naviInfo_SectionIndex && guid === naviInfo_GuidIndex)
+            {
+                currectPos = pathData.routes[0].sections[naviInfo_SectionIndex].roads[naviInfo_GuidIndex];
+
+                leftDis += (calculateDistance(latlng.getLat(), latlng.getLng(), currectPos.vertexes[1], currectPos.vertexes[0]) * 1000);//현제 경로의 남은 경로
+
+            }else
+            {
+                currectPos = pathData.routes[0].sections[sec].roads[guid];
+
+                leftDis += currectPos.distance;
+            }
+
+            for(let i = 0; i < currectPos.vertexes.length; i += 2)
+            {
+                linePath.push(new kakao.maps.LatLng(currectPos.vertexes[i + 1], currectPos.vertexes[i]));
+            }
+
+            // 그러니  routes -> 경로 / section -> 다음 경유지까지의 구간 / guid -> 다음 안내 / road -> 도로 / road.vertexes -> (지도 그리기용) 직선 거리
+        }
+    }
+
+
+    let polyline = new kakao.maps.Polyline({
+        path: linePath,
+        strokeWeight: 5,
+        strokeColor: '#007bff',
+        strokeOpacity: 0.7,
+        strokeStyle: 'solid'
+    });
+
+    polyline.setMap(map);
+
+    polylines.push(polyline); // 선을 배열에 추가
+
+    return linePath;
+}
 
 function startNavi()
 {
     getNextGuidPoint(false);
     getGuidPoint();
+    startCorutine();
 }
 
 //네비게이션 안내 초기화
@@ -207,10 +297,18 @@ function clearNavi()
     naviInfo_SectionIndex = 0;
     naviInfo_GuidIndex = 1;
 
-    naviInfo_State = getNextGuidPoint(false);
+    if (pathData != null)
+        naviInfo_State = getNextGuidPoint(false);
 
+    positionMark.setMap(null);
+    positionText.close();
     naviInfoMark.setMap(null);
     naviInfoText.close();
+
+    if (pathData != null)
+        drawPolylines(pathData);
+
+    startCorutine();
 }
 
 function getGuidPoint(marked = true)
@@ -319,4 +417,14 @@ function getNextGuidPoint(add = true)
         naviInfo_State = 1;
         return 1;
     }
+}
+
+function positionCoroutine()
+{
+    navigator.geolocation.getCurrentPosition(function(position) {
+        // 위치 정보를 표시하기
+        // $("#location2").text("\n, GPS 위치 정보: " + position.coords.latitude + ", " + position.coords.longitude);
+        EditMark(positionMark, positionText, position.coords.latitude, position.coords.longitude, '클릭한 위치');
+        console.log("위치 업데이트");
+    });
 }

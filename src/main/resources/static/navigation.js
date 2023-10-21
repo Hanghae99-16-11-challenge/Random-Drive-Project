@@ -131,43 +131,7 @@ document.getElementById('search-form').addEventListener('submit', function(e) {
                 });
             }
 
-            // 경로 정보(routes)의 각 섹션(section)별로 반복하여 처리합니다.
-            for (let route of data.routes) {
-                for (let section of route.sections) {
-
-                    // 각 섹션의 경계 상자(bound) 정보를 가져옵니다.
-                    let bound = section.bound;
-
-                    // 카카오 지도에 섹션을 표시합니다.
-                    var bounds = new kakao.maps.LatLngBounds(
-                        new kakao.maps.LatLng(bound.min_y, bound.min_x),
-                        new kakao.maps.LatLng(bound.max_y, bound.max_x)
-                    );
-
-                    map.setBounds(bounds);
-
-                    // polyline 생성
-                    for(let road of section.roads){
-                        let path = [];
-                        for(let i=0; i<road.vertexes.length; i+=2){
-                            console.log("vertexes: ", road.vertexes[i], road.vertexes[i+1]);
-                            path.push(new kakao.maps.LatLng(road.vertexes[i+1], road.vertexes[i]));
-                        }
-
-                        let polyline = new kakao.maps.Polyline({
-                            path: path,
-                            strokeWeight: 5,
-                            strokeColor: '#007bff',
-                            strokeOpacity: 0.7,
-                            strokeStyle: 'solid'
-                        });
-
-                        polyline.setMap(map);
-
-                        polylines.push(polyline); // 선을 배열에 추가
-                    }
-                }
-            }
+            drawPolylines(data);
 
             // "아니오" 버튼 생성
             let noButton = document.createElement('button');
@@ -249,43 +213,8 @@ document.getElementById('all-random-search-form').addEventListener('submit', fun
                 });
             }
 
-            // 경로 정보(routes)의 각 섹션(section)별로 반복하여 처리합니다.
-            for (let route of data.routes) {
-                for (let section of route.sections) {
+            drawPolylines(data);
 
-                    // 각 섹션의 경계 상자(bound) 정보를 가져옵니다.
-                    let bound = section.bound;
-
-                    // 카카오 지도에 섹션을 표시합니다.
-                    var bounds = new kakao.maps.LatLngBounds(
-                        new kakao.maps.LatLng(bound.min_y, bound.min_x),
-                        new kakao.maps.LatLng(bound.max_y, bound.max_x)
-                    );
-
-                    map.setBounds(bounds);
-
-                    // polyline 생성
-                    for(let road of section.roads){
-                        let path = [];
-                        for(let i=0; i<road.vertexes.length; i+=2){
-                            console.log("vertexes: ", road.vertexes[i], road.vertexes[i+1]);
-                            path.push(new kakao.maps.LatLng(road.vertexes[i+1], road.vertexes[i]));
-                        }
-
-                        let polyline = new kakao.maps.Polyline({
-                            path: path,
-                            strokeWeight: 5,
-                            strokeColor: '#007bff',
-                            strokeOpacity: 0.7,
-                            strokeStyle: 'solid'
-                        });
-
-                        polyline.setMap(map);
-
-                        polylines.push(polyline); // 선을 배열에 추가
-                    }
-                }
-            }
             // "아니오" 버튼 생성
             let noButton = document.createElement('button');
             noButton.textContent = '아니오';
@@ -365,43 +294,8 @@ document.getElementById('random-search-form').addEventListener('submit', functio
                 });
             }
 
-            // 경로 정보(routes)의 각 섹션(section)별로 반복하여 처리합니다.
-            for (let route of data.routes) {
-                for (let section of route.sections) {
+            drawPolylines(data);
 
-                    // 각 섹션의 경계 상자(bound) 정보를 가져옵니다.
-                    let bound = section.bound;
-
-                    // 카카오 지도에 섹션을 표시합니다.
-                    var bounds = new kakao.maps.LatLngBounds(
-                        new kakao.maps.LatLng(bound.min_y, bound.min_x),
-                        new kakao.maps.LatLng(bound.max_y, bound.max_x)
-                    );
-
-                    map.setBounds(bounds);
-
-                    // polyline 생성
-                    for(let road of section.roads){
-                        let path = [];
-                        for(let i=0; i<road.vertexes.length; i+=2){
-                            console.log("vertexes: ", road.vertexes[i], road.vertexes[i+1]);
-                            path.push(new kakao.maps.LatLng(road.vertexes[i+1], road.vertexes[i]));
-                        }
-
-                        let polyline = new kakao.maps.Polyline({
-                            path: path,
-                            strokeWeight: 5,
-                            strokeColor: '#007bff',
-                            strokeOpacity: 0.7,
-                            strokeStyle: 'solid'
-                        });
-
-                        polyline.setMap(map);
-
-                        polylines.push(polyline); // 선을 배열에 추가
-                    }
-                }
-            }
             // "아니오" 버튼 생성
             let noButton = document.createElement('button');
             noButton.textContent = '아니오';
@@ -467,6 +361,47 @@ function clearPolylines() {
         polylines[i].setMap(null);
     }
     polylines = [];
+}
+
+// 경로 정보(routes)의 각 섹션(section)별로 반복하여 처리합니다.
+function drawPolylines(data)
+{
+    for (let route of data.routes) {
+        for (let section of route.sections) {
+
+            // 각 섹션의 경계 상자(bound) 정보를 가져옵니다.
+            let bound = section.bound;
+
+            // 카카오 지도에 섹션을 표시합니다.
+            var bounds = new kakao.maps.LatLngBounds(
+                new kakao.maps.LatLng(bound.min_y, bound.min_x),
+                new kakao.maps.LatLng(bound.max_y, bound.max_x)
+            );
+
+            map.setBounds(bounds);
+
+            // polyline 생성
+            for(let road of section.roads){
+                let path = [];
+                for(let i=0; i<road.vertexes.length; i+=2){
+                    console.log("vertexes: ", road.vertexes[i], road.vertexes[i+1]);
+                    path.push(new kakao.maps.LatLng(road.vertexes[i+1], road.vertexes[i]));
+                }
+
+                let polyline = new kakao.maps.Polyline({
+                    path: path,
+                    strokeWeight: 5,
+                    strokeColor: '#007bff',
+                    strokeOpacity: 0.7,
+                    strokeStyle: 'solid'
+                });
+
+                polyline.setMap(map);
+
+                polylines.push(polyline); // 선을 배열에 추가
+            }
+        }
+    }
 }
 
 // 현재 위치 마커 표시----------------------------------------------------------------------------------------------------------//
