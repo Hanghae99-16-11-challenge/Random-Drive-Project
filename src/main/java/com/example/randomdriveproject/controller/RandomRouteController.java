@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequiredArgsConstructor
 @Slf4j(topic = "RouteController")
-@RequestMapping("/api")
 public class RandomRouteController {
 
     private final RandomKakaoRouteSearchService kakaoRouteSearchService;
@@ -38,7 +37,7 @@ public class RandomRouteController {
     @GetMapping("/all-random-route")
     @Operation(summary = "랜덤경로", description = "반경을 기준으로 랜덤 경로를 가져옵니다.")
     public ResponseEntity<KakaoRouteAllResponseDto> getRandomWays(@RequestParam String originAddress, @RequestParam Integer redius) {
-        KakaoRouteAllResponseDto response = kakaoRouteSearchService.requestRandomWays(originAddress,redius);
+        KakaoRouteAllResponseDto response = kakaoRouteSearchService.requestAllRandomWay(originAddress,redius);
         if (response == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 적절한 HTTP 상태 코드로 응답
         }

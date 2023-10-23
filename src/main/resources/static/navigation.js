@@ -224,19 +224,19 @@ document.getElementById('all-random-search-form').addEventListener('submit', fun
     fetch('/all-random-route?originAddress=' + originAddress  + '&redius=' + redius)
         .then(response => response.json())
         .then(data => {
+            console.log(data);
             // data는 KakaoRouteAllResponseDto 객체
             clearPolylines(); // 기존의 선들을 모두 제거
+            let destinationAddress = '무작위 주소';
 
             if (!map) {
                 map = new kakao.maps.Map(document.getElementById('map'), {
                     level: 3
                 });
             }
-
             // 경로 정보(routes)의 각 섹션(section)별로 반복하여 처리합니다.
             for (let route of data.routes) {
                 for (let section of route.sections) {
-
                     // 각 섹션의 경계 상자(bound) 정보를 가져옵니다.
                     let bound = section.bound;
 
@@ -252,7 +252,6 @@ document.getElementById('all-random-search-form').addEventListener('submit', fun
                     for(let road of section.roads){
                         let path = [];
                         for(let i=0; i<road.vertexes.length; i+=2){
-                            console.log("vertexes: ", road.vertexes[i], road.vertexes[i+1]);
                             path.push(new kakao.maps.LatLng(road.vertexes[i+1], road.vertexes[i]));
                         }
 
@@ -297,7 +296,7 @@ document.getElementById('all-random-search-form').addEventListener('submit', fun
                     body: JSON.stringify({
                         requestData: data, // KakaoRouteAllResponseDto 객체
                         originAddress: originAddress,
-                        destinationAddress: "무작위 주소"
+                        destinationAddress: destinationAddress
                     })
                 })
 

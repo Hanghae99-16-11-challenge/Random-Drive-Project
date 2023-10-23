@@ -5,6 +5,7 @@ import com.example.randomdriveproject.request.dto.KakaoApiResponseDto;
 import com.example.randomdriveproject.request.dto.KakaoRouteAllResponseDto;
 import com.example.randomdriveproject.request.service.KakaoAddressSearchService;
 import com.example.randomdriveproject.request.service.RandomKakaoCategorySearchService;
+import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,8 +32,7 @@ public class RandomKakaoRouteSearchService {
     private String kakaoRestApiKey;
 
 
-    public KakaoRouteAllResponseDto requestRandomWays(String originAddress, Integer redius) {
-
+    public KakaoRouteAllResponseDto requestAllRandomWay(String originAddress, Integer redius) {
 
        if (ObjectUtils.isEmpty(originAddress) || ObjectUtils.isEmpty(redius)) return null;
 
@@ -66,7 +66,6 @@ public class RandomKakaoRouteSearchService {
          ***/
 
         return makeRequestForm(origin,destination,waypoints);
-
     }
 
     public KakaoRouteAllResponseDto requestRamdomWay(String originAddress, String destinationAddress,Integer redius) {
