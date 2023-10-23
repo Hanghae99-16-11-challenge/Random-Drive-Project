@@ -26,13 +26,13 @@ public class HistoryService {
     private final BoundRepository boundRepository;
     private final RoadRepository roadRepository;
 
-    public void saveHistory(KakaoRouteAllResponseDto requestDto, String originAddress, String destinationAddress, User user) {
+    public void saveHistory(KakaoRouteAllResponseDto requestDto, String originAddress, String destinationAddress, String mapType, User user) {
         for (KakaoRouteAllResponseDto.RouteInfo routeInfo : requestDto.getRoutes()) {
             KakaoRouteAllResponseDto.Summary summary = routeInfo.getSummary();
             KakaoRouteAllResponseDto.Section section = routeInfo.getSections()[0]; // 첫 번째 Section을 사용하겠습니다.
 
             // Route 객체 생성
-            Route route = new Route(originAddress, destinationAddress, summary.getDuration(), summary.getDistance(), user);
+            Route route = new Route(originAddress, destinationAddress, mapType, summary.getDuration(), summary.getDistance(), user);
 
             // Bound 객체 생성 및 설정
             KakaoRouteAllResponseDto.BoundingBox bound = section.getBound();
@@ -92,6 +92,7 @@ public class HistoryService {
                         route.getId(),
                         route.getOriginAddress(),
                         route.getDestinationAddress(),
+                        route.getMapType(),
                         route.getDuration(),
                         route.getDistance(),
                         route.getCreatedAt()
