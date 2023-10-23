@@ -1,12 +1,13 @@
-const host = 'http://' + window.location.host;
+const host = 'http://' + window.location.host
+let responseData = null;
+const url = window.location.href;
+const segments = url.split("/");
+const type = segments[segments.length - 5]; // 뒤에서 다섯 번째 segment
+const routeId = segments[segments.length - 4]; // 뒤에서 네 번째 segment
+const originAddress = segments[segments.length - 3]; // 뒤에서 세 번째 segment
+const destinationAddress = segments[segments.length - 2]; // 뒤에서 두 번째 segment
+const redius = segments[segments.length - 1]; // 마지막 segment
 $(document).ready(function() {
-    const url = window.location.href;
-    const segments = url.split("/");
-    const type = segments[segments.length - 5]; // 뒤에서 다섯 번째 segment
-    const routeId = segments[segments.length - 4]; // 뒤에서 네 번째 segment
-    const originAddress = segments[segments.length - 3]; // 뒤에서 세 번째 segment
-    const destinationAddress = segments[segments.length - 2]; // 뒤에서 두 번째 segment
-    const redius = segments[segments.length - 1]; // 마지막 segment
     if (type === 'save') {
         makeHistoryMap(routeId);
     } else if (type === 'live') {
@@ -18,6 +19,24 @@ $(document).ready(function() {
     } else {
         return;
     }
+});
+
+// 예 버튼
+document.getElementsByClassName('button-yes')[0].addEventListener('click', function() {
+    if (type === 'live') {
+        saveRoute(responseData, originAddress, destinationAddress)
+    } else if (type === 'live-random') {
+        saveRoute(responseData, originAddress, destinationAddress)
+    } else if (type === 'live-all-random') {
+        saveRoute(responseData, originAddress, '무작위 주소')
+    } else {
+        return;
+    }
+});
+
+// 아니오 버튼
+document.getElementsByClassName('button-no')[0].addEventListener('click', function() {
+    window.location.href = '/api/home';
 });
 
 // kakaomap 표시 해주는 곳-----------------------------------------------------------------------------------------------------//
@@ -48,6 +67,23 @@ function makeHistoryMap(routeId) {
                 });
             }
             let bound = data.bounds;
+            let distance = data.distance;
+            let duration = data.duration;
+
+            // distance와 duration을 표시할 요소를 선택
+            let distanceElement = document.querySelector('.distance');
+            let durationElement = document.querySelector('.duration');
+
+            let hour = Math.floor(duration / 3600);
+            let minute = Math.floor((duration % 3600) / 60);
+
+            let km= (distance / 1000).toFixed(1);
+
+
+            // 요소에 데이터를 추가
+            distanceElement.textContent = '소요 시간: ' + hour + '시간 ' + minute + '분';
+            durationElement.textContent = '총 거리: ' + km + ' km';
+
 
             var bounds = new kakao.maps.LatLngBounds(
                 new kakao.maps.LatLng(bound.min_y, bound.min_x),
@@ -76,34 +112,6 @@ function makeHistoryMap(routeId) {
 
                 polylines.push(polyline);
             }
-            // "아니오" 버튼 생성
-            let noButton = document.createElement('button');
-            noButton.textContent = '아니오';
-            document.getElementById('yes-or-no').insertAdjacentElement('afterend', noButton);
-            noButton.addEventListener('click', function() {
-                // 여기에 "아니오" 버튼을 눌렀을 때 실행할 동작 추가 가능
-                window.location.href = '/api/home';
-                confirmationMessage.remove(); // 문구와 버튼 제거
-                yesButton.remove();
-                noButton.remove();
-            });
-
-            // "예" 버튼 생성
-            let yesButton = document.createElement('button');
-            yesButton.textContent = '예';
-            document.getElementById('yes-or-no').insertAdjacentElement('afterend', yesButton);
-            yesButton.addEventListener('click', function() {
-                // 여기에 "예" 버튼을 눌렀을 때 실행할 동작 추가 가능
-
-                confirmationMessage.remove(); // 문구와 버튼 제거
-                yesButton.remove();
-                noButton.remove();
-            });
-
-            // "해당 경로로 안내해 드릴까요?" 문구 표시
-            let confirmationMessage = document.createElement('p');
-            confirmationMessage.textContent = '해당 경로로 안내해 드릴까요?';
-            document.getElementById('yes-or-no').insertAdjacentElement('afterend', confirmationMessage);
         })
         .catch(error => {
             console.error('Error:', error);
@@ -116,7 +124,11 @@ function makeNavi(originAddress, destinationAddress) {
     fetch('/route?originAddress=' + originAddress  + '&destinationAddress=' + destinationAddress)
         .then(response => response.json())
         .then(data => {
-            makeLiveMap(data, originAddress, destinationAddress)
+            responseData = data;
+            makeLiveMap(data)
+        })
+        .catch(error => {
+            console.error('Error:', error);
         });
 }
 
@@ -126,7 +138,11 @@ function makeRandomNavi(originAddress, destinationAddress, redius) {
     fetch('/random-route?originAddress=' + originAddress  + '&destinationAddress=' + destinationAddress + '&redius=' + redius)
         .then(response => response.json())
         .then(data => {
-            makeLiveMap(data, originAddress, destinationAddress)
+            responseData = data;
+            makeLiveMap(data)
+        })
+        .catch(error => {
+            console.error('Random-Error:', error);
         });
 }
 
@@ -136,13 +152,17 @@ function makeAllRandomNavi(originAddress, redius) {
     fetch('/all-random-route?originAddress=' + originAddress  + '&redius=' + redius)
         .then(response => response.json())
         .then(data => {
-            makeLiveMap(data, originAddress, "무작위 목적지")
+            responseData = data;
+            makeLiveMap(data)
+        })
+        .catch(error => {
+            console.error('All-Random-Error:', error);
         });
 }
 
 
 // 신규 길찾기, 랜덤 길찾기에서 얻은 response를 가공해서 Map에 띄워줌
-function makeLiveMap(data, originAddress, destinationAddress) {
+function makeLiveMap(data) {
     clearPolylines(); // 기존의 선들을 모두 제거
     if (!map) {
         map = new kakao.maps.Map(document.getElementById('map'), {
@@ -152,6 +172,21 @@ function makeLiveMap(data, originAddress, destinationAddress) {
 
     // 경로 정보(routes)의 각 섹션(section)별로 반복하여 처리합니다.
     for (let route of data.routes) {
+        let distance = route.summary.distance;
+        let duration = route.summary.duration;
+
+        // distance와 duration을 표시할 요소를 선택
+        let distanceElement = document.querySelector('.distance');
+        let durationElement = document.querySelector('.duration');
+
+        let hour = Math.floor(duration / 3600);
+        let minute = Math.floor((duration % 3600) / 60);
+        let km= (distance / 1000).toFixed(1);
+
+        // 요소에 데이터를 추가
+        distanceElement.textContent = '소요 시간: ' + hour + '시간 ' + minute + '분';
+        durationElement.textContent = '총 거리: ' + km + ' km';
+
         for (let section of route.sections) {
 
             // 각 섹션의 경계 상자(bound) 정보를 가져옵니다.
@@ -187,45 +222,22 @@ function makeLiveMap(data, originAddress, destinationAddress) {
             }
         }
     }
-    // "아니오" 버튼 생성
-    let noButton = document.createElement('button');
-    noButton.textContent = '아니오';
-    document.getElementById('yes-or-no').insertAdjacentElement('afterend', noButton);
-    noButton.addEventListener('click', function() {
-        // 여기에 "아니오" 버튼을 눌렀을 때 실행할 동작 추가 가능
-        confirmationMessage.remove(); // 문구와 버튼 제거
-        yesButton.remove();
-        noButton.remove();
-    });
+}
 
-    // "예" 버튼 생성
-    let yesButton = document.createElement('button');
-    yesButton.textContent = '예';
-    document.getElementById('yes-or-no').insertAdjacentElement('afterend', yesButton);
-    yesButton.addEventListener('click', function() {
-
-        fetch('/api/routes', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': auth // 인증 토큰을 Authorization 헤더에 추가
-            },
-            body: JSON.stringify({
-                requestData: data, // KakaoRouteAllResponseDto 객체
-                originAddress: originAddress,
-                destinationAddress: destinationAddress
-            })
+// 경로 기록
+function saveRoute(data, originAddress, destinationAddress) {
+    fetch('/api/routes', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': auth // 인증 토큰을 Authorization 헤더에 추가
+        },
+        body: JSON.stringify({
+            requestData: data, // KakaoRouteAllResponseDto 객체
+            originAddress: originAddress,
+            destinationAddress: destinationAddress
         })
-
-        confirmationMessage.remove(); // 문구와 버튼 제거
-        yesButton.remove();
-        noButton.remove();
-    });
-
-    // "해당 경로로 안내해 드릴까요?" 문구 표시
-    let confirmationMessage = document.createElement('p');
-    confirmationMessage.textContent = '해당 경로로 안내해 드릴까요?';
-    document.getElementById('yes-or-no').insertAdjacentElement('afterend', confirmationMessage);
+    })
 }
 
 // 토큰 세팅하기

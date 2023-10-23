@@ -36,7 +36,33 @@ public class HistoryService {
 
             // Bound 객체 생성 및 설정
             KakaoRouteAllResponseDto.BoundingBox bound = section.getBound();
-            Bound boundEntity = new Bound(bound.getMinX(), bound.getMinY(), bound.getMaxX(), bound.getMaxY(),route);
+
+            double min_x = bound.getMinX();
+            double min_y = bound.getMinY();
+            double max_x = bound.getMaxX();
+            double max_y = bound.getMaxY();
+
+            double ori_x = summary.getOrigin().getX();
+            double ori_y = summary.getOrigin().getY();
+            double des_x = summary.getDestination().getX();
+            double des_y = summary.getDestination().getY();
+
+            min_x = Math.min(min_x, Math.min(ori_x, des_x));
+            min_y = Math.min(min_y, Math.min(ori_y, des_y));
+            max_x = Math.max(max_x, Math.max(ori_x, des_x));
+            max_y = Math.max(max_y, Math.max(ori_y, des_y));
+
+            for (int i = 0; i < summary.getWaypoints().length; i++) {
+                double waypoint_x = summary.getWaypoints()[i].getX();
+                double waypoint_y = summary.getWaypoints()[i].getY();
+
+                min_x = Math.min(min_x, waypoint_x);
+                min_y = Math.min(min_y, waypoint_y);
+                max_x = Math.max(max_x, waypoint_x);
+                max_y = Math.max(max_y, waypoint_y);
+            }
+
+            Bound boundEntity = new Bound(min_x, min_y, max_x, max_y,route);
 
             // RouteRepository를 사용하여 Route 저장
             routeRepository.save(route);

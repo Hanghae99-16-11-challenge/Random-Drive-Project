@@ -3,21 +3,83 @@
 <head>
   <meta charset="UTF-8">
   <title>Kakao Route Search</title>
-  <!--  <link rel="stylesheet" href="/css.css">-->
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+
+
   <script src="https://code.jquery.com/jquery-3.7.0.min.js"
           integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/paginationjs/2.1.4/pagination.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/paginationjs/2.1.4/pagination.css"/>
+
+
+  <!--    부트스트랩-->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+
+  <link rel="apple-touch-icon" type="image/png" href="https://cpwebassets.codepen.io/assets/favicon/apple-touch-icon-5ae1a0698dcc2402e9712f7d01ed509a57814f994c660df9f7a952f3060705ee.png">
+  <meta name="apple-mobile-web-app-title" content="CodePen">
+
+  <script src="https://use.fontawesome.com/webfontloader/1.6.24/webfontloader.js"></script><script src="https://cpwebassets.codepen.io/assets/common/stopExecutionOnTimeout-2c7831bb44f98c1391d6a4ffda0e1fd302503391ca806e7fcc7b9b87197aec26.js"></script>
+
+  <link rel="canonical" href="https://codepen.io/rnzpsgwg-the-styleful/pen/qBgWoLB">
+  <link href="https://fonts.googleapis.com/css?family=Courgette|Oxygen+Mono|Lato:400,700" rel="stylesheet" type="text/css">
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no" width="device-width">
+  <script src="https://use.fontawesome.com/798759b2a2.js"></script>
+
+  <link rel="stylesheet" href="/navi.css">
 </head>
 <body>
 
-<h1>상세 주행 정보</h1>
+<div class="demo-container">
+  <div class="phone-screen">
 
-<div id="map" style="width:1300px;height:900px;"></div> <!-- 지도가 표시될 영역 -->
+    <div class="app">
+      <div class="photo-container">
+        <div class="photo photo-8" number="8" ph-index="8" style="opacity: 0; z-index: 0; transform: translate3d(0px, 5.2rem, 0px) scale(0.6);">
+          <div class="photo-caption">Me</div>
+          <div class="photo-info">Take a look at my other <a target="_blank" href="https://codepen.io/kiyutink/">Pens</a></div>
+        </div>
+        <div class="photo photo-7" number="7" ph-index="7" style="transform: translate3d(0px, 4.55rem, 0px) scale(0.65); opacity: 0; z-index: 1;">
+          <div class="photo-caption">Los Angeles</div>
+          <div class="photo-info">The city of Angels</div>
+        </div>
+
+        <!--                        <div class="photo-counter">1/9</div>-->
+      </div>
+
+      <div class="app-footer">
+        <div class="distance-duration">
+          <div class="distance"></div>
+          <div class="duration"></div>
+        </div>
+        <div class="button-row">
+          <div class="button">
+            <a class="button-yes">안내 시작</a>
+          </div>
+          <div class="button">
+            <a class="button-no">안내 취소</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-screen" id="map" style="width: 100%; height: 100%;"></div> <!-- 지도가 표시될 영역 -->
+
+  </div>
+  <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+  <script id="rendered-js"></script>
+
+</div>
+
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=c87b1c2e1d4bcdc3401e35160e8e7d95"></script>
 <!-- 카카오 지도 API -->
 <script type="text/javascript"
         src="//dapi.kakao.com/v2/maps/sdk.js?appkey=c87b1c2e1d4bcdc3401e35160e8e7d95&libraries=services,clusterer,drawing"></script>
-<form id = 'yes-or-no'></form>
+
 
 <script src="/navi.js"></script> <!-- 여기에 실제 자바스크립트 파일 경로를 입력하세요 -->
 

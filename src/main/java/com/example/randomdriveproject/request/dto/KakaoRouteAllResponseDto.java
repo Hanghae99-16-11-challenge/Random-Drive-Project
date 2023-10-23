@@ -66,6 +66,9 @@ public class KakaoRouteAllResponseDto {
         @JsonProperty("duration")
         private int duration;
 
+        public Waypoint[] getWaypoints() {
+            return waypoints;
+        }
         public int getDistance() {
             return distance;
         }
@@ -215,7 +218,14 @@ public class KakaoRouteAllResponseDto {
         @JsonProperty("y")
         private double y;
 
-        // Getter, Setter, toString 등 필요한 메서드들은 생략
+        public double getX() {
+            return x;
+        }
+
+        public double getY() {
+            return y;
+        }
+
     }
 
     public static class Guide {
