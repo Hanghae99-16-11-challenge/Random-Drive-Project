@@ -52,6 +52,9 @@ html {
     position: relative;
     display: flex;
     flex-direction: column;
+
+    justify-content: center; /* 수직 가운데 정렬 */
+    align-items: center; /* 수평 가운데 정렬 */
 }
 
 #map {
@@ -130,6 +133,7 @@ html {
     text-align: center;
     color: #181f57;
     font-weight: 700;
+
 }
 
 .app-caption-login {
@@ -145,6 +149,8 @@ html {
     position: absolute; /* 위치를 조정하기 위해 절대 위치 지정 */
     top: 15%; /* 현재 위치에서 아래로 50% 이동 */
     transform: translateY(50%); /* 이동한 위치를 다시 조정 */
+    font-family: "Courgette", sans-serif;
+    font-size: 1.5rem;
 
 }
 
@@ -300,6 +306,21 @@ html {
 
     align-items: center; /* 세로 가운데 정렬 */
     flex-direction: column; /* 버튼을 세로로 정렬합니다. */
+}
+
+.app-footer-login form {
+    text-align: center; /* 입력 요소를 중앙 정렬 */
+}
+
+.signup-id-label {
+    color: #f3cc18;
+    font-family: "Courgette", sans-serif;
+}
+
+.signup-input-box{
+    font-family: "SDSamliphopangche_Basic", sans-serif;
+    width: 85%;
+    font-size: 0.9rem;
 }
 
 a {
