@@ -320,7 +320,8 @@ html {
 .signup-input-box{
     font-family: "SDSamliphopangche_Basic", sans-serif;
     width: 85%;
-    font-size: 0.9rem;
+    font-size: 0.6rem;
+    height: 1.5rem;
 }
 
 a {

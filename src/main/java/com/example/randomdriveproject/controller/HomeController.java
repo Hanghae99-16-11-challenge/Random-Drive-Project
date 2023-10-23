@@ -32,6 +32,12 @@ public class HomeController {
         return "index"; // 뷰 이름은 templates 폴더에 있는 템플릿 파일명과 일치해야 합니다.
     }
 
+    @GetMapping("/search")
+    public String search(Model model){
+        model.addAttribute("message", "안녕하세요!");
+        return "search"; // 뷰 이름은 templates 폴더에 있는 템플릿 파일명과 일치해야 합니다.
+    }
+
     @GetMapping("/home")
     @Operation(summary = "HOME", description = "HOME 화면을 보여줍니다.")
     public String home(Model model){
