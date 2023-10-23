@@ -34,34 +34,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @RequestMapping("/api")
 @Tag(name = "User Controller", description = "카카오로 로그인 & 회원가입")
-//https://adjh54.tistory.com/m/72
-//http://localhost:8080/swagger-ui/index.html#/
 public class UserController {
 
     private final UserService userService;
     private final KakaoService kakaoService;
-
-    @GetMapping("/user/login")
-    public String login() {
-        return "home";
-    }
-
-    @GetMapping("/user/login-page")
-    public String loginPage() {
-        return "login";
-    }
-
-    @GetMapping("/user/signup")
-    public String signupPage() {
-        return "signup";
-    }
-
-//    @PostMapping("/user/signup")
-//    @Operation(summary = "회원가입", description = "회원가입 화면을 출력합니다.")
-//    public ResponseEntity<?> signup(@RequestBody @Valid SignupRequestDto signupRequestDto) {
-//        userService.signup(signupRequestDto);
-//        return ResponseEntity.ok().build();
-//    }
 
     @PostMapping("/user/signup")
     @Operation(summary = "회원가입", description = "회원가입 화면을 출력합니다.")

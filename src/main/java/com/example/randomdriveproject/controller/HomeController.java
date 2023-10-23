@@ -1,9 +1,6 @@
 package com.example.randomdriveproject.controller;
 
-import com.example.randomdriveproject.user.jwt.JwtUtil;
-import com.example.randomdriveproject.user.repository.UserRepository;
 import com.example.randomdriveproject.user.security.UserDetailsImpl;
-//import com.example.randomdriveproject.user.service.RandomUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +10,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Tag(name = "Home Controller", description = "Controller")
@@ -22,14 +18,28 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequiredArgsConstructor
 @RequestMapping("/api")
 public class HomeController {
-//    private final RandomUserService userService;
-    private final JwtUtil jwtUtil;
-    private final UserRepository userRepository;
+    //https://adjh54.tistory.com/m/72
+    //http://localhost:8080/swagger-ui/index.html#/
 
     @GetMapping("/")
     public String index(Model model){
         model.addAttribute("message", "안녕하세요!");
         return "index"; // 뷰 이름은 templates 폴더에 있는 템플릿 파일명과 일치해야 합니다.
+    }
+
+    @GetMapping("/user/login")
+    public String login() {
+        return "home";
+    }
+
+    @GetMapping("/user/login-page")
+    public String loginPage() {
+        return "login";
+    }
+
+    @GetMapping("/user/signup")
+    public String signupPage() {
+        return "signup";
     }
 
     @GetMapping("/search")
@@ -62,7 +72,6 @@ public class HomeController {
     public String waypointsNavigation() {
         return "randomwaypoints";
     }
-
 
 
     @GetMapping("/histories")
