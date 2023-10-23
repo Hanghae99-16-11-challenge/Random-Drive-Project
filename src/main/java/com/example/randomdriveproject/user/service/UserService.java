@@ -1,10 +1,13 @@
 package com.example.randomdriveproject.user.service;
 
 import com.example.randomdriveproject.user.dto.SignupRequestDto;
+import com.example.randomdriveproject.user.dto.StatusResponseDto;
 import com.example.randomdriveproject.user.entity.User;
 import com.example.randomdriveproject.user.entity.UserRoleEnum;
 import com.example.randomdriveproject.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,9 +23,10 @@ public class UserService {
     // ADMIN_TOKEN
     private final String ADMIN_TOKEN = "${ADMIN_TOKEN}";
 
-    public void signup(SignupRequestDto requestDto) {
+    public ResponseEntity<StatusResponseDto> signup(SignupRequestDto requestDto) {
         String username = requestDto.getUsername();
         String password = passwordEncoder.encode(requestDto.getPassword());
+
 
         // 회원 중복 확인
         Optional<User> checkUsername = userRepository.findByUsername(username);
@@ -49,5 +53,8 @@ public class UserService {
         // 사용자 등록
         User user = new User(username, password, email, role);
         userRepository.save(user);
+
+        StatusResponseDto res = new StatusResponseDto("회원가입이 완료되었습니다.", 200);
+        return new ResponseEntity<>(res, HttpStatus.OK);
     }
 }

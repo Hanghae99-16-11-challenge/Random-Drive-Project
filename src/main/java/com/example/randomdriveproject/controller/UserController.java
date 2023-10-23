@@ -1,6 +1,7 @@
 package com.example.randomdriveproject.controller;
 
 import com.example.randomdriveproject.user.dto.SignupRequestDto;
+import com.example.randomdriveproject.user.dto.StatusResponseDto;
 import com.example.randomdriveproject.user.dto.UserInfoDto;
 import com.example.randomdriveproject.user.entity.UserRoleEnum;
 import com.example.randomdriveproject.user.jwt.JwtUtil;
@@ -15,13 +16,18 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
@@ -50,27 +56,51 @@ public class UserController {
         return "signup";
     }
 
-//    @PostMapping("/auth/signup")
-//    public ResponseEntity<StatusResponseDto> signup(@RequestBody @Valid SignupRequestDto signupRequestDto) {
-//        return userService.signup(signupRequestDto);
+//    @PostMapping("/user/signup")
+//    @Operation(summary = "회원가입", description = "회원가입 화면을 출력합니다.")
+//    public ResponseEntity<?> signup(@RequestBody @Valid SignupRequestDto signupRequestDto) {
+//        userService.signup(signupRequestDto);
+//        return ResponseEntity.ok().build();
 //    }
 
     @PostMapping("/user/signup")
     @Operation(summary = "회원가입", description = "회원가입 화면을 출력합니다.")
-    public String signup(@Valid SignupRequestDto requestDto, BindingResult bindingResult) {
-        // Validation 예외처리
-        List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-        if(fieldErrors.size() > 0) {
-            for (FieldError fieldError : bindingResult.getFieldErrors()) {
-                log.error(fieldError.getField() + " 필드 : " + fieldError.getDefaultMessage());
-            }
-            return "redirect:/api/user/signup";
-        }
-
-        userService.signup(requestDto);
-
-        return "redirect:/api/user/login-page";
+    public ResponseEntity<?> signup(@RequestBody @Valid SignupRequestDto signupRequestDto) {
+       return userService.signup(signupRequestDto);
     }
+
+//    @PostMapping("/user/signup")
+//    @Operation(summary = "회원가입", description = "회원가입 화면을 출력합니다.")
+//    public ResponseEntity<?> signup(@Valid SignupRequestDto requestDto, BindingResult bindingResult) {
+//        if (bindingResult.hasErrors()) {
+//            List<String> errors = bindingResult.getFieldErrors().stream()
+//                    .map(fieldError -> fieldError.getField() + " 필드: " + fieldError.getDefaultMessage())
+//                    .collect(Collectors.toList());
+//            return ResponseEntity.badRequest().body(errors); // 오류 메시지를 포함한 400 Bad Request 응답 반환
+//        }
+//
+//        userService.signup(requestDto);
+//
+//        // 회원가입 성공 응답
+//        return ResponseEntity.ok().build();
+//    }
+
+//    @PostMapping("/user/signup")
+//    @Operation(summary = "회원가입", description = "회원가입 화면을 출력합니다.")
+//    public String signup(@Valid SignupRequestDto requestDto, BindingResult bindingResult) {
+//        // Validation 예외처리
+//        List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+//        if(fieldErrors.size() > 0) {
+//            for (FieldError fieldError : bindingResult.getFieldErrors()) {
+//                log.error(fieldError.getField() + " 필드 : " + fieldError.getDefaultMessage());
+//            }
+//            return "redirect:/api/user/signup";
+//        }
+//
+//        userService.signup(requestDto);
+//
+//        return "redirect:/api/user/login-page";
+//    }
 
     // 회원 관련 정보 받기
     @GetMapping("/user-info")
