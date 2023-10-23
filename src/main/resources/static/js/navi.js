@@ -273,3 +273,6 @@ function getToken() {
     }
     return auth;
 }
+
+// 상세교통상황 표시
+// map.addOverlayMapTypeId(kakao.maps.MapTypeId.TRAFFIC);

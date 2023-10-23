@@ -21,16 +21,6 @@ public class RandomRouteController {
 
     private final RandomKakaoRouteSearchService kakaoRouteSearchService;
 
-    @Value("${kakao.rest.api.key}")
-    private String kakaoRestApiKey;
-
-    @GetMapping("/random-map")
-    @Operation(summary = "지도", description = "카카오 API 지도를 보여줍니다.")
-    public String showMap(Model model) {
-        model.addAttribute("kakaoRestApiKey", kakaoRestApiKey);
-        return "home";
-    }
-
     @GetMapping("/all-random-route")
     @Operation(summary = "랜덤경로", description = "반경을 기준으로 랜덤 경로를 가져옵니다.")
     public ResponseEntity<KakaoRouteAllResponseDto> getRandomWays(@RequestParam String originAddress, @RequestParam Integer redius) {

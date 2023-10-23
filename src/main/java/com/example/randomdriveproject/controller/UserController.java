@@ -45,38 +45,6 @@ public class UserController {
        return userService.signup(signupRequestDto);
     }
 
-//    @PostMapping("/user/signup")
-//    @Operation(summary = "회원가입", description = "회원가입 화면을 출력합니다.")
-//    public ResponseEntity<?> signup(@Valid SignupRequestDto requestDto, BindingResult bindingResult) {
-//        if (bindingResult.hasErrors()) {
-//            List<String> errors = bindingResult.getFieldErrors().stream()
-//                    .map(fieldError -> fieldError.getField() + " 필드: " + fieldError.getDefaultMessage())
-//                    .collect(Collectors.toList());
-//            return ResponseEntity.badRequest().body(errors); // 오류 메시지를 포함한 400 Bad Request 응답 반환
-//        }
-//
-//        userService.signup(requestDto);
-//
-//        // 회원가입 성공 응답
-//        return ResponseEntity.ok().build();
-//    }
-
-//    @PostMapping("/user/signup")
-//    @Operation(summary = "회원가입", description = "회원가입 화면을 출력합니다.")
-//    public String signup(@Valid SignupRequestDto requestDto, BindingResult bindingResult) {
-//        // Validation 예외처리
-//        List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-//        if(fieldErrors.size() > 0) {
-//            for (FieldError fieldError : bindingResult.getFieldErrors()) {
-//                log.error(fieldError.getField() + " 필드 : " + fieldError.getDefaultMessage());
-//            }
-//            return "redirect:/api/user/signup";
-//        }
-//
-//        userService.signup(requestDto);
-//
-//        return "redirect:/api/user/login-page";
-//    }
 
     // 회원 관련 정보 받기
     @GetMapping("/user-info")
@@ -89,14 +57,7 @@ public class UserController {
 
         return new UserInfoDto(username, isAdmin);
     }
-//
-//    @GetMapping("/user-folder")
-//    public String getUserInfo(Model model, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-//        // 회원별로 폴더들을 가져와 index.html에 데이터를 전달해줌
-//        model.addAttribute("folders", folderService.getFolders(userDetails.getUser()));
-//
-//        return "index :: #fragment";// 그냥 index.html에 정보 보내는 것
-//    }
+
 
     @GetMapping("/user/kakao/callback")
     @Operation(summary = "카카오 로그인", description = "카카오로 로그인 합니다.")
