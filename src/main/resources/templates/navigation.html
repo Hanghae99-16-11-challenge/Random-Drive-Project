@@ -20,9 +20,13 @@
 <!-- 카카오 지도 API -->
 <script type="text/javascript"
         src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8718b48048bf8ca4325b869cb07bb294&libraries=services,clusterer,drawing"></script>
-<button id="history-button" onclick="location.href='/histories'">
-    내 주행 기록
-</button>
+
+<div>
+    <button id="history-button" onclick="location.href='/histories'" style="width: 100px">내 주행 기록</button>
+    <button id="Debug-button" onclick="clearNavi()" style="width: 150px">네비게이션 초기화</button>
+    <button  onclick="stopNavi()" style="width: 150px">네비게이션 종료</button>
+    <button  onclick="stopCoroutine()" style="width: 150px">위치 업데이트 종료</button>
+</div>
 
 
 <h3>기본 길찾기</h3>
@@ -76,7 +80,17 @@
 
     <button type='submit'>길 찾기</button>
 </form>
+
+
+<!--<a id="start-navigation" href="javascript:startNavigation()">-->
+<!--  <img src="https://developers.kakao.com/assets/img/about/buttons/navi/kakaonavi_btn_medium.png"-->
+<!--       alt="길 안내하기 버튼" />-->
+<!--</a>-->
+
+
 <script src="/navigation.js"></script> <!-- 여기에 실제 자바스크립트 파일 경로를 입력하세요 -->
+<script src="/Calculation.js"></script>
+<script src="/staticVariable.js"></script>
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script> <!-- 카카오 우편번호 서비스 -->
 
 </body>

@@ -35,6 +35,9 @@ public class RouteController {
     public ResponseEntity<KakaoRouteAllResponseDto> getRoute(@RequestParam String originAddress,
                                                              @RequestParam String destinationAddress) {
         KakaoRouteAllResponseDto response = kakaoRouteSearchService.requestRouteSearch(originAddress, destinationAddress);
+
+//        PathUtil.PathInfo(response, "RouteController");
+
         if (response == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
