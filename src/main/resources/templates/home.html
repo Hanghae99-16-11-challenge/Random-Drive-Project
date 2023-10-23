@@ -35,13 +35,7 @@
 </head>
 
 
-
-
 <body>
-
-<!--<button id="logout-id-btn" onclick="logout()">-->
-<!--    로그아웃하기-->
-<!--</button>-->
 
 <div>
 
@@ -56,11 +50,7 @@
                          <button type="button" class="btn btn-primary" onclick="location.href='/api/navigation-search'">검색</button>
 
                         </div>
-<!--                        <div class="menu-button">-->
-<!--                            <div class="bar"></div>-->
-<!--                            <div class="bar"></div>-->
-<!--                            <div class="bar"></div>-->
-<!--                        </div>-->
+
                     </div>
                     <div class="photo-container">
 
@@ -73,7 +63,7 @@
                             <div class="photo-info">The city of Angels</div>
                         </div>
 
-<!--                        <div class="photo-counter">1/9</div>-->
+
                     </div>
                     <div class="app-footer">
                         <div class="button-row">
@@ -113,14 +103,7 @@
 <script type="text/javascript">
 
 </script>
-<script>
-    function logout() {
-        // 토큰 삭제
-        Cookies.remove('Authorization', {path: '/'});
-        // window.location.reload(); // 현재 페이지 리로드
-        window.location.href = '/api/user/login-page';
-    }
-</script>
+
 </html>
 
 
