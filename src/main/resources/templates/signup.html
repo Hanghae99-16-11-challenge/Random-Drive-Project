@@ -41,35 +41,138 @@
 
             <div class="app">
                     <div class="app-caption-login">Random Route Service</div>
-            <div class="app-footer-login" >
-                
+                <div class="app-footer-login" >
+
                 <div >
-                    <form action="/api/user/signup" method="post">
+                    <form id="signupForm" action="/api/user/signup" method="post">
                         <div class="signup-id-label" ></div>
 
                         <div class="signup-id-label" >Username</div>
-                        <input type="text" name="username" placeholder="Username" class="signup-input-box">
+                        <input type="text" id="username" placeholder="아이디는 소문자 및 숫자로 구성된 4~10자의 문자열이어야 합니다." class="signup-input-box">
 
                         <div class="signup-id-label">Password</div>
-                        <input type="password" name="password" class="signup-input-box">
+                        <input type="password"  id="password" placeholder="비밀번호는 대소문자, 숫자로만 구성된 8~15자의 문자열이어야 합니다." class="signup-input-box">
 
 
                         <div class="signup-id-label">E-mail</div>
-                        <input type="text" name="email" placeholder="E-mail" class="signup-input-box">
+                        <input type="text"  id="email" placeholder="E-mail" class="signup-input-box">
 
 
-                        <button class="button-login" id="login-id-submit" >회원 가입</button>
+                        <button type="button" class="button-login" id="login-id-submit" onclick="submitSignup(event)" >회원 가입</button>
+<!--                        onclick="submitSignup()"-->
                     </form>
                 </div>
-            </div>route
+            </div>
         </div>
 
     </div>
-    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<!--    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>-->
     <script id="rendered-js"></script>
 
 </div>
 
 
 </body>
+
+<script>
+
+    function submitSignup(event) {
+        event.preventDefault(); // 이벤트 기본 동작을 취소
+        console.log("회원가입 함수 실행"); // 확인을 위한 로그
+
+        // const username = $("input[name='username']").val();
+        // const password = $("input[name='password']").val();
+        // const email = $("input[name='email']").val();
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const email = document.getElementById('email').value;
+
+        const formData = {
+            username: username,
+            password: password,
+            email: email,
+        };
+
+        // JSON 데이터를 문자열로 변환
+        // const jsonData = JSON.stringify(formData);
+
+        console.log(formData); // 데이터 확인 로그
+
+        $.ajax({
+            type: 'POST',
+            url: '/api/user/signup',
+            data: JSON.stringify(formData),
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json', // 응답을 JSON 형식으로 파싱합니다.
+            success: function (response) {
+                alert(response.msg); // 성공 메시지를 표시합니다.
+                window.location.href = '/api/user/login-page'; // 홈 페이지로 리다이렉션합니다.
+            },
+            error: function (response) {
+                console.log('서버로부터 오류 응답 :' ,response); // 오류 응답 로깅
+                console.log('서버로부터 오류 응답 :' ,response.responseText);
+
+                //response에서 JSON 데이터 추출
+                var errors = JSON.parse(response.responseText);
+
+                // 오류 메시지를 보기 좋게 줄 바꿈하여 표시
+                var errorMessage = "";
+                if(errors.password) {
+                    errorMessage += "password: " + errors.password + "\n"; // 비밀번호 오류 메시지
+                }
+                if(errors.email) {
+                    errorMessage += "email: " + errors.email + "\n"; // 이메일 오류 메시지
+                }
+                if(errors.username) {
+                    errorMessage += "username: " + errors.username + "\n"; // 사용자 이름 오류 메시지
+                }
+                // 구성된 오류 메시지를 alert 창에 표시
+                alert(errorMessage);
+                }
+
+        });
+    }
+
+    //-> validexceptionhandler만 사용하면 해당 데이터를 json으로 가져오나
+    // 다른 exception 클래스를 키면 안된다.
+    // response에서 JSON 데이터 추출
+    // var errors = JSON.parse(response.responseText);
+    //
+    // // 오류 메시지를 보기 좋게 줄 바꿈하여 표시
+    // var errorMessage = "";
+    // if(errors.password) {
+    //     errorMessage += "password: " + errors.password + "\n"; // 비밀번호 오류 메시지
+    // }
+    // if(errors.email) {
+    //     errorMessage += "email: " + errors.email + "\n"; // 이메일 오류 메시지
+    // }
+    // if(errors.username) {
+    //     errorMessage += "username: " + errors.username + "\n"; // 사용자 이름 오류 메시지
+    // }
+    // // 구성된 오류 메시지를 alert 창에 표시
+    // alert(errorMessage);
+
+
+    // 다른 exception 클래스를 키면 -> 모든 응답에 대해서 보여주는 곳
+    // if (response.status === 400) {
+    //     var message = "오류:\n";
+    //     if(response.responseJSON) { // 서버 응답이 JSON 형태인 경우
+    //         var errors = response.responseJSON;
+    //         if(errors.errors) { // 'errors' 필드가 존재하는 경우
+    //             errors.errors.forEach(function(error) {
+    //                 message += "- " + error.defaultMessage + "\n";
+    //             });
+    //         } else {
+    //             message += errors.message; // 'message' 필드가 있는 경우
+    //         }
+    //     } else { // 서버 응답이 단순 문자열인 경우
+    //         message += response.responseText;
+    //     }
+    //     alert(message); // 생성된 문자열을 사용자에게 표시합니다.
+    // } else {
+    //     // 기타 오류 처리
+    //     alert('서버 오류가 발생했습니다. 나중에 다시 시도해 주세요.');
+
+
+</script>
 </html>
