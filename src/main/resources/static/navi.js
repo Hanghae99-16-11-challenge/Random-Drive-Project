@@ -226,6 +226,11 @@ function makeLiveMap(data) {
 
 // 경로 기록
 function saveRoute(data, originAddress, destinationAddress) {
+
+    const auth = getToken();
+    var decodedOriginAddress = decodeURIComponent(originAddress);
+    var decodedDestinationAddress = decodeURIComponent(destinationAddress);
+
     fetch('/api/routes', {
         method: 'POST',
         headers: {
@@ -234,8 +239,8 @@ function saveRoute(data, originAddress, destinationAddress) {
         },
         body: JSON.stringify({
             requestData: data, // KakaoRouteAllResponseDto 객체
-            originAddress: originAddress,
-            destinationAddress: destinationAddress
+            originAddress: decodedOriginAddress,
+            destinationAddress: decodedDestinationAddress
         })
     })
 }
