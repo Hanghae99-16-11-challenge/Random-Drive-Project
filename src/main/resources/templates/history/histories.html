@@ -100,7 +100,7 @@
         button.textContent = '상세 정보 보기';
         button.addEventListener('click', function() {
             // 상세 정보 페이지로 이동
-            window.location.href = `/history/${routeId}`;
+            window.location.href = `/api/history/${routeId}`;
         });
         return button;
     }

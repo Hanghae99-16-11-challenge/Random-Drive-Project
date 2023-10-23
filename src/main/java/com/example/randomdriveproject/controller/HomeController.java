@@ -39,11 +39,22 @@ public class HomeController {
         return "home"; // 뷰 이름은 templates 폴더에 있는 템플릿 파일명과 일치해야 합니다.
     }
 
+    @GetMapping("/navigation-search")
+    @Operation(summary = "기본 네비게이션", description = "네비게이션 화면을 출력합니다.")
+    public String searchNavigation() {
+        return "search";
+    }
 
-    @GetMapping("/navigation")
-    @Operation(summary = "네비게이션", description = "네비게이션 화면을 출력합니다.")
-    public String showNavigation() {
-        return "navigation";
+    @GetMapping("/navigation-radius")
+    @Operation(summary = "반경 네비게이션", description = "네비게이션 화면을 출력합니다.")
+    public String radiusNavigation() {
+        return "randomradius";
+    }
+
+    @GetMapping("/navigation-waypoints")
+    @Operation(summary = "목적지 반경 네비게이션", description = "네비게이션 화면을 출력합니다.")
+    public String waypointsNavigation() {
+        return "randomwaypoints";
     }
 
 

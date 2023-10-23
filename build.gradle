@@ -54,7 +54,7 @@ dependencies {
 
     //GOOGLE MAPS
 
-        implementation 'com.google.maps:google-maps-services:2.2.0'
+    implementation 'com.google.maps:google-maps-services:2.2.0'
 
 
 }

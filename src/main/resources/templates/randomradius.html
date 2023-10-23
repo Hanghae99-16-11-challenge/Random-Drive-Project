@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width,initial-scale=1">
+    <title>Random Radius</title>
+    <!--  <link rel="stylesheet" href="/css.css">-->
+
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"
+            integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+    <link rel="stylesheet" href="/css/codePen.css">
+</head>
+<body>
+<div class="demo-container">
+    <div class="phone-screen">
+        <div class="app">
+            <div class="app-header">
+                <div class="app-caption">Random Radius</div>
+            </div>
+            <div class="kr0">반경 기반 랜덤 길찾기</div>
+            <div class="kr1">
+                <form id="all-random-search-form">
+                    <div class="btn-group" role="group" aria-label="Default button group">
+                        <label for="all-random-originAddress" class="search kr-font">출발지 검색하기</label><br>
+                        <input class="kr2" type="text" id="all-random-originAddress" name="all-random-originAddress"
+                               placeholder="출발지를 입력하세요" aria-label="Search" aria-describedby="search-addon">
+                        <button type='button' class='w-btn w-btn-indigo' id='all-random-search-origin'>검색</button>
+                        <button type='button' class='w-btn w-btn-indigo' id='all-random-current-location'>현재 위치 추가
+                        </button>
+                    </div>
+                    <div>
+                        <label for="all-random-redius" class="search kr-font">반경</label><br>
+                        <input class="kr2" type="text" id="all-random-redius" name="all-random-redius"
+                               placeholder="반경을 입력하세요"><br>
+                        <button type='submit' class='w-btn w-btn-indigo'>길 찾기</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/js/navigation.js"></script> <!-- 여기에 실제 자바스크립트 파일 경로를 입력하세요 -->
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<!-- 카카오 우편번호 서비스 -->
+
+</body>
+</html>
