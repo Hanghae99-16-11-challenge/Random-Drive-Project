@@ -33,7 +33,7 @@ function calculateCurrectToPoint(data)
         //response.getRoutes()[0].getSummary().getDuration()
         let spend = data.routes[0].summary.duration;
 
-        alert("현제위치와 출발지간의 직선거리 : " + calculateDistance(C_lat, C_lon, let_ori, lon_ori) + "km" +
+        console.log("현제위치와 출발지간의 직선거리 : " + calculateDistance(C_lat, C_lon, let_ori, lon_ori) + "km" +
             "\n현제위치와 도착지 간의 직선거리 : " + calculateDistance(C_lat, C_lon, lat_des, lon_des) + "km" +
             "\n경로 길이 : " + data.routes[0].summary.distance +"m , 소요 시간 : " +
             Math.floor(spend / 60) + "분" + (spend - (Math.floor(spend / 60) * 60)) + "초");
@@ -415,7 +415,6 @@ function getNextGuidPoint(add = true)
         {
             if (add)
             {
-                console.log("add");
                 // naviInfo_SectionIndex = naviInfo_SectionIndex + 1;/xxx
                 naviInfo_GuidIndex = naviInfo_GuidIndex + 1;
             }
@@ -430,7 +429,6 @@ function getNextGuidPoint(add = true)
             // naviInfo_SectionIndex = naviInfo_SectionIndex + 1;
             // naviInfo_GuidIndex = naviInfo_GuidIndex + 1;
 
-            console.log("end");
             naviInfo_State = 0;
             return 0;
         }
@@ -440,7 +438,6 @@ function getNextGuidPoint(add = true)
     {
         if (add)
         {
-            console.log("added");
             naviInfo_SectionIndex = naviInfo_SectionIndex + 1;
             naviInfo_GuidIndex = 1;
         }
@@ -452,7 +449,6 @@ function getNextGuidPoint(add = true)
     {
         if (add)
         {
-            console.log("added");
             naviInfo_GuidIndex = naviInfo_GuidIndex + 1;
         }
 
@@ -460,16 +456,6 @@ function getNextGuidPoint(add = true)
         naviInfo_State = 1;
         return 1;
     }
-}
-
-function positionCoroutine()
-{
-    navigator.geolocation.getCurrentPosition(function(position) {
-        // 위치 정보를 표시하기
-        // $("#location2").text("\n, GPS 위치 정보: " + position.coords.latitude + ", " + position.coords.longitude);
-        EditMark(positionMark, positionText, position.coords.latitude, position.coords.longitude, '클릭한 위치');
-        console.log("위치 업데이트");
-    });
 }
 
 function panTo(lat , lng) {
