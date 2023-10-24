@@ -1,0 +1,497 @@
+
+<!DOCTYPE html>
+<html lang="en" class="wf-fontawesome-n4-active wf-active"><head>
+  <meta charset="UTF-8">
+
+
+  <link rel="apple-touch-icon" type="image/png" href="https://cpwebassets.codepen.io/assets/favicon/apple-touch-icon-5ae1a0698dcc2402e9712f7d01ed509a57814f994c660df9f7a952f3060705ee.png">
+
+  <meta name="apple-mobile-web-app-title" content="CodePen">
+
+  <link rel="shortcut icon" type="image/x-icon" href="https://cpwebassets.codepen.io/assets/favicon/favicon-aec34940fbc1a6e787974dcd360f2c6b63348d4b1f4e06c77743096d55480f33.ico">
+
+  <link rel="mask-icon" type="image/x-icon" href="https://cpwebassets.codepen.io/assets/favicon/logo-pin-b4b4269c16397ad2f0f7a01bcdf513a1994f4c94b8af2f191c09eb0d601762b1.svg" color="#111">
+
+
+
+
+  <script src="https://use.fontawesome.com/webfontloader/1.6.24/webfontloader.js"></script><script src="https://cpwebassets.codepen.io/assets/common/stopExecutionOnTimeout-2c7831bb44f98c1391d6a4ffda0e1fd302503391ca806e7fcc7b9b87197aec26.js"></script>
+
+
+  <title>CodePen - Mobile app interface with unusual scrolling</title>
+
+  <link rel="canonical" href="https://codepen.io/rnzpsgwg-the-styleful/pen/qBgWoLB">
+  <link href="https://fonts.googleapis.com/css?family=Courgette|Oxygen+Mono|Lato:400,700" rel="stylesheet" type="text/css">
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no" width="device-width">
+  <script src="https://use.fontawesome.com/798759b2a2.js"></script>
+
+
+
+
+  <style>
+    *, *:before, *:after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      font-size: 16px;
+    }
+
+    .demo-container {
+      width: 100vw;
+      min-height: 100vh;
+      background: radial-gradient(farthest-corner at 50% 50%, #6270a4, #3B4465);
+      font-family: "Oxygen Mono", sans-serif;
+      overflow: hidden;
+    }
+
+    .phone-back, .demo-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .phone-screen {
+      width: 18rem;
+      height: 32rem;
+      background: white;
+      overflow: hidden;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .app {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      transition: all 0.3s ease;
+    }
+
+    .app-header {
+      height: 4rem;
+      width: 100%;
+      position: relative;
+      font-family: "Courgette", sans-serif;
+      font-size: 1.7rem;
+      z-index: 200;
+    }
+
+    .menu-button {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 201;
+      width: 4rem;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      cursor: pointer;
+    }
+
+    .bar {
+      width: 1.4rem;
+      height: 2px;
+      background: #181f57;
+      margin: 2px;
+    }
+
+    .app-caption {
+      width: 100%;
+      position: absolute;
+      top: 0;
+      height: 4rem;
+      line-height: 4rem;
+      text-align: center;
+      color: #181f57;
+      font-weight: 700;
+    }
+
+    .photo-container {
+      height: 22rem;
+      position: relative;
+      cursor: -webkit-grab;
+      cursor: grab;
+    }
+
+    .bg-pic {
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      position: absolute;
+      top: 0;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s ease;
+    }
+
+    .bg-active {
+      opacity: 0.2;
+    }
+
+    .back-button {
+      width: 3rem;
+      height: 3rem;
+      position: absolute;
+      left: 0.5rem;
+      top: 0.5rem;
+      text-align: center;
+      cursor: pointer;
+    }
+    .back-button span {
+      font-size: 1.3rem;
+      color: white;
+      line-height: 3rem;
+      margin-right: 0.1rem;
+    }
+
+    .photo {
+      width: 15rem;
+      height: 15rem;
+      position: absolute;
+      left: 1.5rem;
+      top: 2.5rem;
+      background: white;
+      box-shadow: 0 0 6px black;
+      background-size: cover;
+      background-position: center;
+      will-change: transform, opacity;
+    }
+
+    .photo-caption, .photo-info {
+      color: #070a1b;
+      text-align: center;
+      opacity: 0;
+      transform: translate3d(0, 12rem, 0);
+      transition: all 0.3s ease-out;
+      width: 18rem;
+      position: relative;
+      left: -1.5rem;
+      will-change: transform, opacity;
+    }
+
+    .ph-info-active {
+      opacity: 1;
+      transform: translate3d(0, 18rem, 0);
+    }
+
+    .photo-caption {
+      font-weight: 500;
+      font-size: 1.5rem;
+      font-family: "Courgette", sans-serif;
+    }
+
+    .photo-info {
+      transition-delay: 0.2s;
+      font-family: "Lato", sans-serif;
+    }
+
+    .photo-counter {
+      position: absolute;
+      bottom: 1.5rem;
+      height: 1.5rem;
+      width: 50%;
+      left: 25%;
+      text-align: center;
+      color: #020207;
+    }
+
+    .photo-0 {
+      background-image: url("https://kiyutink.github.io/sidney/sidney1.jpg");
+    }
+
+    .photo-1 {
+      background-image: url("https://kiyutink.github.io/nyc/nyc1.jpg");
+    }
+
+    .photo-2 {
+      background-image: url("https://kiyutink.github.io/beijing/beijing1.jpg");
+    }
+
+    .photo-3 {
+      background-image: url("https://kiyutink.github.io/tokyo/tokyo1.jpg");
+    }
+
+    .photo-4 {
+      background-image: url("https://kiyutink.github.io/london/london1.jpg");
+    }
+
+    .photo-5 {
+      background-image: url("https://kiyutink.github.io/moscow/moscow1.jpg");
+    }
+
+    .photo-6 {
+      background-image: url("https://kiyutink.github.io/madrid/madrid1.jpg");
+    }
+
+    .photo-7 {
+      background-image: url("https://kiyutink.github.io/la/la2.jpg");
+    }
+
+    .photo-8 {
+      background-image: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/450545/profile/profile-512.jpg?3);
+    }
+
+    .animation {
+      transition: all 0.3s ease;
+    }
+
+    .app-footer {
+      height: 4rem;
+      width: 100%;
+      position: absolute;
+      z-index: 200;
+      bottom: 0;
+    }
+
+    a {
+      color: #181f57;
+    }
+
+    .button {
+      width: 50%;
+      margin: 0.5rem auto;
+      height: 2rem;
+      background: #181f57;
+      color: white;
+      font-family: "Courgette", sans-serif;
+      font-size: 1.5rem;
+      text-align: center;
+      line-height: 2rem;
+      cursor: pointer;
+    }
+    .button:hover {
+      box-shadow: 0 0 10px #181f57;
+    }
+    .button:active {
+      transform: translate3d(0, 2px, 0);
+    }
+  </style>
+
+  <script>
+    window.console = window.console || function(t) {};
+  </script><link rel="stylesheet" href="https://use.fontawesome.com/798759b2a2.css" media="all">
+
+
+
+</head>
+
+<body translate="no">
+<div class="demo-container">
+  <div class="phone-screen">
+    <div class="app">
+      <div class="app-header">
+        <div class="app-caption">Traveller</div>
+        <div class="menu-button">
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+        </div>
+      </div>
+      <div class="photo-container">
+        <div class="photo photo-8" number="8" ph-index="8" style="opacity: 0; z-index: 0; transform: translate3d(0px, 5.2rem, 0px) scale(0.6);">
+          <div class="photo-caption">Me</div>
+          <div class="photo-info">Take a look at my other <a target="_blank" href="https://codepen.io/kiyutink/">Pens</a></div>
+        </div>
+        <div class="photo photo-7" number="7" ph-index="7" style="transform: translate3d(0px, 4.55rem, 0px) scale(0.65); opacity: 0; z-index: 1;">
+          <div class="photo-caption">Los Angeles</div>
+          <div class="photo-info">The city of Angels</div>
+        </div>
+        <div class="photo photo-6" number="6" ph-index="6" style="transform: translate3d(0px, 3.9rem, 0px) scale(0.7); opacity: 0; z-index: 2;">
+          <div class="photo-caption">Madrid</div>
+          <div class="photo-info">It's somewhere in Spain I believe</div>
+        </div>
+        <div class="photo photo-5" number="5" ph-index="5" style="transform: translate3d(0px, 3.25rem, 0px) scale(0.75); opacity: 0; z-index: 3;">
+          <div class="photo-caption">Moscow</div>
+          <div class="photo-info">Putin. Vodka. Balalaika.</div>
+        </div>
+        <div class="photo photo-4" number="4" ph-index="4" style="transform: translate3d(0px, 2.6rem, 0px) scale(0.8); opacity: 1; z-index: 4;">
+          <div class="photo-caption">London</div>
+          <div class="photo-info">Have you ever seen the Queen?</div>
+        </div>
+        <div class="photo photo-3" number="3" ph-index="3" style="transform: translate3d(0px, 1.95rem, 0px) scale(0.85); opacity: 1; z-index: 5;">
+          <div class="photo-caption">Tokyo</div>
+          <div class="photo-info">One of the biggest cities in the world</div>
+        </div>
+        <div class="photo photo-2" number="2" ph-index="2" style="transform: translate3d(0px, 1.3rem, 0px) scale(0.9); opacity: 1; z-index: 6;">
+          <div class="photo-caption">Beijing</div>
+          <div class="photo-info">The capital of China</div>
+        </div>
+        <div class="photo photo-1" number="1" ph-index="1" style="transform: translate3d(0px, 0.65rem, 0px) scale(0.95); opacity: 1; z-index: 7;">
+          <div class="photo-caption">New York</div>
+          <div class="photo-info">The heart of America</div>
+        </div>
+        <div class="photo photo-0" number="0" ph-index="0" style="transform: translate3d(0px, 0rem, 0px) scale(1); opacity: 1; z-index: 8;">
+          <div class="photo-caption ph-info-active">Sidney</div>
+          <div class="photo-info ph-info-active">Overall a nice city</div>
+        </div>
+        <div class="photo-counter">1/9</div>
+      </div>
+      <div class="app-footer">
+        <div class="button">Book</div>
+      </div>
+    </div>
+    <div class="bg-pic bg-pic-0 bg-active" style="background-image: url(&quot;https://kiyutink.github.io/sidney/sidney1.jpg&quot;);"></div><div class="bg-pic bg-pic-1" style="background-image: url(&quot;https://kiyutink.github.io/nyc/nyc1.jpg&quot;);"></div>
+    <div class="bg-pic bg-pic-2" style="background-image: url(&quot;https://kiyutink.github.io/beijing/beijing1.jpg&quot;);"></div><div class="bg-pic bg-pic-3" style="background-image: url(&quot;https://kiyutink.github.io/tokyo/tokyo1.jpg&quot;);"></div><div class="bg-pic bg-pic-4" style="background-image: url(&quot;https://kiyutink.github.io/london/london1.jpg&quot;);"></div>
+    <div class="bg-pic bg-pic-5" style="background-image: url(&quot;https://kiyutink.github.io/moscow/moscow1.jpg&quot;);"></div><div class="bg-pic bg-pic-6" style="background-image: url(&quot;https://kiyutink.github.io/madrid/madrid1.jpg&quot;);"></div><div class="bg-pic bg-pic-7" style="background-image: url(&quot;https://kiyutink.github.io/la/la2.jpg&quot;);"></div>
+    <div class="bg-pic bg-pic-8" style="background-image: url(&quot;https://s3-us-west-2.amazonaws.com/s.cdpn.io/450545/profile/profile-512.jpg?3&quot;);"></div></div>
+</div>
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<script id="rendered-js">
+  $(document).ready(function () {
+    var animTime = 300;
+    var delX;
+    var delY;
+    var phWid = parseInt($(".photo").css("width"));
+    var numOfPhotos = $(".photo").length;
+    var topCard = "div[ph-index='0']";
+    var curPhoto = 1;
+    var shift;
+    var k = parseInt($("html").css("font-size")) / 16;
+    var busy = false;
+    var startedDragging = false;
+
+    for (i = 0; i <= numOfPhotos - 1; i++) {if (window.CP.shouldStopExecution(0)) break;
+      loadBackground(".photo-" + i);
+    }window.CP.exitedLoop(0);
+
+    changeCounter();
+    rearrangeStack();
+
+    function changeCounter(nope) {
+      if (!nope) {
+        $(".photo-counter").html(curPhoto + "/" + numOfPhotos);
+        if (curPhoto != numOfPhotos)
+          curPhoto++;else
+
+          curPhoto = 1;
+      } else
+        $(".photo-counter").html(curPhoto - 1 + "/" + numOfPhotos);
+    }
+
+    function handleAnimation() {
+      busy = true;
+      $(".photo").addClass("animation");
+      setTimeout(function () {
+        $(".photo").removeClass("animation");
+        busy = false;
+        startedDragging = false;
+      }, animTime);
+    }
+
+    function rearrangeStack() {
+      handleAnimation();
+
+      setTimeout(function () {
+
+        for (i = 0; i < numOfPhotos; i++) {if (window.CP.shouldStopExecution(1)) break;
+          $("div[ph-index=" + i + "]").css({
+            "z-index": numOfPhotos - i - 1 });}window.CP.exitedLoop(1);
+
+
+        if (numOfPhotos != 1)
+          $("div[ph-index=" + (numOfPhotos - 1) + "]").css(
+                  "transform", "translate3d(0, " + 0.65 * (numOfPhotos - 1) + "rem, 0)" + " scale(" + (1 - (numOfPhotos - 1) * 0.05) + ")");
+
+
+      }, animTime);
+
+      if (numOfPhotos != 1)
+        $("div[ph-index=" + (numOfPhotos - 1) + "]").css({
+          "opacity": 0,
+          "transform": "translate3d" + shift }).
+        children().removeClass("ph-info-active");else
+
+        $("div[ph-index='0']").css("transform", "none");
+
+      $("div[ph-index='0']").children().addClass("ph-info-active");
+
+      $(".bg-pic").removeClass("bg-active");
+      var n = $("div[ph-index='0']").attr("number");
+      $(".bg-pic-" + n).addClass("bg-active");
+
+      for (i = 0; i < numOfPhotos - 1; i++) {if (window.CP.shouldStopExecution(2)) break;
+        if (i >= 5) var op = 0;else
+          var op = 1;
+        $("div[ph-index=" + i + "]").css({
+          "transform": "translate3d(0, " + 0.65 * i + "rem, 0)" + " scale(" + (1 - i * 0.05) + ")",
+          "opacity": op });
+
+      }window.CP.exitedLoop(2);
+    }
+
+    function reindexate() {
+      for (i = 0; i < numOfPhotos; i++) {if (window.CP.shouldStopExecution(3)) break;
+        $("div[ph-index=" + i + "]").attr("ph-index", i - 1);}window.CP.exitedLoop(3);
+      $("div[ph-index='-1']").attr("ph-index", numOfPhotos - 1);
+      changeCounter();
+    }
+
+    function loadBackground(selector) {
+      var url = $(selector).css("background-image");
+      var bgIndex = $(selector).attr("ph-index");
+      $(".phone-screen").append("<div class='bg-pic bg-pic-" + $(selector).attr("number") + "'></div>");
+      $(".bg-pic").last().css("background-image", url);
+    }
+
+    $(".photo-container").on("mousedown touchstart", function (event) {
+      if (busy)
+        return;
+      startedDragging = true;
+      if (!event.pageX) event.preventDefault();
+      var stX = event.pageX || event.originalEvent.touches[0].pageX;
+      var stY = event.pageY || event.originalEvent.touches[0].pageY;
+      $(".phone-screen").on("mousemove touchmove", function (event) {
+        delX = (event.pageX || event.originalEvent.touches[0].pageX) - stX;
+        delY = (event.pageY || event.originalEvent.touches[0].pageY) - stY;
+        var rotY = delX / phWid;
+        var rotX = delY / phWid;
+        $(topCard).css("transform", "rotateY(" + rotY * 25 + "deg)" + " rotateX(" + rotX * -25 + "deg)" + " translate3d(" + delX / 5 * k + "px, " + delY / 5 * k + "px, 0)");
+      });
+    });
+
+    $(".phone-screen").on("mouseleave", function () {
+      $(document).trigger("mouseup");
+      delX = 0;
+      delY = 0;
+    });
+
+    $(document).on("mouseup touchend", function () {
+      if (!startedDragging)
+        return;
+      $(".phone-screen").off("mousemove touchmove");
+      if (delX > delY && delX > phWid / 2) {
+        shift = "(" + phWid * 1.5 + "px, 0, 0)";
+        reindexate();
+      } else if (delX < delY && delY > phWid / 2) {
+        shift = "(0, " + phWid * 1.5 + "px, 0)";
+        reindexate();
+      } else if (Math.abs(delX) > Math.abs(delY) && delX < -phWid / 2) {
+        shift = "(" + -phWid * 1.5 + "px, 0, 0)";
+        reindexate();
+      } else if (Math.abs(delX) < Math.abs(delY) && delY < -phWid / 2) {
+        shift = "(0, " + -phWid * 1.5 + "px, 0)";
+        reindexate();
+      }
+      delX = 0;
+      delY = 0;
+      rearrangeStack();
+    });
+  });
+  //# sourceURL=pen.js
+</script>
+
+
+
+
+
+</body></html>

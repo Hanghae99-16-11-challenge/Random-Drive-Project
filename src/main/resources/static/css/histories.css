@@ -1,0 +1,166 @@
+@font-face {
+    font-family: 'SDSamliphopangche_Basic';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts-20-12@1.0/SDSamliphopangche_Basic.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+*, *:before, *:after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html {
+    font-size: 16px;
+}
+
+.demo-container {
+    width: 100vw;
+    min-height: 100vh;
+    background: radial-gradient(farthest-corner at 50% 50%, #6270a4, #3B4465);
+    font-family: "Oxygen Mono", sans-serif;
+    overflow: hidden;
+    max-height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden; /* 가로 스크롤 숨김 처리 */
+}
+
+.phone-back, .demo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.phone-screen {
+    width: 18rem;
+    height: 32rem;
+    background: #ffffff;
+    overflow-y: auto; /* 또는 overflow-y: scroll; */
+    flex-shrink: 0;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+}
+
+.app {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    transition: all 0.3s ease;
+}
+
+.bar {
+    width: 1.4rem;
+    height: 2px;
+    background: #181f57;
+    margin: 2px;
+}
+
+
+.app-footer {
+    height: 32rem;
+    position: relative;
+    cursor: pointer;
+    overflow-y: auto; /* 스크롤이 내릴 수 있게 설정 */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td,thead {
+    font-size: 0.8rem; /* 원하는 크기로 조절하세요. */
+    padding: 1rem;
+    text-align: center;
+}
+
+tr.history-row {
+    font-family: "SDSamliphopangche_Basic", sans-serif;
+    font-size: 0.8rem;
+    line-height: 0;
+    background-color: #F7F7F7; /*#3949d5;*/
+    color: #2E2E2E;
+    position: sticky;
+    top: 0;
+}
+
+
+.logout-button {
+    font-size: 0.8rem; /* 버튼의 텍스트 크기를 작게 조절 */
+    padding: 0.3rem 0.7rem; /* 버튼의 여백을 작게 조절 */
+    background-color: #611122; /* 로그아웃 버튼의 배경색을 지정 #ff6347*/
+    color: white; /* 텍스트 색상을 흰색으로 지정 */
+    border: none; /* 테두리 제거 */
+    cursor: pointer; /* 마우스 커서를 포인터로 변경하여 클릭 가능한 상태로 표시 */
+    position: sticky; /*스크롤 내렸을 때 버튼 고정*/
+    bottom: 0; /*버튼 위친 하단*/
+    left: 250px; /*버튼 위치 왼쪽에서 오른쪽으로 밀기*/
+    font-family: "SDSamliphopangche_Basic", sans-serif;
+    border-radius: 20px;
+}
+
+.logout-button:hover {
+    background-color: #ff3b1f; /* 마우스를 올렸을 때의 배경색을 지정 */
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+tbody tr:hover {
+    background-color: #c0c0c0;
+}
+
+#historyTableBody td {
+    /* 기본 텍스트 정렬 및 여백 설정 */
+    text-align: center;
+    padding: 8px;
+    font-family: "SDSamliphopangche_Basic", sans-serif;
+    white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+    overflow: hidden; /* 넘치는 부분을 숨김 */
+    text-overflow: ellipsis; /* 넘치는 부분을 생략 부호(...)로 표시 */
+    max-width: 150px; /* 각 주소 칸의 최대 너비 설정 */
+}
+
+#historyTableBody td:first-child,
+#historyTableBody td:nth-child(2),
+#historyTableBody td:nth-child(3) {
+    width: 150px; /* 첫 번째와 두 번째, 세 번째 칸의 너비 설정 */
+}
+
+/* 랜덤 또는 랜덤이 아니면 색상을 변경 */
+#historyTableBody tr[data-maptype="live"] {
+    background-color: #F0F8FD; /* 푸른색 배경 #3498db */
+    color: #023656; /* 텍스트 색상을 흰색으로 설정 */
+}
+
+#historyTableBody tr:not([data-maptype="live"]) {
+    background-color: #FEF0F6; /* 붉은색 배경 #e74c3c */
+    color: #57002A; /* 텍스트 색상을 흰색으로 설정 */
+
+}
+
+#historyTableBody tr:hover {
+    background-color: #8bcbf2; /* 마우스를 올렸을 때의 배경색을 지정 forestgreen */
+}
+
+
+.btn {
+    background-color: #3949d5; /* 배경색 지정 */
+    color: white; /* 텍스트 색상 */
+}
+.btn:hover {
+    background-color: #148ef1; /* 마우스를 가져다 댔을 때 배경색을 흰색으로 변경 */
+    color: #ffffff; /* 마우스를 가져다 댔을 때 텍스트 색상을 원래 색으로 변경 */
+    /*box-shadow: 0 0 10px #181f57; !* 선택 효과(섀도우) 추가 *!*/
+}
