@@ -175,6 +175,8 @@ function makeLiveMap(data) {
         });
     }
 
+    var bounds = new kakao.maps.LatLngBounds(); // 모든 경로의 좌표를 포함할 수 있는 경계 객체를 만듭니다.
+
     // 경로 정보(routes)의 각 섹션(section)별로 반복하여 처리합니다.
     for (let route of data.routes) {
         let distance = route.summary.distance;
@@ -186,31 +188,20 @@ function makeLiveMap(data) {
 
         let hour = Math.floor(duration / 3600);
         let minute = Math.floor((duration % 3600) / 60);
-        let km= (distance / 1000).toFixed(1);
+        let km = (distance / 1000).toFixed(1);
 
         // 요소에 데이터를 추가
         distanceElement.textContent = '소요 시간: ' + hour + '시간 ' + minute + '분';
         durationElement.textContent = '총 거리: ' + km + ' km';
 
         for (let section of route.sections) {
-
-            // 각 섹션의 경계 상자(bound) 정보를 가져옵니다.
-            let bound = section.bound;
-
-            // 카카오 지도에 섹션을 표시합니다.
-            var bounds = new kakao.maps.LatLngBounds(
-                new kakao.maps.LatLng(bound.min_y, bound.min_x),
-                new kakao.maps.LatLng(bound.max_y, bound.max_x)
-            );
-
-            map.setBounds(bounds);
-
-            // polyline 생성
-            for(let road of section.roads){
+            // 각 섹션의 경로를 순회하면서 모든 좌표를 경계 객체에 추가합니다.
+            for (let road of section.roads) {
                 let path = [];
-                for(let i=0; i<road.vertexes.length; i+=2){
-                    console.log("vertexes: ", road.vertexes[i], road.vertexes[i+1]);
-                    path.push(new kakao.maps.LatLng(road.vertexes[i+1], road.vertexes[i]));
+                for (let i = 0; i < road.vertexes.length; i += 2) {
+                    let latLng = new kakao.maps.LatLng(road.vertexes[i + 1], road.vertexes[i]);
+                    bounds.extend(latLng); // 경계를 확장하여 이 좌표를 포함하도록 합니다.
+                    path.push(latLng);
                 }
 
                 let polyline = new kakao.maps.Polyline({
@@ -227,7 +218,10 @@ function makeLiveMap(data) {
             }
         }
     }
+
+    map.setBounds(bounds); // 새로 계산된 경계를 지도에 적용합니다.
 }
+
 
 // 경로 기록
 function saveRoute(data, originAddress, destinationAddress) {
