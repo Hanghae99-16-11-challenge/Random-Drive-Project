@@ -12,12 +12,13 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Tag(name = "Route Controller", description = "일반 네비게이션")
 @Controller
 @RequiredArgsConstructor
-
+@RequestMapping("/api")
 public class RouteController {
 
     private final KakaoRouteSearchService kakaoRouteSearchService;
@@ -25,6 +26,7 @@ public class RouteController {
     @Value("${kakao.javascript.api.key}")
     private String kakaoJavascriptApiKey;
 
+    @Deprecated// 미사용 중 임
     @GetMapping("/map")
     public String showMap(Model model) {
         model.addAttribute("kakaoJavascriptApiKey", kakaoJavascriptApiKey);

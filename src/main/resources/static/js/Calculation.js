@@ -17,7 +17,13 @@ function calculateCurrectToPoint(data)
     //data.routes[0].summary.origin.y, data.routes[0].summary.origin.x
     //반경 기반 랜덤 길찾기 할때 현위치랑 출발기 거리 측정
 
-    var originAddress = document.getElementById('all-random-originAddress').value;//반경 기반 랜덤 길찾기 - 출발지
+    // var originAddress = document.getElementById('all-random-originAddress').value;//반경 기반 랜덤 길찾기 - 출발지
+
+    if (data == null)
+    {
+        console.warn("길이 없음");
+        return;
+    }
 
     var let_ori = data.routes[0].summary.origin.y;
     var lon_ori = data.routes[0].summary.origin.x;
@@ -141,6 +147,8 @@ function update(lat, lng)
         if (naviInfo_State === 0)
         {
             stopNavi();
+            reset();
+            return;
         }
 
         // pathData.routes[0].sections[0].roads[0].vertexes[1] -> lat (길 기준)
@@ -307,7 +315,8 @@ function leftDistance_road(lat, lng)
 
     polyline.setMap(map);
 
-    polylines.push(polyline); // 선을 배열에 추가
+    // polylines.push(polyline); // 선을 배열에 추가//=========== 갑자기 안됌
+    polylines = [polyline];
 
     // 그러니  routes -> 경로 / section -> 다음 경유지까지의 구간 / guid -> 다음 안내 / road -> 도로 / road.vertexes -> (지도 그리기용) 직선 거리
     //  (naviInfo_SectionIndex, naviInfo_GuidIndex) 은 다음 안내 지점부터의 길

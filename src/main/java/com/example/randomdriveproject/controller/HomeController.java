@@ -43,7 +43,7 @@ public class HomeController {
     @GetMapping("/navigation")
     @Operation(summary = "네비게이션", description = "네비게이션 화면을 출력합니다.")
     public String showNavigation() {
-        return "navigation";
+        return "navi";
     }
 
 

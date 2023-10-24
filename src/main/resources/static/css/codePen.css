@@ -33,8 +33,8 @@ html {
 
 
 .phone-screen {
-    width: 18rem;
-    height: 32rem;
+    width: 100vw;
+    height: 100vh;
     background: #ffffff;
     overflow: hidden;
     flex-shrink: 0;
@@ -119,6 +119,7 @@ html {
 
 .bar {
     width: 1.4rem;
+    height: 2px;
     height: 2px;
     background: #181f57;
     margin: 2px;

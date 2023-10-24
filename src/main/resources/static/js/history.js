@@ -29,7 +29,7 @@ $(document).ready(function() {
             }
             let bound = data.bounds;
 
-            var bounds = new kakao.maps.LatLngBounds(
+            let bounds = new kakao.maps.LatLngBounds(
                 new kakao.maps.LatLng(bound.min_y, bound.min_x),
                 new kakao.maps.LatLng(bound.max_y, bound.max_x)
             );
@@ -54,7 +54,7 @@ $(document).ready(function() {
 
                 polyline.setMap(map);
 
-                polylines.push(polyline);
+                polylines_his.push(polyline);
             }
         })
         .catch(error => {
@@ -64,18 +64,18 @@ $(document).ready(function() {
 
 
 // kakaomap 표시 해주는 곳-----------------------------------------------------------------------------------------------------//
-var container = document.getElementById('map');
-var options = {
+let container = document.getElementById('map');
+let options = {
     center: new kakao.maps.LatLng(33.450701, 126.570667),
     level: 3
 };
 
-var map = new kakao.maps.Map(container, options);
+let map = new kakao.maps.Map(container, options);
 // 경로 안내 polyline ----------------------------------------------------------------------------------------------------------//
-var polylines = [];
-function clearPolylines() {
-    for (let i = 0; i < polylines.length; i++) {
-        polylines[i].setMap(null);
+let polylines_his = [];
+function clearpolylines_his() {
+    for (let i = 0; i < polylines_his.length; i++) {
+        polylines_his[i].setMap(null);
     }
-    polylines = [];
+    polylines_his = [];
 }
