@@ -32,6 +32,7 @@
   <script src="https://use.fontawesome.com/798759b2a2.js"></script>
 
   <link rel="stylesheet" href="/css/navi.css">
+  <link rel="stylesheet" href="/css/navigation.css">
 </head>
 <body>
 
@@ -52,7 +53,7 @@
         <!--                        <div class="photo-counter">1/9</div>-->
       </div>
 
-      <div class="app-footer">
+      <div class="app-footer" id = "input_StartNavi">
         <div class="distance-duration">
           <div class="distance"></div>
           <div class="duration"></div>
@@ -66,7 +67,18 @@
           </div>
         </div>
       </div>
+
+      <div class="app-footer disabled" id = "guid_info">
+        <div class="distance-duration">
+          <label id = "guid_ance">전방 {남은거리}에서 {안내문구}으로</label>
+          <label id = "guid_left">도착까지 {남은거리} {남은시간}</label>
+        </div>
+        <div class="button">
+          <a class="button-no" onclick="onClick_StopNavi_navi()">안내 취소</a>
+        </div>
+      </div>
     </div>
+
     <div class="phone-screen" id="map" style="width: 100%; height: 100%;"></div> <!-- 지도가 표시될 영역 -->
 
   </div>

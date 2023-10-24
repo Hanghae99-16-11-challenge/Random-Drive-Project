@@ -39,7 +39,7 @@ function calculateCurrectToPoint(data)
         //response.getRoutes()[0].getSummary().getDuration()
         let spend = data.routes[0].summary.duration;
 
-        console.log("현제위치와 출발지간의 직선거리 : " + calculateDistance(C_lat, C_lon, let_ori, lon_ori) + "km" +
+        console.warn("=====현제위치와 출발지간의 직선거리 : " + calculateDistance(C_lat, C_lon, let_ori, lon_ori) + "km" +
             "\n현제위치와 도착지 간의 직선거리 : " + calculateDistance(C_lat, C_lon, lat_des, lon_des) + "km" +
             "\n경로 길이 : " + data.routes[0].summary.distance +"m , 소요 시간 : " +
             Math.floor(spend / 60) + "분" + (spend - (Math.floor(spend / 60) * 60)) + "초");
@@ -92,6 +92,8 @@ function update(lat, lng)
     //\n 클릭한 위도, 경도 정보를 가져옵니다
 
     EditMark(positionMark, positionText, lat, lng, '클릭한 위치');
+
+    // calculateCurrectToPoint(pathData);//이건 잘됨
 
     if(pathData == null)
     {
@@ -147,16 +149,20 @@ function update(lat, lng)
         if (naviInfo_State === 0)
         {
             stopNavi();
-            reset();
+            // reset();
+            onClick_StopNavi_navi();
+            console.log("길 안내 종료");
+
             return;
         }
-
-        // update_GuidInfo();
 
         // pathData.routes[0].sections[0].roads[0].vertexes[1] -> lat (길 기준)
 
         var linePath_Calculate = leftDistance_road(lat, lng);
         var currectPathLine = [];
+
+        // update_GuidInfo();//======길찾기 정보 업데이트
+        Update_GuidIndo_navi();
 
         {
             //현재 도로 의 vertexes 를 완벽하게 측정x 이므로
