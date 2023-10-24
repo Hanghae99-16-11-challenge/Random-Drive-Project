@@ -52,18 +52,28 @@
         <!--                        <div class="photo-counter">1/9</div>-->
       </div>
 
-      <div class="app-footer">
+      <div class="app-footer" id = "input_StartNavi">
         <div class="distance-duration">
           <div class="distance"></div>
           <div class="duration"></div>
         </div>
         <div class="button-row">
           <div class="button">
-            <a class="button-yes">안내 시작</a>
+            <a class="button-yes" onclick="onClick_StartNavi_navi()">안내 시작</a>
           </div>
           <div class="button">
-            <a class="button-no">안내 취소</a>
+            <a class="button-no" onclick="onClick_StartNavi_navi()">안내 취소</a>
           </div>
+        </div>
+      </div>
+
+      <div class="app-footer disabled" id = "guid_info">
+        <div class="distance-duration">
+          <label id = "guid_ance">전방 {남은거리}에서 {안내문구}으로</label>
+          <label id = "guid_left">도착까지 {남은거리} {남은시간}</label>
+        </div>
+        <div class="button">
+          <a class="button-no" onclick="onClick_StopNavi_navi()">안내 취소</a>
         </div>
       </div>
     </div>
@@ -80,8 +90,9 @@
 <script type="text/javascript"
         src="//dapi.kakao.com/v2/maps/sdk.js?appkey=c87b1c2e1d4bcdc3401e35160e8e7d95&libraries=services,clusterer,drawing"></script>
 
-
 <script src="/js/navi.js"></script> <!-- 여기에 실제 자바스크립트 파일 경로를 입력하세요 -->
+<script src="/js/calculation.js"></script>
+<script src="/js/staticVariable.js"></script>
 
 </body>
 </html>

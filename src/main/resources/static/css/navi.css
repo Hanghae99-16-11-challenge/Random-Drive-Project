@@ -378,3 +378,33 @@ a {
     color: #ffffff; /* 마우스를 가져다 댔을 때 텍스트 색상을 원래 색으로 변경 */
     /*box-shadow: 0 0 10px #181f57; !* 선택 효과(섀도우) 추가 *!*/
 }
+
+
+.disabled {
+    pointer-events: none;
+    opacity: 0.4%;
+    display: none;
+}
+
+.guid-button {
+    position: fixed;
+    height: auto;
+    bottom: 15px;
+    z-index: 2;
+    /* background-color: rgba(50,50,50,0.3); */
+    width: 80%;
+    left: 10%;
+    display: grid;
+
+    margin: 0.5rem auto;
+    background: #3949d5;
+    color: white;
+    font-family: "SDSamliphopangche_Basic", sans-serif;
+    font-size: 0.9rem;
+    text-align: center;
+    line-height: 3rem;
+    align-items: center;
+    /*justify-content: center;*//*space-around*/
+    cursor: pointer;
+    border-radius: 2rem;
+}

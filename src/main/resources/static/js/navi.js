@@ -45,7 +45,7 @@ var options = {
     center: new kakao.maps.LatLng(33.450701, 126.570667),
     level: 3
 };
-var map = new kakao.maps.Map(container, options);
+map = new kakao.maps.Map(container, options);
 
 // 경로 안내 polyline ----------------------------------------------------------------------------------------------------------//
 var polylines = [];
@@ -276,3 +276,87 @@ function getToken() {
 
 // 상세교통상황 표시
 // map.addOverlayMapTypeId(kakao.maps.MapTypeId.TRAFFIC);
+
+function onClick_StartNavi_navi()
+{
+    pathData = responseData;
+    getNextGuidPoint(false);
+    getGuidPoint(true);
+    // startCorutine();
+
+
+    //guid_info
+    if(!document.getElementById("input_StartNavi").classList.contains("disabled"))
+        document.getElementById("input_StartNavi").classList.add("disabled");
+    if(document.getElementById("guid_info").classList.contains("disabled"))
+        document.getElementById("guid_info").classList.remove("disabled");
+
+    if (pathData != null)
+    {
+        let startPoint = pathData.routes[0].sections[0].guides[0];
+        update(startPoint.y, startPoint.x);
+
+        map.setLevel(3, {animate: true});// 사용시 보이는 위치 달라짐
+        panTo(startPoint.y, startPoint.x);
+    }
+}
+function onClick_StopNavi_navi()
+{
+    if(document.getElementById("input_StartNavi").classList.contains("disabled"))
+        document.getElementById("input_StartNavi").classList.remove("disabled");
+    if(!document.getElementById("guid_info").classList.contains("disabled"))
+        document.getElementById("guid_info").classList.add("disabled");
+
+    stopNavi();
+    window.location.href = host + '/api/home';
+}
+
+function Update_GuidIndo_navi()
+{
+    let nextGuid = getGuidPoint(false);
+
+    // document.getElementById('guid-Distance').innerText = "전방 " + nextGuidDistacne.toFixed(1) + "m 에서 " + data.guidance;
+    // document.getElementById('guid-EnterTime').innerText = "다음 안내 까지 : " + nexGuidDuration.toFixed(1) + "s";
+    // document.getElementById('guid-Des-Distance').innerText = pathLeftDistance.toFixed(1) + "m";
+    // document.getElementById('guid-Des-Time').innerText = pathLeftDuration.toFixed(1) + "s";
+
+    console.log("전방 " + visibilityDistance(nextGuidDistacne) + " 에서 " + nextGuid.guidance);
+    console.log("다음 안내까지 : " + visibilityTime(nexGuidDuration));
+    console.log("도착까지  " + visibilityDistance(pathLeftDistance) + " / " + visibilityTime(pathLeftDuration));
+
+    document.getElementById('guid_ance').innerText
+        = "전방 " + visibilityDistance(nextGuidDistacne) + " 에서\n" + nextGuid.guidance;
+    document.getElementById('guid_left').innerText
+        =   "도착까지  " + visibilityDistance(pathLeftDistance) + " / " + visibilityTime(pathLeftDuration);
+
+}
+
+function visibilityDistance(dis = 0)
+{
+    if(dis == null)
+        return "0m";
+
+    if (Math.floor(dis * 0.001) > 0)
+    {
+        return (dis * 0.001).toFixed(1) + "km";
+    }else
+    {
+        return dis.toFixed(1) + "m";
+    }
+}
+function visibilityTime(dur = 0)
+{
+    if (dur == null)
+        return "0분";
+
+    const hours = Math.floor(dur / 3600); // 초를 시간으로 변환
+    const minutes = Math.floor((dur % 3600) / 60); // 초를 분으로 변환하고 소수점 첫 번째 자리까지 나타내기
+
+    if (hours > 0)
+    {
+        return `${hours}시간${minutes}분`;
+    }else
+    {
+        return `${minutes}분`;
+    }
+}
