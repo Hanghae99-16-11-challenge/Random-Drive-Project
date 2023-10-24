@@ -560,6 +560,12 @@ a {
 .w-btn:active {
     transform: translate3d(0, 2px, 0);
 }
+.w-btn2:hover {
+    box-shadow: 0 0 10px #181f57;
+}
 
+.w-btn2:active {
+    transform: translate3d(0, 2px, 0);
+}
 
 

@@ -2,7 +2,7 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" name="viewport" content="width=device-width,initial-scale=1">
-    <title>Random Waypoints</title>
+    <title>Random Search</title>
     <!--  <link rel="stylesheet" href="/css.css">-->
 
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"
@@ -15,26 +15,25 @@
     <div class="phone-screen">
         <div class="app">
             <div class="app-header">
-                <div class="app-caption">Random Radius</div>
+                <div class="app-caption">Random Waypoints</div>
             </div>
             <div class="kr0">목적지, 반경 기반 랜덤 길찾기</div>
             <div class="kr1">
                 <form id="random-search-form">
                     <label for="random-originAddress" class="search2 kr-font">출발지 검색하기</label><br>
-                    <input class="kr2" type="text" id="random-originAddress" name="random-originAddress"
-                           placeholder="출발지를 입력하세요" aria-label="Search" aria-describedby="search-addon">
+                    <input class="kr2" type="text" id="random-originAddress" name="random-originAddress" placeholder="출발지를 입력하세요" aria-label="Search" aria-describedby="search-addon">
                     <div class="btn-group" role="group" aria-label="Default button group">
                         <button type='button' class='w-btn2 w-btn-indigo' id='random-search-origin'>검색</button>
                         <button type='button' class='w-btn2 w-btn-indigo' id='random-current-location'>현재 위치 추가
                         </button>
                     </div>
-                    <div>
                         <label for="random-destinationAddress" class="search2 kr-font">목적지 검색하기</label><br>
                         <input class="kr2" type="text" id="random-destinationAddress" name="random-destinationAddress"
                                placeholder="목적지를 입력하세요">
+                    <div class="btn-group" role="group" aria-label="Default button group">
                         <button type='button' class='w-btn2 w-btn-indigo' id='random-search-destination'>검색</button>
                     </div>
-                    <div>
+                    <div class="btn-group" role="group" aria-label="Default button group">
                         <label for="random-redius" class="search2 kr-font">반경:</label><br>
                         <input class="kr2" type="text" id="random-redius" name="random-redius"
                                placeholder="반경을 입력하세요"><br>
@@ -46,6 +45,7 @@
     </div>
 </div>
 <!-- 여기에 실제 자바스크립트 파일 경로를 입력하세요 -->
+<script src="/js/waypoints.js" type="text/javascript"></script>
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <!-- 카카오 우편번호 서비스 -->
 
