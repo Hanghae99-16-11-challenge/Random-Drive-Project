@@ -61,6 +61,7 @@ function makeHistoryMap(routeId) {
     fetch('/api/route/' + routeId)
         .then(response => response.json())
         .then(data => {
+            responseData = data;
             if (!map) {
                 map = new kakao.maps.Map(document.getElementById('map'), {
                     level: 3
@@ -96,7 +97,6 @@ function makeHistoryMap(routeId) {
             for(let road of data.roads){
                 let path = [];
                 for(let i=0; i<road.vertexes.length; i+=2){
-                    console.log("vertexes: ", road.vertexes[i], road.vertexes[i+1]);
                     path.push(new kakao.maps.LatLng(road.vertexes[i+1], road.vertexes[i]));
                 }
 
@@ -280,10 +280,17 @@ function getToken() {
 function onClick_StartNavi_navi()
 {
     pathData = responseData;
-    getNextGuidPoint(false);
-    getGuidPoint(true);
-    // startCorutine();
+    if (type === 'save') {
+        // getSaveNextGuidPoint(false);
+        // getSaveGuidPoint(true);
+        // // startCorutine();
+    }
+    else {
+        getNextGuidPoint(false);
+        getGuidPoint(true);
+        startCorutine();
 
+    }
 
     //guid_info
     if(!document.getElementById("input_StartNavi").classList.contains("disabled"))
@@ -291,13 +298,21 @@ function onClick_StartNavi_navi()
     if(document.getElementById("guid_info").classList.contains("disabled"))
         document.getElementById("guid_info").classList.remove("disabled");
 
-    if (pathData != null)
-    {
-        let startPoint = pathData.routes[0].sections[0].guides[0];
-        update(startPoint.y, startPoint.x);
 
-        map.setLevel(3, {animate: true});// 사용시 보이는 위치 달라짐
-        panTo(startPoint.y, startPoint.x);
+    if (pathData != null) {
+        if (type === 'save') {
+            // update(pathData.roads(0).vertexes[1], pathData.roads(0).vertexes[0]);
+            // map.setLevel(3, {animate: true});// 사용시 보이는 위치 달라짐
+            // panTo(pathData.roads(0).vertexes[1], pathData.roads(0).vertexes[0]);
+        }
+
+        else {
+            let startPoint = pathData.routes[0].sections[0].guides[0];
+            update(startPoint.y, startPoint.x);
+
+            map.setLevel(3, {animate: true});// 사용시 보이는 위치 달라짐
+            panTo(startPoint.y, startPoint.x);
+        }
     }
 }
 function onClick_StopNavi_navi()

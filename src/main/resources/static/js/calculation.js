@@ -488,3 +488,103 @@ function panTo(lat , lng) {
     // 만약 이동할 거리가 지도 화면보다 크면 부드러운 효과 없이 이동합니다
     map.panTo(moveLatLon);
 }
+
+function getSaveGuidPoint(marked = true)
+{
+    var temp_gui = pathData.guides[Math.min(naviInfo_GuidIndex, (pathData.guides.length - 1))];
+
+    if (marked)
+    {
+        var stateText = '';
+        switch (naviInfo_State)
+        {
+            case -1:
+                stateText = '경로가 없음';
+                break;
+            case 0:
+                stateText = '도착 하였습니다';
+                break;
+            case  1:
+                stateText = '다음 안내 지점';
+                break;
+            case  2:
+                stateText = '경유지 도착';
+                break;
+            case 3:
+                stateText = '곧 목적지 입니다';
+                break;
+            default:
+                stateText = '';
+        }
+
+        EditMark(naviInfoMark, naviInfoText, temp_gui.y, temp_gui.x, stateText);
+    }
+
+    return temp_gui;
+}
+//다음에 올 안내 정보를 찾음 (Section, Guid 인덱스 을 저장)
+// 반환이 0 일때 이미 도착지점일때 , -1 : 유효하지 않은 경로일때 , 1 : 성공 , 2 : 구간 시작점, 3 : 다음이 도착지점일때
+function getSaveNextGuidPoint(add = true)
+{
+    getSaveGuidPoint(true);
+
+    {
+        try {
+            pathData.guides[1];
+        }catch (e)
+        {
+            console.log(e.message);
+
+            naviInfo_State = -1;
+            return -1;
+        }
+    }//유효성 검사
+
+
+
+    if ((naviInfo_GuidIndex + 1) === (pathData.guides.length - 1))
+    {
+        if (add)
+        {
+            // naviInfo_SectionIndex = naviInfo_SectionIndex + 1;/xxx
+            naviInfo_GuidIndex = naviInfo_GuidIndex + 1;
+        }
+
+        // console.log("곧 목적지 입니다. => " + naviInfo_SectionIndex + " : " + naviInfo_GuidIndex);
+        naviInfo_State = 3;
+        return 3;
+    }
+    else if (((naviInfo_GuidIndex + 1) > (pathData.guides.length - 1)))
+    {
+        // console.log("이미 목적지 입니다");
+        // naviInfo_SectionIndex = naviInfo_SectionIndex + 1;
+        // naviInfo_GuidIndex = naviInfo_GuidIndex + 1;
+
+        naviInfo_State = 0;
+        return 0;
+    }
+
+
+    if ((naviInfo_GuidIndex + 1) >= pathData.guides.length)
+    {
+        if (add)
+        {
+            naviInfo_SectionIndex = naviInfo_SectionIndex + 1;
+            naviInfo_GuidIndex = 1;
+        }
+
+        // console.log("경유지 도착 => " + naviInfo_SectionIndex + " : " + naviInfo_GuidIndex);
+        naviInfo_State = 2;
+        return 2;
+    }else
+    {
+        if (add)
+        {
+            naviInfo_GuidIndex = naviInfo_GuidIndex + 1;
+        }
+
+        // console.log("안내 지점 =>" + naviInfo_SectionIndex + " : " + naviInfo_GuidIndex);
+        naviInfo_State = 1;
+        return 1;
+    }
+}
