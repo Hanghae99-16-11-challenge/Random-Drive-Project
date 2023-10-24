@@ -148,8 +148,13 @@ function makeRandomNavi(originAddress, destinationAddress, redius) {
 
 // 반경 기반 랜덤 길찾기 동작
 function makeAllRandomNavi(originAddress, redius) {
-    setToken();
-    fetch('/all-random-route?originAddress=' + originAddress  + '&redius=' + redius)
+    const auth = getToken();
+    fetch(`/all-random-route?originAddress=${originAddress}&redius=${redius}`, {
+        method: 'GET',
+        headers: {
+            'Authorization': auth // 토큰을 Authorization 헤더에 실어 보냄
+        }
+    })
         .then(response => response.json())
         .then(data => {
             responseData = data;

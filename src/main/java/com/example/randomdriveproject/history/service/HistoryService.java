@@ -8,6 +8,8 @@ import com.example.randomdriveproject.history.entity.Route;
 import com.example.randomdriveproject.history.repository.BoundRepository;
 import com.example.randomdriveproject.history.repository.RoadRepository;
 import com.example.randomdriveproject.history.repository.RouteRepository;
+import com.example.randomdriveproject.navigation.random.entity.RandomDestination;
+import com.example.randomdriveproject.navigation.random.repository.RandomDestinationRepository;
 import com.example.randomdriveproject.request.dto.KakaoRouteAllResponseDto;
 import com.example.randomdriveproject.user.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -25,11 +27,17 @@ public class HistoryService {
     private final RouteRepository routeRepository;
     private final BoundRepository boundRepository;
     private final RoadRepository roadRepository;
+    private final RandomDestinationRepository randomDestinationRepository;
 
     public void saveHistory(KakaoRouteAllResponseDto requestDto, String originAddress, String destinationAddress, String mapType, User user) {
         for (KakaoRouteAllResponseDto.RouteInfo routeInfo : requestDto.getRoutes()) {
             KakaoRouteAllResponseDto.Summary summary = routeInfo.getSummary();
             KakaoRouteAllResponseDto.Section section = routeInfo.getSections()[0]; // 첫 번째 Section을 사용하겠습니다.
+
+            if (mapType.equals("live-all-random")) {
+                RandomDestination olderRandomDestination = randomDestinationRepository.findByUsername(user.getUsername());
+                destinationAddress = olderRandomDestination.getDestinationAddress();
+            }
 
             // Route 객체 생성
             Route route = new Route(originAddress, destinationAddress, mapType, summary.getDuration(), summary.getDistance(), user);
