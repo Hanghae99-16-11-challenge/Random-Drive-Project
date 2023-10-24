@@ -40,6 +40,9 @@ public class Route extends Timestamped{
     @OneToMany(mappedBy = "route", orphanRemoval = true)
     private List<Road> roads = new ArrayList<>();
 
+    @OneToMany(mappedBy = "route", orphanRemoval = true)
+    private List<Guide> guides = new ArrayList<>();
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user = new User();

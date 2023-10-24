@@ -179,6 +179,10 @@ public class KakaoRouteAllResponseDto {
             return roads;
         }
 
+        public Guide[] getGuides() {
+            return guides;
+        }
+
         // Getter, Setter, toString 등 필요한 메서드들은 생략
     }
 
@@ -252,6 +256,38 @@ public class KakaoRouteAllResponseDto {
 
         @JsonProperty("road_index")
         private int roadIndex;
+
+        public String getName() {
+            return name;
+        }
+
+        public double getX() {
+            return x;
+        }
+
+        public double getY() {
+            return y;
+        }
+
+        public int getDistance() {
+            return distance;
+        }
+
+        public int getDuration() {
+            return duration;
+        }
+
+        public int getType() {
+            return type;
+        }
+
+        public String getGuidance() {
+            return guidance;
+        }
+
+        public int getRoadIndex() {
+            return roadIndex;
+        }
 
         // Getter, Setter, toString 등 필요한 메서드들은 생략
     }
