@@ -240,7 +240,8 @@ function saveRoute(data, originAddress, destinationAddress) {
         body: JSON.stringify({
             requestData: data, // KakaoRouteAllResponseDto 객체
             originAddress: decodedOriginAddress,
-            destinationAddress: decodedDestinationAddress
+            destinationAddress: decodedDestinationAddress,
+            mapType: type
         })
     })
 }

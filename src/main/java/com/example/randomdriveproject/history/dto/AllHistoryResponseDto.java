@@ -22,6 +22,9 @@ public class AllHistoryResponseDto {
     @JsonProperty("destinationAddress")
     private String destinationAddress;
 
+    @JsonProperty("mapType")
+    private String mapType;
+
     @JsonProperty("duration")
     private int duration;
 

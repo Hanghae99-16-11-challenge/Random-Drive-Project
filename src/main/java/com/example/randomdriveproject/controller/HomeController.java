@@ -77,15 +77,7 @@ public class HomeController {
     @GetMapping("/histories")
     @Operation(summary = "저장한 경로 조회", description = "저장한 경로를 조회 합니다.")
     public String showHistories(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return "history/histories";
-    }
-
-    @GetMapping("/history/{routeId}")
-    @Operation(summary = "저장한 경로 선택 조회 ", description = "저장한 경로 중 원하는 경로를 조회합니다.")
-    public String showHistoryDetail(@PathVariable Long routeId, Model model) {
-        model.addAttribute("routeId", routeId);
-
-        return "history/historyDetail";
+        return "histories";
     }
 
     @GetMapping("/navi/{type}/{routeId}/{originAddress}/{destinationAddress}/{redius}")
