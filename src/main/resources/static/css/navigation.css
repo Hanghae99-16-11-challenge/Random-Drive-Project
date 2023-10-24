@@ -4,3 +4,25 @@
     display: none;
 }
 
+.guid-button {
+    position: fixed;
+    height: auto;
+    bottom: 15px;
+    z-index: 2;
+    /* background-color: rgba(50,50,50,0.3); */
+    width: 80%;
+    left: 10%;
+    display: grid;
+
+    margin: 0.5rem auto;
+    background: #3949d5;
+    color: white;
+    font-family: "SDSamliphopangche_Basic", sans-serif;
+    font-size: 0.9rem;
+    text-align: center;
+    line-height: 3rem;
+    align-items: center;
+    /*justify-content: center;*//*space-around*/
+    cursor: pointer;
+    border-radius: 2rem;
+}

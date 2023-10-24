@@ -151,6 +151,8 @@ function update(lat, lng)
             return;
         }
 
+        update_GuidInfo();
+
         // pathData.routes[0].sections[0].roads[0].vertexes[1] -> lat (길 기준)
 
         var linePath_Calculate = leftDistance_road(lat, lng);
@@ -303,6 +305,10 @@ function leftDistance_road(lat, lng)
             pathLeftDuration = leftDur + (currectPath.duration * (leftNextPointDis/nextLineDis));
         }
     }
+
+    nextGuidDistacne = leftNextPointDis;
+    nexGuidDuration = (currectPath.duration * (leftNextPointDis/nextLineDis));
+
     console.log("==> 목적지 도착까지 남은 거리 : " + pathLeftDistance.toFixed(2) + "m / 남은 시간 : " + pathLeftDuration.toFixed(2) + "s");
 
     let polyline = new kakao.maps.Polyline({
@@ -326,8 +332,9 @@ function leftDistance_road(lat, lng)
 function startNavi()
 {
     getNextGuidPoint(false);
-    getGuidPoint();
+    getGuidPoint(true);
     startCorutine();
+    update_GuidInfo();
 }
 function stopNavi()
 {
@@ -340,6 +347,7 @@ function stopNavi()
     naviInfoMark.setMap(null);
     naviInfoText.close();
 
+    stopCoroutine();
     clearPolylines();
 }
 

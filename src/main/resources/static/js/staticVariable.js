@@ -14,6 +14,8 @@ var naviInfo_State = -1;
 
 var pathLeftDistance = 0;
 var pathLeftDuration = 0;
+var nextGuidDistacne = 0;
+var nexGuidDuration = 0;
 
 
 let intervalId;
@@ -35,5 +37,7 @@ function startCorutine()
 function stopCoroutine()
 {
     clearInterval(intervalId);
+
+    intervalId = -1;
 }
 

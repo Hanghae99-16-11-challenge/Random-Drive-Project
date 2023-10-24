@@ -27,6 +27,9 @@ function reset()
 
     if (document.getElementById('input-radius').classList.contains("disabled"))
         document.getElementById('input-radius').classList.remove("disabled");
+
+    if (!document.getElementById('input_SavePath').classList.contains("disabled"))
+        document.getElementById('input_SavePath').classList.add("disabled");
 }
 function onClick_NormalPath()
 {
@@ -89,7 +92,6 @@ function onClick_StartGuid()
                         calculateCurrectToPoint(data);//디버그 - 정보 확인용
                         pathData = data;
                         startNavi();
-                        stopCoroutine();
 
                         if (!map) {
                             map = new kakao.maps.Map(document.getElementById('map'), {
@@ -160,7 +162,6 @@ function onClick_StartGuid()
                         calculateCurrectToPoint(data);//디버그 - 정보 확인용
                         pathData = data;
                         startNavi();
-                        stopCoroutine();//================================ 임시
 
                         if (!map) {
                             map = new kakao.maps.Map(document.getElementById('map'), {
@@ -235,7 +236,6 @@ function onClick_StartGuid()
 
                         pathData = data;
                         startNavi();
-                        stopCoroutine();//================================ 임시
 
                         if (!map) {
                             map = new kakao.maps.Map(document.getElementById('map'), {
@@ -299,17 +299,7 @@ function onClick_StartGuid()
     //=============== 현위치 업데이트를 시작하자마자 종료시킴 + 경로 저장 기능 주석 처리
     //=============== 중복 되는 요소 함수화 시키기
 }
-function onClick_CencleGuid()
-{
-    if (!document.getElementById('app_ChoosePath').classList.contains("disabled"))
-    {
-        document.getElementById('app_ChooseType').classList.remove("disabled");
-        document.getElementById('app_ChoosePath').classList.add("disabled");
-    }
 
-    RemoveInfoMart(startInfoMark);
-    RemoveInfoMart(endInfoMark);
-}
 // 0 -> 출발점 , 1 -> 목표지 , 현위치 버튼 눌렀을때
 function onClick_CurrectLocation(type)
 {
@@ -417,3 +407,61 @@ function onClick_SelectRadius()
     console.log("Select : " + document.getElementById('radiusSelector').value);
 }
 
+function update_GuidInfo()
+{
+    let data = getGuidPoint(false);
+    //data -> 다음 안내 지점
+    document.getElementById('guid-Distance').innerText = "전방 " + nextGuidDistacne.toFixed(1) + "m 에서 " + data.guidance;
+    document.getElementById('guid-EnterTime').innerText = "다음 안내 까지 : " + nexGuidDuration.toFixed(1) + "s";
+    document.getElementById('guid-Des-Distance').innerText = pathLeftDistance.toFixed(1) + "m";
+    document.getElementById('guid-Des-Time').innerText = pathLeftDuration.toFixed(1) + "s";
+}
+
+function onClick_StopNavi()
+{
+    reset();
+    stopNavi();
+}
+function onClick_ToggleLocUpdate()
+{
+    if (intervalId >= 0)
+    {
+        stopCoroutine();
+        console.warn("위치 업데이트 종료");
+    }else
+    {
+        startCorutine();
+        console.warn("위치 업데이트 시작");
+    }
+}
+
+function onClick_AskSave()
+{
+    if (!document.getElementById('app_GuidPath').classList.contains("disabled"))
+        document.getElementById('app_GuidPath').classList.add("disabled");
+
+    if (document.getElementById('input_SavePath').classList.contains("disabled"))
+        document.getElementById('input_SavePath').classList.remove("disabled");
+}
+function onClick_SavePath()
+{
+    console.log("try save path");
+
+    {
+        const auth = getToken();
+        fetch('/api/routes', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': auth // 인증 토큰을 Authorization 헤더에 추가
+            },
+            body: JSON.stringify({
+                requestData: pathData, // KakaoRouteAllResponseDto 객체
+                originAddress: StartPoint,
+                destinationAddress: DestinationPoint
+            })
+        })
+    }
+
+    onClick_StopNavi();
+}

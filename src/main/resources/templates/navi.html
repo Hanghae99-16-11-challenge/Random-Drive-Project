@@ -44,18 +44,18 @@
 
             <div class="app disabled" id = "app_ChoosePath" style="position: fixed;height: auto;bottom: 0px;z-index: 2;">
                 <div class="" style="display: flex; align-content: initial;" id = "input-start">
-                    <div style="align-content: center; width: 20%">
+                    <div style="align-content: center; width: 20%; min-width: 20px;">
                         <a class="button" onclick="onClick_CurrectLocation(0)">현위치</a>
                     </div>
-                    <div style="align-content: center; width: 80%">
+                    <div style="align-content: center; width: 80%; min-width: 20px;">
                         <a class="button" onclick="onClick_StartPoint()">출발지</a><!-- 주소 검색창 보이고 출발지 마크 추가-->
                     </div>
                 </div>
                 <div class="" style="display: flex; align-content: initial;" id = "input-Destination">
-                    <div style="align-content: center; width: 20%">
+                    <div style="align-content: center; width: 20%; min-width: 20px;">
                         <a class="button" onclick="onClick_CurrectLocation(1)">현위치</a>
                     </div>
-                    <div style="align-content: center; width: 80%">
+                    <div style="align-content: center; width: 80%; min-width: 20px;">
                         <a class="button" onclick="onClick_DestinationPoint()">목적지</a>
                     </div>
                 </div>
@@ -76,18 +76,51 @@
                         <a class="button" onclick="onClick_StartGuid()">안내 시작</a>
                     </div>
                     <div style="align-content: center; width: 50%">
-                        <a class="button" onclick="onClick_CencleGuid()">안내 취소</a>
+                        <a class="button" onclick="onClick_StopNavi()">안내 취소</a>
                     </div>
                 </div>
             </div>
 
-            <div class="app disabled" id ="app_GuidPath" style="position: fixed;height: auto;bottom: 0px;z-index: 2;background-color: rgba(50,50,50,0.3);">
 
+            <div class="guid-button disabled" id ="app_GuidPath" style="/* background-color: rgba(50,50,50,0.3); */">
+                <label id = "guid-Distance">전방 {남은거리}에서 {진행 방향}으로</label>
+                <label id = "guid-EnterTime">{다음 도로} 진입까지 : {남은 시간}</label>
+                <div class="" style="display: flex;width: 100%;justify-content: space-around;">
+                    <div style="align-content: center; width: 33%">
+                        <label>목표지 도착까지 </label>
+                    </div>
+                    <div style="align-content: center; width: 33%">
+                        <label id = "guid-Des-Distance">남은 거리</label>
+                    </div>
+                    <div style="align-content: center; width: 33%">
+                        <label id = "guid-Des-Time">남은 시간</label>
+                    </div>
+                </div>
+                <div class="" style="display: flex; align-content: center;">
+                    <div style="align-content: center; width: 80%">
+                        <label onclick="onClick_AskSave()">안내 종료</label>
+                    </div>
+                    <div style="align-content: center; width: 20%">
+                        <label  onclick="onClick_ToggleLocUpdate()">디버그</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="guid-button disabled" id ="input_SavePath" style="/* background-color: rgba(50,50,50,0.3); */">
+                <label>주행한 경로를 저장할까요?</label>
+                <div class="" style="display: flex; align-content: center;">
+                    <div style="align-content: center; width: 50%">
+                        <label onclick="onClick_SavePath()"> 예 </label>
+                    </div>
+                    <div style="align-content: center; width: 50%">
+                        <label  onclick="onClick_StopNavi()">아니오</label>
+                    </div>
+                </div>
             </div>
 
 
             <div class="app" id="app_ChooseType">
-                <div class="app-header">
+                <div class="app-header disabled"><!--------------------- 비활성화 함 -->
                     <div class="app-caption">Traveller</div>
                     <div class="input-group" style="width: 85%; margin: auto">
                         <input type="text" id="searchKeyword" class="form-control rounded" placeholder="주소를 입력하세요 - 길찾기" aria-label="Search" aria-describedby="search-addon">
