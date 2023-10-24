@@ -64,5 +64,5 @@ document.getElementById('all-random-search-form').addEventListener('submit', fun
     var originAddress = document.getElementById('all-random-originAddress').value;
     var redius = document.getElementById('all-random-redius').value;
 
-    window.location.href = 'navi/' + 'live-all-random' + '/0/' + originAddress + '/' + redius + '/0';
+    window.location.href = 'navi/' + 'live-all-random' + '/0/' + originAddress + '/route/' + redius;
 });

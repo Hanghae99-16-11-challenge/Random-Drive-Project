@@ -92,8 +92,14 @@ function extractOriginAddressParts(address) {
 
 function extractDestinationAddressParts(address) {
     const parts = address.split(' ');
+    const regex = /\d$/;
     if (parts.length >= 4) {
-        return `${parts[1]} ${parts[2]} ${parts[3]}`;
+        const str = parts[3];
+        const endsWithNumber = regex.test(str);
+        if (endsWithNumber)
+            return `${parts[1]} ${parts[2]}`
+        else
+            return `${parts[1]} ${parts[2]} ${parts[3]}`;
     }
     return address; // 두 번째와 세 번째 부분이 없는 경우 전체 주소 반환
 }

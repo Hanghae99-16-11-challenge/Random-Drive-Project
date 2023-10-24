@@ -74,5 +74,5 @@ document.getElementById('random-search-form').addEventListener('submit', functio
     var destinationAddress = document.getElementById('random-destinationAddress').value;
     var redius = document.getElementById('random-redius').value;
 
-    window.location.href = 'navi/' + 'live-random' + '/0/' + originAddress + '/' + destinationAddress + '/' + redius + '/0';
+    window.location.href = 'navi/' + 'live-random' + '/0/' + originAddress + '/' + destinationAddress + '/' + redius;
 });
