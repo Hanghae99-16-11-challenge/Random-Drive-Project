@@ -79,7 +79,7 @@ table {
 }
 
 th, td {
-    font-size: 0.9rem; /* 원하는 크기로 조절하세요. */
+    font-size: 0.8rem; /* 원하는 크기로 조절하세요. */
     padding: 1rem;
     text-align: center;
 }
@@ -90,7 +90,7 @@ thead {
 }
 
 .logout-button {
-    font-size: 0.9rem; /* 버튼의 텍스트 크기를 작게 조절 */
+    font-size: 0.8rem; /* 버튼의 텍스트 크기를 작게 조절 */
     padding: 0.3rem 0.7rem; /* 버튼의 여백을 작게 조절 */
     background-color: #ff6347; /* 로그아웃 버튼의 배경색을 지정 */
     color: white; /* 텍스트 색상을 흰색으로 지정 */
@@ -99,7 +99,8 @@ thead {
     position: absolute;
     bottom: 0;
     right: 0;
-    font-family: "Oxygen Mono", sans-serif;
+    font-family: "SDSamliphopangche_Basic", sans-serif;
+    border-radius: 20px;
 }
 
 .logout-button:hover {
@@ -131,6 +132,7 @@ tbody tr:hover {
     width: 150px; /* 첫 번째와 두 번째, 세 번째 칸의 너비 설정 */
 }
 
+/* 랜덤 또는 랜덤이 아니면 색상을 변경 */
 #historyTableBody tr[data-maptype="live"] {
     background-color: #3498db; /* 푸른색 배경 */
     color: white; /* 텍스트 색상을 흰색으로 설정 */
