@@ -276,3 +276,16 @@ function getToken() {
 
 // 상세교통상황 표시
 // map.addOverlayMapTypeId(kakao.maps.MapTypeId.TRAFFIC);
+
+
+function onClick_StartNavi_navi()
+{
+    pathData = responseData;
+    // getNextGuidPoint(false);
+    getGuidPoint(true);
+    // startCorutine();
+}
+function onClick_StopNavi_navi()
+{
+    stopNavi();
+}
