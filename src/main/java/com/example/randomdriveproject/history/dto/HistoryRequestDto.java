@@ -16,4 +16,6 @@ public class HistoryRequestDto {
     private String originAddress;
     @JsonProperty("destinationAddress")
     private String destinationAddress;
+    @JsonProperty("mapType")
+    private String mapType;
 }

@@ -26,7 +26,7 @@ public class HistoryController {
     public ResponseEntity<String> saveRoutes(@RequestBody HistoryRequestDto requestDto,
                                              @AuthenticationPrincipal UserDetailsImpl userDetails) {
         historyService.saveHistory(requestDto.getRequestData(),
-                requestDto.getOriginAddress(), requestDto.getDestinationAddress(),
+                requestDto.getOriginAddress(), requestDto.getDestinationAddress(), requestDto.getMapType(),
                 userDetails.getUser());
         return ResponseEntity.ok("Data received successfully"); // 성공 응답
     }

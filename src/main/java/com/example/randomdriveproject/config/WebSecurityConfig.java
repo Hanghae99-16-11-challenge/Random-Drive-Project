@@ -66,12 +66,6 @@ public class WebSecurityConfig {
         http.authorizeHttpRequests((authorizeHttpRequests) ->
                 authorizeHttpRequests
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용 설정
-//                        .requestMatchers("/").permitAll() // 메인 페이지 요청 허가
-//                        .requestMatchers("/navigation.js").permitAll() // 메인 페이지 요청 허가
-//                        .requestMatchers("/navigation").permitAll() // 메인 페이지 요청 허가
-//                        .requestMatchers("/api/user/**").permitAll() // '/api/user/'로 시작하는 요청 모두 접근 허가
-//                        .anyRequest().authenticated() // 그 외 모든 요청 인증처리
-//                        .requestMatchers("/route/**").authenticated()
                         .requestMatchers("/").authenticated()
                         .anyRequest().permitAll()
 
@@ -80,7 +74,7 @@ public class WebSecurityConfig {
         http.formLogin((formLogin) ->
                 formLogin
                         .loginPage("/api/user/login-page").permitAll()
-                        .defaultSuccessUrl("/home", true) // 로그인 성공 후 이동할 페이지
+                        .defaultSuccessUrl("/api/home", true) // 로그인 성공 후 이동할 페이지, 카카오 로그인이 안될때 확인해보기
                         .failureUrl("/api/user/login-page?error") // 로그인 실패 시 명시적으로 에러 파라미터 추가
         );
 

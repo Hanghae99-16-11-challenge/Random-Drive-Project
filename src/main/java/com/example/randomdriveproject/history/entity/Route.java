@@ -25,6 +25,9 @@ public class Route extends Timestamped{
     @Column(name = "destinationAddress", nullable = false)
     private String destinationAddress;
 
+    @Column(name = "mapType", nullable = false)
+    private String mapType;
+
     @Column(name = "duration", nullable = false)
     private int duration;
 
@@ -37,13 +40,17 @@ public class Route extends Timestamped{
     @OneToMany(mappedBy = "route", orphanRemoval = true)
     private List<Road> roads = new ArrayList<>();
 
+    @OneToMany(mappedBy = "route", orphanRemoval = true)
+    private List<Guide> guides = new ArrayList<>();
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user = new User();
 
-    public Route(String originAddress, String destinationAddress, int duration, int distance, User user) {
+    public Route(String originAddress, String destinationAddress, String mapType, int duration, int distance, User user) {
         this.originAddress = originAddress;
         this.destinationAddress = destinationAddress;
+        this.mapType = mapType;
         this.duration = duration;
         this.distance = distance;
         this.user = user;

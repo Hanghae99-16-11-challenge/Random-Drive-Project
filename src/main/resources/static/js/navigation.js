@@ -25,7 +25,7 @@ function handleCurrentLocationClick() {
         fetch(
             'https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x=' + lon + '&y=' + lat,
             {
-                headers: { Authorization: 'KakaoAK 8718b48048bf8ca4325b869cb07bb294' },
+                headers: { Authorization: 'KakaoAK 8718b48048bf8ca4325b869cb07bb294' }, //rest api
             }
         )
             .then((response) => response.json())

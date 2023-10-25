@@ -1,10 +1,13 @@
 package com.example.randomdriveproject.navigation.random.service;
 
+import com.example.randomdriveproject.navigation.random.entity.RandomDestination;
+import com.example.randomdriveproject.navigation.random.repository.RandomDestinationRepository;
 import com.example.randomdriveproject.request.dto.DocumentDto;
 import com.example.randomdriveproject.request.dto.KakaoApiResponseDto;
 import com.example.randomdriveproject.request.dto.KakaoRouteAllResponseDto;
 import com.example.randomdriveproject.request.service.KakaoAddressSearchService;
 import com.example.randomdriveproject.request.service.RandomKakaoCategorySearchService;
+import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,13 +29,12 @@ public class RandomKakaoRouteSearchService {
     private final RestTemplate restTemplate;
     private final KakaoAddressSearchService kakaoAddressSearchService;
     private final RandomKakaoCategorySearchService kakaoCategorySearchService;
+    private final RandomDestinationRepository randomDestinationRepository;
 
     @Value("${kakao.rest.api.key}")
     private String kakaoRestApiKey;
 
-
-    public KakaoRouteAllResponseDto requestRandomWays(String originAddress, Integer redius) {
-
+    public KakaoRouteAllResponseDto requestAllRandomWay(String username, String originAddress, Integer redius) {
 
        if (ObjectUtils.isEmpty(originAddress) || ObjectUtils.isEmpty(redius)) return null;
 
@@ -40,7 +42,7 @@ public class RandomKakaoRouteSearchService {
         DocumentDto origin = kakaoAddressSearchService.requestAddressSearch(originAddress).getDocumentDtoList().get(0);
 
         /***
-         * 목적지와 경유지 값을 반경으로 계산해서 가져오는 메소드
+         목적지와 경유지 값을 반경으로 계산해서 가져오는 메소드
          ***/
         KakaoApiResponseDto responses = kakaoCategorySearchService.requestPharmacyCategorySearch(origin.getLatitude(), origin.getLongitude(), redius);
 
@@ -61,12 +63,18 @@ public class RandomKakaoRouteSearchService {
         DocumentDto destination = responses.getDocumentDtoList().get(destinationCnt);
         DocumentDto waypoints = responses.getDocumentDtoList().get(waypointsCnt);
 
+        // 목적지 DB에 남김, 만일 동일 사용자가 이미 목적지를 저장해 놓았다면, 삭제
+        RandomDestination randomDestination = new RandomDestination(username, destination.getAddressName());
+        RandomDestination olderRandomDestination = randomDestinationRepository.findByUsername(username);
+        if (olderRandomDestination != null)
+            randomDestinationRepository.delete(olderRandomDestination);
+        randomDestinationRepository.save(randomDestination);
+
         /***
-         * 요청 헤더 만드는 공식
+         요청 헤더 만드는 공식
          ***/
 
         return makeRequestForm(origin,destination,waypoints);
-
     }
 
     public KakaoRouteAllResponseDto requestRamdomWay(String originAddress, String destinationAddress,Integer redius) {
