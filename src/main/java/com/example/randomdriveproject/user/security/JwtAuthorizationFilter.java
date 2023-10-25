@@ -64,9 +64,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 objectMapper.writeValue(res.getWriter(), responseDto);
                 return;
             }
-        }else
-        {
-            log.error("토큰 없음");
         }
 
         filterChain.doFilter(req, res);
