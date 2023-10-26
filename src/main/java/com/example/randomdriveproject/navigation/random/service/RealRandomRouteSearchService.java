@@ -36,6 +36,7 @@ public class RealRandomRouteSearchService {
     @Value("${kakao.rest.api.key}")
     private String kakaoRestApiKey;
 
+    // 반경 기반 랜덤 길찾기
     public KakaoRouteAllResponseDto requestAllRandomWay(String username, String originAddress, Integer distance, Integer count) {
 
         if (ObjectUtils.isEmpty(originAddress) || ObjectUtils.isEmpty(distance)) return null;
@@ -56,6 +57,24 @@ public class RealRandomRouteSearchService {
         if (olderRandomDestination != null)
             randomDestinationRepository.delete(olderRandomDestination);
         randomDestinationRepository.save(randomDestination);
+
+        List<RandomDocumentDto> waypoints = getWayPoints(originY, originX, destination.getLatitude(), destination.getLongitude(), count);
+
+        return makeRequestForm(origin,destination,waypoints);
+    }
+
+    // 목적지 기반 랜덤 길찾기
+    public KakaoRouteAllResponseDto requestRandomWay(String originAddress, String destinationAddress, Integer count) {
+
+        if (ObjectUtils.isEmpty(originAddress) || ObjectUtils.isEmpty(count) || ObjectUtils.isEmpty(destinationAddress)) return null;
+
+        // 출발지 주소를 좌표로 변환
+        DocumentDto origin = kakaoAddressSearchService.requestAddressSearch(originAddress).getDocumentDtoList().get(0);
+        double originY = origin.getLatitude();
+        double originX = origin.getLongitude();
+
+        //목적지 주소를 좌표로 전환
+        DocumentDto destination = kakaoAddressSearchService.requestAddressSearch(destinationAddress).getDocumentDtoList().get(0);
 
         List<RandomDocumentDto> waypoints = getWayPoints(originY, originX, destination.getLatitude(), destination.getLongitude(), count);
 
