@@ -51,6 +51,9 @@ public class RealRandomRouteSearchService {
         // 목적지를 거리 기반으로 무작위적으로 가져오는 메소드
         DocumentDto destination = getDestination(originY, originX, convertedDistance);
 
+        double destinationY = destination.getLatitude();
+        double destinationX = destination.getLongitude();
+
         // 목적지 DB에 남김, 만일 동일 사용자가 이미 목적지를 저장해 놓았다면, 삭제
         RandomDestination randomDestination = new RandomDestination(username, destination.getAddressName());
         RandomDestination olderRandomDestination = randomDestinationRepository.findByUsername(username);
@@ -58,9 +61,17 @@ public class RealRandomRouteSearchService {
             randomDestinationRepository.delete(olderRandomDestination);
         randomDestinationRepository.save(randomDestination);
 
-        List<RandomDocumentDto> waypoints = getWayPoints(originY, originX, destination.getLatitude(), destination.getLongitude(), count);
-
+        // 선형 랜덤 경유지 추천
+        List<RandomDocumentDto> waypoints = getWayPointsAroundLine(originY, originX, destinationY, destinationX, count);
         return makeRequestForm(origin,destination,waypoints);
+
+        // 박스형 랜덤 경유지
+//        List<RandomDocumentDto> waypoints = getWayPointsInBox(originY, originX, destinationY, destinationX, count);
+//        return makeRequestForm(origin,destination,waypoints);
+
+        // 순환형 랜덤 경유지
+//        List<RandomDocumentDto> waypoints = getWayPointsCircular(originY, originX, convertedDistance/2, count);
+//        return makeRequestForm(origin, origin, waypoints);
     }
 
     // 목적지 기반 랜덤 길찾기
@@ -76,11 +87,15 @@ public class RealRandomRouteSearchService {
         //목적지 주소를 좌표로 전환
         DocumentDto destination = kakaoAddressSearchService.requestAddressSearch(destinationAddress).getDocumentDtoList().get(0);
 
-        List<RandomDocumentDto> waypoints = getWayPoints(originY, originX, destination.getLatitude(), destination.getLongitude(), count);
+//        List<RandomDocumentDto> waypoints = getWayPointsAroundLine(originY, originX, destination.getLatitude(), destination.getLongitude(), count);
+        List<RandomDocumentDto> waypoints = getWayPointsInBox(originY, originX, destination.getLatitude(), destination.getLongitude(), count);
 
         return makeRequestForm(origin,destination,waypoints);
+
+
     }
 
+    // 반환형 만들기
     private KakaoRouteAllResponseDto makeRequestForm(DocumentDto origin, DocumentDto destination, List<RandomDocumentDto> waypoints){
         Map<String,Object> uriData = new TreeMap<>();
         uriData.put("origin",new RandomDocumentDto(origin.getLongitude(),origin.getLatitude()));
@@ -101,11 +116,11 @@ public class RealRandomRouteSearchService {
 
     // 무작위 목적지 가져오기
     private DocumentDto getDestination(double originY, double originX, double distance) {
-        double radians = Math.toRadians(getRandomAngle());
+        double radians = Math.toRadians(getRandomAngle(360));
 
         double randomY = originY + distance * Math.sin(radians);
         double randomX = originX + distance * Math.cos(radians);
-        System.out.println("새로운 좌표: (" + randomY + ", " + randomX + ")");
+
         double tempY = randomY; // 임시 Y 좌표
         double tempX = randomX; // 임시 X 좌표
 
@@ -139,41 +154,104 @@ public class RealRandomRouteSearchService {
     }
 
     // 경유지 구하기 - 직선거리 주변 경유지
-    private List<RandomDocumentDto> getWayPoints(double originY, double originX, double destinationY, double destinationX, Integer count) {
+    private List<RandomDocumentDto> getWayPointsAroundLine(double originY, double originX, double destinationY, double destinationX, Integer count) {
         double distance = calculateDistance(originY, originX, destinationY, destinationX);
         double realDistance = distance * 100;
         List<RandomDocumentDto> wayPoints = new ArrayList<>();
-        if(count * 0.2 < distance) {
-            for (int i = 0; i < count; i++) {
-                double tempY = originY + (destinationY - originY) * i / count;
-                double tempX = originX + (destinationX - originX) * i / count;
-                KakaoApiResponseDto responses = kakaoCategorySearchService.requestPharmacyCategorySearch(tempY, tempX, 20);
-                int randomLength = responses.getDocumentDtoList().size();
-                Random rd = new Random();
-                int wayPointCnt = rd.nextInt(randomLength);
-                RandomDocumentDto wayPoint = new RandomDocumentDto(responses.getDocumentDtoList().get(wayPointCnt));
-                wayPoints.add(wayPoint);
-            }
-        }
-        else {
-            for (int i = 1; i <= count; i++) {
-                double tempY = originY + (destinationY - originY) * i / count;
-                double tempX = originX + (destinationX - originX) * i / count;
-                KakaoApiResponseDto responses = kakaoCategorySearchService.requestPharmacyCategorySearch(tempY, tempX, realDistance/count);
-                int randomLength = responses.getDocumentDtoList().size();
-                Random rd = new Random();
-                int wayPointCnt = rd.nextInt(randomLength);
-                RandomDocumentDto wayPoint = new RandomDocumentDto(responses.getDocumentDtoList().get(wayPointCnt));
-                wayPoints.add(wayPoint);
-            }
+        for (int i = 1; i <= count; i++) {
+            double tempY = originY + (destinationY - originY) * i / count;
+            double tempX = originX + (destinationX - originX) * i / count;
+            double redius = Math.min(realDistance/count, 20);
+            RandomDocumentDto wayPoint = getRandomWayPoint(tempY, tempX, redius);
+            wayPoints.add(wayPoint);
         }
         return wayPoints;
     }
 
-    private double getRandomAngle() {
+    // 경유지 구하기 - 정사각형 박스 내부 경유지
+    private List<RandomDocumentDto> getWayPointsInBox(double originY, double originX, double destinationY, double destinationX, Integer count) {
+        List<RandomDocumentDto> wayPoints = new ArrayList<>();
+        double middleY = (originY + destinationY) / 2;
+        double middleX = (originX + destinationX) / 2;
+        double distanceY = Math.abs(originY - destinationY);
+        double distanceX = Math.abs(originX - destinationX);
+        double sideLength = Math.max(distanceY, distanceX);
+
+        if (sideLength == distanceY) {
+            if(originY > middleY) {
+                for (int i = 0; i < count; i++) {
+                    Random rd = new Random();
+                    double randomY = originY - sideLength / count / 2  - sideLength / count * i;
+                    double randomX = middleX - sideLength / 2 + sideLength / count * rd.nextInt(count);
+                    double redius = Math.min(sideLength/count * 100, 20);
+                    RandomDocumentDto wayPoint = getRandomWayPoint(randomY, randomX, redius);
+                    wayPoints.add(wayPoint);
+                }
+            }
+            else {
+                for (int i = 0; i < count; i++) {
+                    Random rd = new Random();
+                    double randomY = originY + sideLength / count / 2  + sideLength / count * i;
+                    double randomX = middleX - sideLength / 2 + sideLength / count * rd.nextInt(count);
+                    double redius = Math.min(sideLength/count * 100, 20);
+                    RandomDocumentDto wayPoint = getRandomWayPoint(randomY, randomX, redius);
+                    wayPoints.add(wayPoint);
+                }
+            }
+        }
+        else {
+            if(originX > middleX) {
+                for (int i = 0; i < count; i++) {
+                    Random rd = new Random();
+                    double randomX = originX - sideLength / count / 2 - sideLength / count * i;
+                    double randomY = middleY - sideLength / 2 + sideLength / count * rd.nextInt(count);
+                    double redius = Math.min(sideLength/count * 100, 20);
+                    RandomDocumentDto wayPoint = getRandomWayPoint(randomY, randomX, redius);
+                    wayPoints.add(wayPoint);
+                }
+            }
+            else {
+                for (int i = 0; i < count; i++) {
+                    Random rd = new Random();
+                    double randomX = originX + sideLength / count / 2 + sideLength / count * i;
+                    double randomY = middleY - sideLength / 2 + sideLength / count * rd.nextInt(count);
+                    double redius = Math.min(sideLength/count * 100, 20);
+                    RandomDocumentDto wayPoint = getRandomWayPoint(randomY, randomX, redius);
+                    wayPoints.add(wayPoint);
+                }
+            }
+        }
+        return  wayPoints;
+    }
+
+    private List<RandomDocumentDto> getWayPointsCircular(double originY, double originX, double redius, Integer count) {
+        List<RandomDocumentDto> wayPoints = new ArrayList<>();
+
+        double degree = getRandomAngle(360);
+        double radian = Math.toRadians(degree);
+        double rediusY = originY + redius * Math.sin(radian);
+        double rediusX = originX + redius * Math.cos(radian);
+        System.out.println("중점 : " + rediusY + ", " + rediusX);
+        int rangeDegree = 360 / (count + 1);
+
+        for (int i = 0; i < count; i++) {
+            double wayPointRadian = Math.toRadians(degree + 180 + getRandomAngle(rangeDegree)+ rangeDegree * i);
+            System.out.println("각도 : " + wayPointRadian);
+            double wayPointY = rediusY + redius * Math.sin(wayPointRadian);
+            double wayPointX = rediusX + redius * Math.cos(wayPointRadian);
+            System.out.println("정점" + (i+1) + " : " + wayPointY + ", " + wayPointX);
+            RandomDocumentDto wayPoint = getRandomWayPoint(wayPointY, wayPointX, 2);
+            if (wayPoint != null)
+                wayPoints.add(wayPoint);
+        }
+        return wayPoints;
+    }
+
+    // 무작위 각도를 반환하는 메서드
+    private double getRandomAngle(int angleRange) {
         Random random = new Random();
         // 0부터 3600 사이의 무작위 정수를 얻음
-        int randomInt = random.nextInt(3601); // 0부터 3600까지의 정수
+        int randomInt = random.nextInt(angleRange * 10 + 1); // 랜덤 각도 구해줌
         // 정수를 10으로 나누어 각도를 얻음 (0.1 단위로)
         double angle = randomInt / 10.0;
         // 점검용
@@ -182,11 +260,22 @@ public class RealRandomRouteSearchService {
     }
 
     // 두 점 사이의 거리를 계산하는 메서드
-    public static double calculateDistance(double originY, double originX, double destinationY, double destinationX) {
+    private double calculateDistance(double originY, double originX, double destinationY, double destinationX) {
         double deltaY = destinationY - originY;
         double deltaX = destinationX - originX;
         // 유클리드 거리 계산
         return Math.sqrt(deltaY * deltaY + deltaX * deltaX);
+    }
+
+    // 특정 좌표 주변 경유지를 골라주는 메서드
+    private RandomDocumentDto getRandomWayPoint(double y, double x, double redius) {
+        Random rd = new Random();
+        KakaoApiResponseDto responses = kakaoCategorySearchService.requestPharmacyCategorySearch(y, x, redius);
+        int randomLength = responses.getDocumentDtoList().size();
+        if (randomLength == 0)
+            return null;
+        int wayPointCnt = rd.nextInt(randomLength);
+        return new RandomDocumentDto(responses.getDocumentDtoList().get(wayPointCnt));
     }
 
 }
