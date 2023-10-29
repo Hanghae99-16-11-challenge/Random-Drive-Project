@@ -343,9 +343,9 @@ function Update_GuidIndo_navi()
     // document.getElementById('guid-Des-Distance').innerText = pathLeftDistance.toFixed(1) + "m";
     // document.getElementById('guid-Des-Time').innerText = pathLeftDuration.toFixed(1) + "s";
 
-    console.log("전방 " + visibilityDistance(nextGuidDistacne) + " 에서 " + nextGuid.guidance);
-    console.log("다음 안내까지 : " + visibilityTime(nextGuidDuration));
-    console.log("도착까지  " + visibilityDistance(pathLeftDistance) + " / " + visibilityTime(pathLeftDuration));
+    // console.log("전방 " + visibilityDistance(nextGuidDistacne) + " 에서 " + nextGuid.guidance);
+    // console.log("다음 안내까지 : " + visibilityTime(nextGuidDuration));
+    // console.log("도착까지  " + visibilityDistance(pathLeftDistance) + " / " + visibilityTime(pathLeftDuration));
 
     document.getElementById('guid_ance').innerText
         = "전방 " + visibilityDistance(nextGuidDistacne) + " 에서\n" + nextGuid.guidance;

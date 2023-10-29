@@ -82,9 +82,6 @@ function updateMap(mouseEvent)
     // message += '경도는 ' + latlng.Ma + ' 입니다';
     // console.log(message);
 
-    console.log(responseData);
-    console.log(routeData);
-    console.log(pathData);
     // adapt_KakaoResponseToRouteData(pathData);//====값 검증용
     // update(latlng.Ma, latlng.La);
 
@@ -162,9 +159,7 @@ function update_refact(lat, lng)
 
             return;
         }
-
-
-        // update_GuidInfo();//======길찾기 정보 업데이트
+        
 
         {
             clearPolylines();
@@ -181,35 +176,7 @@ function update_refact(lat, lng)
 
             {
                 //roads 크기와 Guids 크기 같음 , 대신 Guids에는 출발지,도착지 구분하는 항목이 들어가있음 (그래서 길이,소요시간 값 없음)
-
-                // let currectIndex = {sec :-1, guid: -1};
-                // let progress_road = naviInfo_ProcessIndex;
-
-
-                {
-                    //                for (let sec = 0; sec < routeData.roads.length; sec++)
-                    //                 {
-                    //                     for (let guid = 0; guid < routeData.roads[sec].length; guid++, progress_road--)
-                    //                     {
-                    //                         // routeData.roads[sec][guid].value
-                    //
-                    //                         if (progress_road === 0)
-                    //                         {
-                    //                             currectIndex.sec = sec;
-                    //                             currectIndex.guid = guid;
-                    //                         }//다음 지점
-                    //
-                    //                         if (progress_road <= 0)
-                    //                         {
-                    //                             for(let i = 0; i < routeData.roads[sec][guid].length; i += 2)
-                    //                             {
-                    //                                 linePath_Calculate.push(new kakao.maps.LatLng(routeData.roads[sec][guid][i + 1], routeData.roads[sec][guid][i]));
-                    //                             }
-                    //                         }//지나가지 않은 경로
-                    //                     }
-                    //
-                    //                 }//지나가지 않은 경로 vertex 저장
-                }//Legacy - 지나가지 않은 경로 vertex 저장
+                
 
                 {
                     for (let progress = naviInfo_ProcessIndex; progress < routeData.guides.length - 2; progress++)
@@ -227,16 +194,8 @@ function update_refact(lat, lng)
 
                 {
                     let currectRoads = [];
-                    // let currectPathLine = [];
+                    let lastRoadIndex = -1;
 
-                    // if (currectIndex.sec < 0)
-                    // {
-                    //     let t_section = routeData.roads[routeData.roads.length - 1];
-                    //     currectRoads = t_section[t_section.length - 1];
-                    // }else
-                    // {
-                    //     currectRoads = routeData.roads[currectIndex.sec][currectIndex.guid - 1];
-                    // }
                     currectRoads = routeData.roads[naviInfo_ProcessIndex - 1];
 
 
@@ -248,10 +207,31 @@ function update_refact(lat, lng)
                             > calculateDistance(currectRoads.vertexes[1], currectRoads.vertexes[0], lat, lng))
                         {
                             currectPathLine.push(new kakao.maps.LatLng(currectRoads.vertexes[i + 1], currectRoads.vertexes[i]));
+                        }else
+                        {
+                            lastRoadIndex = i;
                         }
                     }
 
-                }//지나가고있는 도로의 Vertex 저장
+
+                    if (lastRoadIndex >= 0)
+                    {
+                        let vex = currectRoads.vertexes;
+
+                        let roadPartLength = calculateDistance(vex[lastRoadIndex + 3], vex[lastRoadIndex + 2],vex[lastRoadIndex + 1], vex[lastRoadIndex]);
+                        let PastToPos = calculateDistance(vex[lastRoadIndex + 1], vex[lastRoadIndex], lat, lng);
+                        let CurrectToPos = calculateDistance(vex[lastRoadIndex + 3], vex[lastRoadIndex + 2], lat, lng);
+
+                        // console.log("roadPartLength : " + (roadPartLength * 1000).toFixed(2)
+                        //     + " / " + (PastToPos * 1000).toFixed(2) + " - pos - " + (CurrectToPos * 1000).toFixed(2));
+
+                        if ((((PastToPos + CurrectToPos) - roadPartLength) * 1000) > offetUserRadius)
+                        {
+                            outOfPath();
+                        }
+                    }//비정확 하지만
+
+                }//지나가고있는 도로의 Vertex 저장 + 경로 이탈 감지
 
                 for (let progress = naviInfo_ProcessIndex; progress < routeData.guides.length; progress++)
                 {
@@ -268,7 +248,7 @@ function update_refact(lat, lng)
 
                 pathLeftDistance += nextGuidDistacne;
                 pathLeftDuration += nextGuidDuration;
-            }
+            }//경로 , 남은 시간 , 남은 거리 계산 + 경로 이탈 계산
 
             Update_GuidIndo_navi();
 
@@ -283,7 +263,7 @@ function update_refact(lat, lng)
             polyline.setMap(map);
 
             polylines.push(polyline); // 선을 배열에 추가
-        }//경로 그리기
+        }//경로 그리기 + 경로 계산
     }
 }
 
@@ -391,6 +371,11 @@ function panTo(lat , lng) {
     // 만약 이동할 거리가 지도 화면보다 크면 부드러운 효과 없이 이동합니다
     map.panTo(moveLatLon);
 }
+function outOfPath()
+{
+    console.warn("경로 이탈");
+}
+
 //=======================
 //  미사용 이지만 아직 의존성 있음
 
