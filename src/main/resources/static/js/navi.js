@@ -62,6 +62,7 @@ function makeHistoryMap(routeId) {
         .then(response => response.json())
         .then(data => {
             responseData = data;
+            routeData = data;
             if (!map) {
                 map = new kakao.maps.Map(document.getElementById('map'), {
                     level: 3
@@ -125,6 +126,7 @@ function makeNavi(originAddress, destinationAddress) {
         .then(response => response.json())
         .then(data => {
             responseData = data;
+            adapt_KakaoResponseToRouteData(data);
             makeLiveMap(data)
         })
         .catch(error => {
@@ -139,6 +141,7 @@ function makeRandomNavi(originAddress, destinationAddress, redius) {
         .then(response => response.json())
         .then(data => {
             responseData = data;
+            adapt_KakaoResponseToRouteData(data);
             makeLiveMap(data)
         })
         .catch(error => {
@@ -158,6 +161,7 @@ function makeAllRandomNavi(originAddress, redius) {
         .then(response => response.json())
         .then(data => {
             responseData = data;
+            adapt_KakaoResponseToRouteData(data);
             makeLiveMap(data)
         })
         .catch(error => {
@@ -279,18 +283,18 @@ function getToken() {
 
 function onClick_StartNavi_navi()
 {
-    pathData = responseData;
     if (type === 'save') {
         // getSaveNextGuidPoint(false);
         // getSaveGuidPoint(true);
         // startCorutine();
     }
     else {
-        getNextGuidPoint(false);
-        getGuidPoint(true);
+        // getNextGuidPoint(false);
+        // getGuidPoint(true);
         // startCorutine();
 
     }
+    updateMark();
 
     //guid_info
     if(!document.getElementById("input_StartNavi").classList.contains("disabled"))
@@ -299,7 +303,7 @@ function onClick_StartNavi_navi()
         document.getElementById("guid_info").classList.remove("disabled");
 
 
-    if (pathData != null) {
+    if (routeData != null) {
         if (type === 'save') {
             // update(pathData.roads(0).vertexes[1], pathData.roads(0).vertexes[0]);
             // map.setLevel(3, {animate: true});// 사용시 보이는 위치 달라짐
@@ -307,13 +311,16 @@ function onClick_StartNavi_navi()
         }
 
         else {
-            let startPoint = pathData.routes[0].sections[0].guides[0];
-            update(startPoint.y, startPoint.x);
 
-            map.setLevel(3, {animate: true});// 사용시 보이는 위치 달라짐
-            panTo(startPoint.y, startPoint.x);
         }
+
+        let startPoint = routeData.guides[0];
+        update(startPoint.y, startPoint.x);
+
+        map.setLevel(3, {animate: true});// 사용시 보이는 위치 달라짐
+        panTo(startPoint.y, startPoint.x);
     }
+
 }
 function onClick_StopNavi_navi()
 {
@@ -328,7 +335,8 @@ function onClick_StopNavi_navi()
 
 function Update_GuidIndo_navi()
 {
-    let nextGuid = getGuidPoint(false);
+    // let nextGuid = getGuidPoint(false);
+    let nextGuid = routeData.guides[naviInfo_ProcessIndex];
 
     // document.getElementById('guid-Distance').innerText = "전방 " + nextGuidDistacne.toFixed(1) + "m 에서 " + data.guidance;
     // document.getElementById('guid-EnterTime').innerText = "다음 안내 까지 : " + nexGuidDuration.toFixed(1) + "s";

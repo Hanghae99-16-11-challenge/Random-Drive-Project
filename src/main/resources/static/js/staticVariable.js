@@ -134,14 +134,29 @@ function adapt_KakaoResponseToRouteData(kakaoRes) {
         //출발지 - 경유지 / 경유지 ~ 목적지
         // == guides 와 roads 부분  이차 배열 형태를 일차 배열으로 바꿔서 설정
 
+
+        {
+            // routeData.roads = [];
+            //
+            // for (let sec = 0; sec < kakaoRes.routes[0].sections.length; sec++) {
+            //     routeData.roads.push([]);
+            //     for (let road = 0; road < kakaoRes.routes[0].sections[sec].roads.length; road++) {
+            //         routeData.roads[sec].push(kakaoRes.routes[0].sections[sec].roads[road].vertexes);
+            //     }
+            // }
+        }
         routeData.roads = [];
 
-        for (let sec = 0; sec < pathData.routes[0].sections.length; sec++) {
-            routeData.roads.push([]);
-            for (let road = 0; road < pathData.routes[0].sections[sec].roads.length; road++) {
-                routeData.roads[sec].push(pathData.routes[0].sections[sec].roads[road].vertexes);
+        for (let sec = 0; sec < kakaoRes.routes[0].sections.length; sec++) {
+            for (let road = 0; road < kakaoRes.routes[0].sections[sec].roads.length; road++) {
+                let vertexes = {
+                    vertexes : kakaoRes.routes[0].sections[sec].roads[road].vertexes
+                };
+
+                routeData.roads.push(vertexes);
             }
-        }
+        }//=================
+
 
         // for (let sec = 0; sec < pathData.routes[0].sections.length; sec++) {
         //     for (let road = 0; road < pathData.routes[0].sections[sec].roads.length; road++) {
@@ -166,10 +181,10 @@ function adapt_KakaoResponseToRouteData(kakaoRes) {
 
 
         routeData.guides = [];
-        routeData.guides.push(pathData.routes[0].sections[0].guides[0]);
-        for (let sec = 0; sec < pathData.routes[0].sections.length; sec++) {
-            for (let guid = 1; guid < pathData.routes[0].sections[sec].guides.length; guid++) {
-                routeData.guides.push(pathData.routes[0].sections[sec].guides[guid]);
+        routeData.guides.push(kakaoRes.routes[0].sections[0].guides[0]);
+        for (let sec = 0; sec < kakaoRes.routes[0].sections.length; sec++) {
+            for (let guid = 1; guid < kakaoRes.routes[0].sections[sec].guides.length; guid++) {
+                routeData.guides.push(kakaoRes.routes[0].sections[sec].guides[guid]);
             }
         }
 
