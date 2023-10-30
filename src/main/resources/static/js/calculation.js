@@ -382,8 +382,15 @@ function panTo(lat , lng) {
 }
 function outOfPath(lat, lng)
 {
-    remakeNavi(lat, lng);
-    clearNavi();
+
+    if (pathType() === 'live')
+    {
+        remakeNavi(lat, lng);
+        clearNavi();
+    }else
+    {
+        console.warn("경로 이탈시 재성성 미지원");
+    }
 
     console.warn("경로 이탈");
 }
