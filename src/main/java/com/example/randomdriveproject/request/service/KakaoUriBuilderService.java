@@ -19,6 +19,9 @@ public class KakaoUriBuilderService {
     // 카테고리 api
     private static final String KAKAO_LOCAL_CATEGORY_SEARCH_URL = "https://dapi.kakao.com/v2/local/search/category.json";
 
+    // 키워드 api
+    private static final String KAKAO_LOCAL_KEYWORD_SEARCH_URL = "https://dapi.kakao.com/v2/local/search/keyword.json";
+
 
     // 주소검색
     public URI buildUriByAddressSearch(String address) {
@@ -56,11 +59,35 @@ public class KakaoUriBuilderService {
         uriBuilder.queryParam("x", x);
         uriBuilder.queryParam("y", y);
         uriBuilder.queryParam("radius", meterRadius); // 반경 순
-        uriBuilder.queryParam("sort", "popularity"); // 인기도 순 정렬
+        uriBuilder.queryParam("sort", "popularity");
 
         URI uri = uriBuilder.build().encode().toUri();
 
         log.info("[KakaoAddressSearchService buildUriByCategorySearch] uri : {} ", uri);
+
+        return uri;
+    }
+
+//    https://dapi.kakao.com/v2/local/search/keyword.json?query=카카오&category_group_code=AT4
+//
+//    https://dapi.kakao.com/v2/local/search/keyword.json?query=카카오&CategoryGroupCode=AT4
+
+    // 키워드
+    public URI buildUriByKeywordSearch( String query){
+
+//        double meterRadius = radius * 1000;
+
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(KAKAO_LOCAL_KEYWORD_SEARCH_URL);
+        uriBuilder.queryParam("query", query);
+//        uriBuilder.queryParam("category_group_code", category);
+//        uriBuilder.queryParam("x", x);
+//        uriBuilder.queryParam("y", y);
+//        uriBuilder.queryParam("radius", meterRadius); // 반경 순
+//        uriBuilder.queryParam("sort", "popularity");
+
+        URI uri = uriBuilder.build().encode().toUri(); // encode 제거
+
+        log.info("***[KakaoAddressSearchService buildUriByKeywordSearch] uri : {} ", uri);
 
         return uri;
     }

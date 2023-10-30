@@ -7,7 +7,6 @@ import com.example.randomdriveproject.request.dto.KakaoApiResponseDto;
 import com.example.randomdriveproject.request.dto.KakaoRouteAllResponseDto;
 import com.example.randomdriveproject.request.service.KakaoAddressSearchService;
 import com.example.randomdriveproject.request.service.RandomKakaoCategorySearchService;
-import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +19,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j(topic = "KakaoRouteSearchService")
 @Service
@@ -44,12 +44,27 @@ public class RandomKakaoRouteSearchService {
         /***
          목적지와 경유지 값을 반경으로 계산해서 가져오는 메소드
          ***/
-        KakaoApiResponseDto responses = kakaoCategorySearchService.requestPharmacyCategorySearch(origin.getLatitude(), origin.getLongitude(), redius);
+        KakaoApiResponseDto responses = kakaoCategorySearchService.requestAttractionCategorySearch(origin.getLatitude(), origin.getLongitude(), redius);
+
+        List<String> addressNames = responses.getDocumentDtoList().stream()
+                .map(DocumentDto::getAddressName)
+                .collect(Collectors.toList());
+
+        log.info("getDocumentDtoList addressNames : {} " , addressNames.toString());
+
+        List<String> placeNames = responses.getDocumentDtoList().stream()
+                .map(DocumentDto::getPlaceName)
+                .collect(Collectors.toList());
+        log.info("getDocumentDtoList placeNames : {} " , placeNames.toString());
+        // DocumentDto 리스트 확인
+
 
         /***
          랜덤으로 다중 목적지와 경유지 만들기 알고리즘
          ***/
         int RandomLength = responses.getDocumentDtoList().size();
+
+
 
         Random rd = new Random();
 
@@ -57,8 +72,14 @@ public class RandomKakaoRouteSearchService {
         int waypointsCnt = rd.nextInt(RandomLength);
 
         if(destinationCnt == waypointsCnt){
+            if(destinationCnt == 0){
+                destinationCnt += 1;
+            }
             waypointsCnt = destinationCnt - 1;
+            // 인덱스 범위 오류 수정
         }
+        log.info("destinationCnt : {}",destinationCnt);
+        log.info("waypointCnt : {}",waypointsCnt);
 
         DocumentDto destination = responses.getDocumentDtoList().get(destinationCnt);
         DocumentDto waypoints = responses.getDocumentDtoList().get(waypointsCnt);
@@ -89,7 +110,7 @@ public class RandomKakaoRouteSearchService {
         /***
          * 목적지와 경유지 값을 반경으로 계산해서 가져오는 메소드
          ***/
-        KakaoApiResponseDto responses = kakaoCategorySearchService.requestPharmacyCategorySearch(origin.getLatitude(), origin.getLongitude(), redius);
+        KakaoApiResponseDto responses = kakaoCategorySearchService.requestAttractionCategorySearch(origin.getLatitude(), origin.getLongitude(), redius);
 
         /***
          랜덤으로 경유지 만들기 알고리즘

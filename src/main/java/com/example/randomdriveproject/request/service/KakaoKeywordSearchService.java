@@ -15,44 +15,30 @@ import java.net.URI;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class RandomKakaoCategorySearchService { // 특정 카테고리 -> 약국
+public class KakaoKeywordSearchService {
 
     private final KakaoUriBuilderService kakaoUriBuilderService;
-
     private final RestTemplate restTemplate;
 
     private static final String PARK_CATEGORY = "AT4";
-    private static final String CULTURE_CATEGORY = "CT1";
 
     @Value("${kakao.rest.api.key}")
     private String kakaoRestApiKey;
 
 
     // KakaoAddressSearch -> 주소 -> 위도,경도 -> 값을 매핑
-    public KakaoApiResponseDto requestAttractionCategorySearch(double y, double x, double radius){ // pharmacy -> 이름 수정해야됨
+    // 관광명소 기반
+    public KakaoApiResponseDto requestAttractionKeywordSearch(String query) {
 
-        URI uri = kakaoUriBuilderService.buildUriByCategorySearch(y, x, radius, PARK_CATEGORY);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.set(HttpHeaders.AUTHORIZATION, "KakaoAK " + kakaoRestApiKey);
-        HttpEntity httpEntity = new HttpEntity(headers);
-
-        // kakao api 호출
-        return restTemplate.exchange(uri, HttpMethod.GET, httpEntity, KakaoApiResponseDto.class).getBody();
-
-    }
-
-    public KakaoApiResponseDto requestCultureCategorySearch(double y, double x, double radius){ // pharmacy -> 이름 수정해야됨
-
-        URI uri = kakaoUriBuilderService.buildUriByCategorySearch(y, x, radius, CULTURE_CATEGORY);
+        URI uri = kakaoUriBuilderService.buildUriByKeywordSearch(query);
 
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.AUTHORIZATION, "KakaoAK " + kakaoRestApiKey);
         HttpEntity httpEntity = new HttpEntity(headers);
+        log.info("*** 키워드 주소 api");
 
         // kakao api 호출
         return restTemplate.exchange(uri, HttpMethod.GET, httpEntity, KakaoApiResponseDto.class).getBody();
-
     }
 
 }

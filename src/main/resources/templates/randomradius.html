@@ -9,6 +9,7 @@
             integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
     <link rel="stylesheet" href="/css/codePen.css">
+
 </head>
 <body>
 <div class="demo-container">
@@ -24,10 +25,21 @@
                     <input class="kr2" type="text" id="all-random-originAddress" name="all-random-originAddress"
                            placeholder="출발지를 입력하세요" aria-label="Search" aria-describedby="search-addon">
                     <div class="btn-group" role="group" aria-label="Default button group">
-                        <button type='button' class='w-btn w-btn-indigo' id='all-random-search-origin'>검색</button>
-                        <button type='button' class='w-btn w-btn-indigo' id='all-random-current-location'>현재 위치 추가
+                        <button type='button' class='w-btn w-btn-indigo' id='all-random-search-origin'>도로명</button>
+                        <button type='button' class='w-btn w-btn-indigo' id='all-random-search-keyword'>키워드</button>
+                        <button type='button' class='w-btn w-btn-indigo' id='all-random-current-location'>현 위치
                         </button>
                     </div>
+
+                    <!-- 키워드 모달 밖으로 이동 -->
+                    <div id="keyword-modal" class="modal">
+                        <div class="modal-content">
+                            <span class="close-btn">×</span>
+                            <input type="text" id="keyword-input" placeholder="키워드를 입력하세요">
+                            <button type='button' id='keyword-search-btn'>검색</button>
+                        </div>
+                    </div>
+
                     <div>
                         <label for="all-random-redius" class="search kr-font">반경</label><br>
                         <input class="kr2" type="text" id="all-random-redius" name="all-random-redius"
@@ -44,5 +56,61 @@
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <!-- 카카오 우편번호 서비스 -->
 
+<script>
+
+    // 모달 창 열기
+    $('#all-random-search-keyword').on('click', function() {
+        $('#keyword-modal').show();
+    });
+
+    $('.close-btn').on('click', function() {
+        $('#keyword-modal').hide();
+    });
+
+    // API 호출하여 키워드로 도로명 검색하기
+    $('#keyword-search-btn').on('click', function() {
+        var keyword = $('#keyword-input').val();
+        searchKeyword(keyword);
+    });
+
+    function searchKeyword(keyword) {
+        $.ajax({
+            url: "/keyword-random-route",
+            data: {
+                query: keyword
+            },
+            success: function(response) {
+                displayResults(response);
+            },
+            error: function(error) {
+                console.error(error);
+            }
+        });
+    }
+
+    // 모달에 검색 결과 표시하기
+    function displayResults(response) {
+        var $results = $('<ul>');
+
+        // 모달 내용 초기화
+        $('.modal-content ul').remove();
+
+        // 응답의 첫 번째 배열은 장소 이름, 두 번째 배열은 주소 이름입니다.
+        for (var i = 0; i < response[0].length; i++) {
+            (function(index) {
+                var placeName = response[0][index];
+                var addressName = response[1][index];
+                var $li = $('<li>').text(placeName + ", " + addressName);
+                $li.on('click', function() {
+                    $('#all-random-originAddress').val(addressName);
+                    $('#keyword-modal').hide();
+                });
+                $results.append($li);
+            })(i);
+        }
+        $('.modal-content').append($results);
+    }
+
+</script>
 </body>
 </html>
