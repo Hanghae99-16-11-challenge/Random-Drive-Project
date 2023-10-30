@@ -97,7 +97,7 @@
             dataType: 'json', // 응답을 JSON 형식으로 파싱합니다.
             success: function (response) {
                 alert(response.msg); // 성공 메시지를 표시합니다.
-                window.location.href = '/api/user/login-page'; // 홈 페이지로 리다이렉션합니다.
+                window.location.href = '/view/user/login-page'; // 홈 페이지로 리다이렉션합니다.
             },
             error: function (response) {
                 console.log('서버로부터 오류 응답 :' ,response); // 오류 응답 로깅

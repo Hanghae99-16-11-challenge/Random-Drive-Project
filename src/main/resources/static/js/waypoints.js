@@ -66,7 +66,7 @@ document.getElementById('random-search-form').addEventListener('submit', functio
             jqXHR.setRequestHeader('Authorization', auth);
         });
     } else {
-        window.location.href = host + '/api/user/login-page';
+        window.location.href = host + '/view/user/login-page';
         return;
     }
 

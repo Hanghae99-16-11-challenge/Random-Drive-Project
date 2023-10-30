@@ -1,6 +1,10 @@
 // 로그아웃 버튼 클릭 이벤트
+// 추가한 코드
+const box_pst = document.querySelectorAll(".logout-button")[0].offsetTop
 document.getElementsByClassName('logout-button')[0].addEventListener('click', function() {
     logout();
+    // 주가한 코드
+    window.scrollTo({left : 0, top : box_pst-100})
 });
 
 // 주요 기능
@@ -27,7 +31,7 @@ $(document).ready(function() {
                 console.error('Error:', error);
             });
     } else {
-        window.location.href = host + '/api/user/login-page';
+        window.location.href = host + '/view/user/login-page';
     }
 });
 
@@ -109,7 +113,7 @@ function logout() {
     // 토큰 삭제
     Cookies.remove('Authorization', {path: '/'});
     // window.location.reload(); // 현재 페이지 리로드
-    window.location.href = '/api/user/login-page';
+    window.location.href = '/view/user/login-page';
 }
 
 // 토큰 가져오기
@@ -127,3 +131,4 @@ function getToken() {
     }
     return auth;
 }
+

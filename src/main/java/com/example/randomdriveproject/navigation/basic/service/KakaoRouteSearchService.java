@@ -62,4 +62,37 @@ public class KakaoRouteSearchService {
 
         return restTemplate.exchange(uri, HttpMethod.GET, httpEntity, KakaoRouteAllResponseDto.class).getBody();
     }
+
+
+//    //경로 재생성
+    public KakaoRouteAllResponseDto requestRouteReSearch(double lat, double lng) {
+//        String username = user.getUsername();
+
+        if (ObjectUtils.isEmpty(lat) || ObjectUtils.isEmpty(lng)) return null;
+        System.out.println("호출준비");
+
+        // 사용자 인증 정보 확인
+//        if(!username.equals(userRepository.findByUsername(username))){
+//            throw new IllegalArgumentException("잘못된토큰 정보");
+//        }
+
+        // 출발지와 도착지 주소를 각각 좌표로 변환
+//        DocumentDto start = kakaoAddressSearchService.requestAddressSearch(String.valueOf(startAddress)).getDocumentDtoList().get(0);
+//        DocumentDto origin = kakaoAddressSearchService.requestAddressSearch(origin).getDocumentDtoList().get(0);
+//        DocumentDto destination = kakaoAddressSearchService.requestAddressSearch(destinationAddress).getDocumentDtoList().get(0);
+
+        // "위도,경도" 형식의 문자열 생성
+//        String startCoord = start.getLongitude() + "," + start.getLatitude();
+//        String destinationCoord = destination.getLongitude() + "," + destination.getLatitude();
+        double startCoord = Double.parseDouble(lat + "," + lng);
+
+        URI uri = kakaoUriBuilderService.buildUriByReRouteSearch(startCoord);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.AUTHORIZATION, "KakaoAK " + kakaoRestApiKey);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity httpEntity = new HttpEntity(headers);
+
+        return restTemplate.exchange(uri, HttpMethod.GET, httpEntity, KakaoRouteAllResponseDto.class).getBody();
+    }
 }

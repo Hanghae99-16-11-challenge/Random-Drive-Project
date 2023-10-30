@@ -860,3 +860,43 @@ function getSaveNextGuidPoint(add = true)
         return 1;
     }
 }
+
+function reCalculateCurrectToPoint(data)
+{
+    // y -> lat ,x -> lon
+    //data.routes[0].summary.origin.y, data.routes[0].summary.origin.x
+    //반경 기반 랜덤 길찾기 할때 현위치랑 출발기 거리 측정
+
+    // var originAddress = document.getElementById('all-random-originAddress').value;//반경 기반 랜덤 길찾기 - 출발지
+
+    if (data == null)
+    {
+        console.warn("길이 없음");
+        return;
+    }
+
+    // var lat_re = data.routes[0].summary.re.y;
+    // var lon_re = data.routes[0].summary.re.x;
+    var lat_re = data.lat;
+    var lon_re = data.lng;
+    var lat_des = routes[-1].summary.destination.y;
+    var lon_des = routes[-1].summary.destination.x;
+
+    navigator.geolocation.getCurrentPosition(function(position) {
+        // 위치 정보를 표시하기
+        // $("#location2").text("\n, GPS 위치 정보: " + position.coords.latitude + ", " + position.coords.longitude);
+        var C_lat = position.coords.latitude;
+        var C_lon = position.coords.longitude;
+
+        //response.getRoutes()[0].getSummary().getDuration()
+        let spend = data.routes[0].summary.duration;
+
+        console.warn("=====현제위치와 출발지간의 직선거리 : " + calculateDistance(C_lat, C_lon, lat_re, lon_re) + "km" +
+            "\n현제위치와 도착지 간의 직선거리 : " + calculateDistance(C_lat, C_lon, lat_des, lon_des) + "km" +
+            "\n경로 길이 : " + data.routes[0].summary.distance +"m , 소요 시간 : " +
+            Math.floor(spend / 60) + "분" + (spend - (Math.floor(spend / 60) * 60)) + "초");
+
+        //"m / 소요 시간 : " + duration + " -> " + (duration / 60) + "m" + (duration - ((duration/60) * 60)) + "s"
+
+    });
+}

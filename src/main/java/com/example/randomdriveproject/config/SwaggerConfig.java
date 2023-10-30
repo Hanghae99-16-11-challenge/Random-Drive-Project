@@ -7,10 +7,17 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SwaggerConfig {
     @Bean
-    public GroupedOpenApi myApi() {
+    public GroupedOpenApi naviApi() {
         return GroupedOpenApi.builder()
-                .group("경로 추천 api") // 컨트롤러 그룹의 이름
-                .pathsToMatch("/api/**") // 해당 패턴을 사용하여 컨트롤러를 그룹화
+                .group("navi api") // 컨트롤러 그룹의 이름
+                .pathsToMatch("/api/**")
+                .build();
+    }
+    @Bean
+    public GroupedOpenApi homeApi() {
+        return GroupedOpenApi.builder()
+                .group("home api") // 컨트롤러 그룹의 이름
+                .pathsToMatch("/view/**")
                 .build();
     }
 

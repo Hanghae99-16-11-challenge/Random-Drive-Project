@@ -52,7 +52,7 @@
                 <div class="button-login-center">
                     <div class="button-login">
 <!--                        <a class="button-login-link" href="/api/navigation">회원 가입하기</a>-->
-                        <a class="button-login-link" id="login-id-btn" onclick="location.href='/api/user/signup'">
+                        <a class="button-login-link" id="login-id-btn" onclick="location.href='/view/user/signup'">
                             회원 가입하기
                         </a>
                     </div>
@@ -100,7 +100,7 @@
 
         $.ajax({
             type: "POST",
-            url: `/api/user/login`, // 최종 request 값을 컨트롤러로
+            url: `/view/user/login`, // 최종 request 값을 컨트롤러로
             contentType: "application/json",
             data: JSON.stringify({username: username, password: password}), // 키 : 값 으로 매핑 , 키 = dtd 필드
         })
@@ -113,11 +113,11 @@
                     jqXHR.setRequestHeader('Authorization', token);
                 });
 
-                window.location.href = '/api/home';
+                window.location.href = '/view/home';
             })
             .fail(function (jqXHR, textStatus) {
                 alert("Login Fail");
-                window.location.href = host + '/api/user/login-page?error'
+                window.location.href = host + '/view/user/login-page?error'
             });
     }
 
@@ -129,7 +129,7 @@
         });
 
         $('#login-id-btn').click(function() {
-            window.location.href = '/api/user/signup';
+            window.location.href = '/view/user/signup';
         });
     });
 

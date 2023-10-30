@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Slf4j(topic = "Home Controller")
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/view")
 public class HomeController {
     //https://adjh54.tistory.com/m/72
     //http://localhost:8080/swagger-ui/index.html#/
@@ -27,35 +27,30 @@ public class HomeController {
         return "index"; // 뷰 이름은 templates 폴더에 있는 템플릿 파일명과 일치해야 합니다.
     }
 
-    @GetMapping("/user/login")
-    public String login() {
-        return "home";
-    }
+//    @GetMapping("/user/login")
+//    public String login() {
+//        return "home";
+//    }
 
     @GetMapping("/user/login-page")
     public String loginPage() {
         return "login";
-    }
+    } //
 
     @GetMapping("/user/signup")
     public String signupPage() {
         return "signup";
-    }
+    } //
 
-    @GetMapping("/search")
-    public String search(Model model){
-        model.addAttribute("message", "안녕하세요!");
-        return "search"; // 뷰 이름은 templates 폴더에 있는 템플릿 파일명과 일치해야 합니다.
-    }
 
-    @GetMapping("/home")
+    @GetMapping("/home") //
     @Operation(summary = "HOME", description = "HOME 화면을 보여줍니다.")
     public String home(Model model){
         model.addAttribute("message", "안녕하세요!");
         return "home"; // 뷰 이름은 templates 폴더에 있는 템플릿 파일명과 일치해야 합니다.
     }
 
-    @GetMapping("/navigation-search")
+    @GetMapping("/navigation-search") //
     @Operation(summary = "기본 네비게이션", description = "네비게이션 화면을 출력합니다.")
     public String searchNavigation() {
         return "search";

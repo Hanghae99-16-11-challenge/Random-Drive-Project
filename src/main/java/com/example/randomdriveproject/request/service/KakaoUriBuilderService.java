@@ -1,5 +1,6 @@
 package com.example.randomdriveproject.request.service;
 
+import com.example.randomdriveproject.history.repository.RouteRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -18,6 +19,9 @@ public class KakaoUriBuilderService {
 
     // 카테고리 api
     private static final String KAKAO_LOCAL_CATEGORY_SEARCH_URL = "https://dapi.kakao.com/v2/local/search/category.json";
+
+    //목적지 가져오기
+    private static  RouteRepository routeRepository;
 
 
     // 주소검색
@@ -64,4 +68,21 @@ public class KakaoUriBuilderService {
 
         return uri;
     }
+
+    // 경로 재생성 길찾기
+    public URI buildUriByReRouteSearch(double startCoord) {
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(KAKAO_ROUTE_SEARCH_URL);
+
+//        uriBuilder.queryParam("lat", lat);
+//        uriBuilder.queryParam("lng", lng);
+//        uriBuilder.queryParam("destination", routeRepository.findBy());
+        uriBuilder.queryParam("startCoord", startCoord);
+
+        URI routeUri = uriBuilder.build().encode().toUri();
+
+        log.info("*** 로그 [KakoaUriBuilerSerivce buildUrilByReRoutreSerach] uri: {} ", routeUri);
+
+        return routeUri;
+    }
+
 }

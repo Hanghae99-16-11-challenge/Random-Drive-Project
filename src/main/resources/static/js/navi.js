@@ -39,7 +39,7 @@ document.getElementsByClassName('button-yes')[0].addEventListener('click', funct
 
 // 아니오 버튼
 document.getElementsByClassName('button-no')[0].addEventListener('click', function() {
-    window.location.href = '/api/home';
+    window.location.href = '/view/home';
 });
 
 // kakaomap 표시 해주는 곳-----------------------------------------------------------------------------------------------------//
@@ -260,7 +260,7 @@ function setToken() {
             jqXHR.setRequestHeader('Authorization', auth);
         });
     } else {
-        window.location.href = host + '/api/user/login-page';
+        window.location.href = host + '/view/user/login-page';
         return;
     }
 }
@@ -333,7 +333,7 @@ function onClick_StopNavi_navi()
         document.getElementById("guid_info").classList.add("disabled");
 
     stopNavi();
-    window.location.href = host + '/api/home';
+    window.location.href = host + '/view/home';
 }
 
 function Update_GuidIndo_navi()

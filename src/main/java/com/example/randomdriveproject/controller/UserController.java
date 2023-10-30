@@ -62,12 +62,13 @@ public class UserController {
     @GetMapping("/user/kakao/callback")
     @Operation(summary = "카카오 로그인", description = "카카오로 로그인 합니다.")
     public String kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
+        long startTime = System.currentTimeMillis();
         String token = kakaoService.kakaoLogin(code);
 
         Cookie cookie = new Cookie(JwtUtil.AUTHORIZATION_HEADER, token.substring(7)); // 일단 앞의 Bearer 때어줌
         cookie.setPath("/");
         response.addCookie(cookie); // 브라우저에 자동적으로 setting 됨
-
-        return  "redirect:/api/home"; // 메인 페이지로 보내주기
+        log.info("카카오 로그인 time : " + (System.currentTimeMillis() - startTime) + "ms.");
+        return  "redirect:/view/home"; // 메인 페이지로 보내주기
     }
 }

@@ -9,7 +9,7 @@ $(document).ready(function () {
             jqXHR.setRequestHeader('Authorization', auth);
         });
     } else {
-        window.location.href = host + '/api/user/login-page';
+        window.location.href = host + '/view/user/login-page';
         return;
     }
     console.log(getToken());

@@ -73,15 +73,15 @@ public class WebSecurityConfig {
 
         http.formLogin((formLogin) ->
                 formLogin
-                        .loginPage("/api/user/login-page").permitAll()
-                        .defaultSuccessUrl("/api/home", true) // 로그인 성공 후 이동할 페이지, 카카오 로그인이 안될때 확인해보기
-                        .failureUrl("/api/user/login-page?error") // 로그인 실패 시 명시적으로 에러 파라미터 추가
+                        .loginPage("/view/user/login-page").permitAll()
+                        .defaultSuccessUrl("/view/home", true) // 로그인 성공 후 이동할 페이지, 카카오 로그인이 안될때 확인해보기
+                        .failureUrl("/view/user/login-page?error") // 로그인 실패 시 명시적으로 에러 파라미터 추가
         );
 
         // 로그아웃 처리 추가 부분
         http.logout(logout -> {
-            logout.logoutUrl("/api/auth/logout")
-                    .logoutSuccessUrl("/api/user/login-page") // 로그아웃 성공 후 이동할 페이지
+            logout.logoutUrl("/view/auth/logout")
+                    .logoutSuccessUrl("/view/user/login-page") // 로그아웃 성공 후 이동할 페이지
                     .logoutSuccessHandler(customLogoutSuccessHandler)
                     .invalidateHttpSession(true)
                     .deleteCookies(JwtUtil.AUTHORIZATION_HEADER);

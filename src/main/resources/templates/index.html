@@ -17,7 +17,7 @@
 <body>
 
 <div>
-    <button id="login-id-btn" onclick="location.href='/api/user/login-page'">
+    <button id="login-id-btn" onclick="location.href='/view/user/login-page'">
         로그인하기
     </button>
     <button id="logout-id-btn" onclick="logout()">
@@ -30,7 +30,7 @@
         // 토큰 삭제
         Cookies.remove('Authorization', {path: '/'});
         // window.location.reload(); // 현재 페이지 리로드
-        window.location.href = '/api/user/login-page';
+        window.location.href = '/view/user/login-page';
     }
 </script>
 

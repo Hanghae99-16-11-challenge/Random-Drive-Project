@@ -26,4 +26,11 @@ public class DocumentDto {
 
     @JsonProperty("x") // x좌표값
     private double longitude;
+
+
+    public DocumentDto(double lat, double lng) {
+        this.latitude = lat;
+        this.longitude = lng;
+    }
 }
+
