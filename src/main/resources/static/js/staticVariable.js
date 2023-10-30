@@ -21,6 +21,8 @@ var routeData = {
 var startLocation = {lat : 0, lng : 0};
 //staticVariable.adapt_KakaoResponseToRouteData() 에서 설정됨
 var destinationLocation = {lat : 0, lng : 0};
+var oriAddress = "";
+var desAddress = "";
 
 var offetUserRadius = 20;
 
@@ -117,8 +119,17 @@ function adapt_KakaoResponseToRouteData(kakaoRes) {
         //(kakaoRes.routes[0].summary.destination.y , kakaoRes.routes[0].summary.destination.x) - 따로 저장?
 
         {
-            stratLocation = {lat: kakaoRes.routes[0].summary.origin.y, lng: kakaoRes.routes[0].summary.origin.x};
-            destinationLocation = {lat: kakaoRes.routes[0].summary.destination.y, lng: kakaoRes.routes[0].summary.destination.x};
+            stratLocation =
+                {
+                    lat: kakaoRes.routes[0].summary.origin.y,
+                    lng: kakaoRes.routes[0].summary.origin.x,
+                };
+
+            destinationLocation =
+                {
+                    lat: kakaoRes.routes[0].summary.destination.y,
+                    lng: kakaoRes.routes[0].summary.destination.x
+                };
         }
 
         routeData.distance = kakaoRes.routes[0].summary.distance;
@@ -135,16 +146,6 @@ function adapt_KakaoResponseToRouteData(kakaoRes) {
         // == guides 와 roads 부분  이차 배열 형태를 일차 배열으로 바꿔서 설정
 
 
-        {
-            // routeData.roads = [];
-            //
-            // for (let sec = 0; sec < kakaoRes.routes[0].sections.length; sec++) {
-            //     routeData.roads.push([]);
-            //     for (let road = 0; road < kakaoRes.routes[0].sections[sec].roads.length; road++) {
-            //         routeData.roads[sec].push(kakaoRes.routes[0].sections[sec].roads[road].vertexes);
-            //     }
-            // }
-        }
         routeData.roads = [];
 
         for (let sec = 0; sec < kakaoRes.routes[0].sections.length; sec++) {
@@ -195,9 +196,4 @@ function adapt_KakaoResponseToRouteData(kakaoRes) {
     //     routeData = null;
     // }
 
-
-
-    // == 경유지 지점 정보가 사라짐 -> 가이드 에서 type이 1000 이면 경유지
-
-    //=== 문제 : 도로에 겹치는 부분이 가끔 있음 - 특정 조건에 의해 발생하는거 같음
 }

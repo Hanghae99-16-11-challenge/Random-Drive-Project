@@ -197,7 +197,7 @@ document.getElementById('all-random-search-form').addEventListener('submit', fun
     var originAddress = document.getElementById('all-random-originAddress').value;
     var redius = document.getElementById('all-random-redius').value;
 
-    fetch('/all-random-route?originAddress=' + originAddress  + '&redius=' + redius)
+    fetch('/api/all-random-route?originAddress=' + originAddress  + '&redius=' + redius)
         .then(response => response.json())
         .then(data => {
             // data는 KakaoRouteAllResponseDto 객체
@@ -279,7 +279,7 @@ document.getElementById('random-search-form').addEventListener('submit', functio
     var destinationAddress = document.getElementById('random-destinationAddress').value;
     var redius = document.getElementById('random-redius').value;
 
-    fetch('/random-route?originAddress=' + originAddress  + '&destinationAddress=' + destinationAddress + '&redius=' + redius)
+    fetch('/api/random-route?originAddress=' + originAddress  + '&destinationAddress=' + destinationAddress + '&redius=' + redius)
         .then(response => response.json())
         .then(data => {
             // data는 KakaoRouteAllResponseDto 객체

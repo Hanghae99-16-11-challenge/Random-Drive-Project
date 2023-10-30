@@ -72,5 +72,10 @@ document.getElementById('search-form').addEventListener('submit', function(e) {
     var originAddress = document.getElementById('originAddress').value;
     var destinationAddress = document.getElementById('destinationAddress').value;
 
+    oriAddress = document.getElementById('originAddress').value;
+    desAddress = document.getElementById('destinationAddress').value;
+    console.log(oriAddress + " ~ " + desAddress);
+
+
     window.location.href = 'navi/' + 'live' + '/0/' + originAddress + '/' + destinationAddress + '/0';
 });

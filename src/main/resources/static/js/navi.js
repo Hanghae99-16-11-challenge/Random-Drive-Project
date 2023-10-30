@@ -1,13 +1,15 @@
 const host = 'http://' + window.location.host
 let responseData = null;
 const url = window.location.href;
-const segments = url.split("/");
+const segments = decodeURIComponent(url).split("/");
 const type = segments[segments.length - 5]; // 뒤에서 다섯 번째 segment
 const routeId = segments[segments.length - 4]; // 뒤에서 네 번째 segment
 const originAddress = segments[segments.length - 3]; // 뒤에서 세 번째 segment
 const destinationAddress = segments[segments.length - 2]; // 뒤에서 두 번째 segment
 const redius = segments[segments.length - 1]; // 마지막 segment
 $(document).ready(function() {
+
+
     if (type === 'save') {
         makeHistoryMap(routeId);
     } else if (type === 'live') {
@@ -122,7 +124,7 @@ function makeHistoryMap(routeId) {
 // 기본 길찾기 동작
 function makeNavi(originAddress, destinationAddress) {
     setToken();
-    fetch('/route?originAddress=' + originAddress  + '&destinationAddress=' + destinationAddress)
+    fetch('/api/route?originAddress=' + originAddress  + '&destinationAddress=' + destinationAddress)
         .then(response => response.json())
         .then(data => {
             responseData = data;
@@ -137,7 +139,7 @@ function makeNavi(originAddress, destinationAddress) {
 // 목적지 기반 랜덤 길찾기 동작
 function makeRandomNavi(originAddress, destinationAddress, redius) {
     setToken();
-    fetch('/random-route?originAddress=' + originAddress  + '&destinationAddress=' + destinationAddress + '&redius=' + redius)
+    fetch('/api/random-route?originAddress=' + originAddress  + '&destinationAddress=' + destinationAddress + '&redius=' + redius)
         .then(response => response.json())
         .then(data => {
             responseData = data;
@@ -152,7 +154,7 @@ function makeRandomNavi(originAddress, destinationAddress, redius) {
 // 반경 기반 랜덤 길찾기 동작
 function makeAllRandomNavi(originAddress, redius) {
     const auth = getToken();
-    fetch(`/all-random-route?originAddress=${originAddress}&redius=${redius}`, {
+    fetch(`/api/all-random-route?originAddress=${originAddress}&redius=${redius}`, {
         method: 'GET',
         headers: {
             'Authorization': auth // 토큰을 Authorization 헤더에 실어 보냄
@@ -382,4 +384,61 @@ function visibilityTime(dur = 0)
     {
         return `${minutes}분`;
     }
+}
+
+// 추가 경로 재생성 동작
+function remakeNavi(lat, lng) {
+    setToken();
+
+    let currectAddress = "";
+
+    fetch(
+        'https://dapi.kakao.com/v2/local/geo/coord2address?x=' + lng + '&y=' + lat,
+        {
+            headers: { Authorization: 'KakaoAK 4752e5a5b955f574af7718613891f796' }, //rest api 키
+        }
+    )
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.documents && data.documents.length > 0) {
+
+                currectAddress = data.documents[0].address.address_name;
+
+                console.warn(currectAddress + " / " + destinationAddress + " OR " + routeData.destinationAddress);
+                {
+                    setToken();
+                    fetch('/api/route?originAddress=' + currectAddress  + '&destinationAddress=' + destinationAddress)
+                        .then(response => response.json())
+                        .then(data => {
+                            responseData = data;
+                            adapt_KakaoResponseToRouteData(data);
+                            makeLiveMap(data)
+                            clearNavi();
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                }
+
+            } else {
+                throw new Error('Could not find address for this coordinates.');
+            }
+        });
+
+    // let startAddress = {
+    //     lat,
+    //     lng,
+    //     des_lat: routeData.guides[routeData.guides.length - 1].y,
+    //     dex_lng: routeData.guides[routeData.guides.length - 1].x
+    // }
+    // fetch('/api/reroute?lat=' + lat + '&lng=' + lng + '&des_lat=' + startAddress.des_lat + '&des_lng=' + startAddress.dex_lng)//('/api/reroute?startAddress=' + startAddress)
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         responseData = data;
+    //         adapt_KakaoResponseToRouteData(data);
+    //         // reCalculateCurrectToPoint(data)
+    //     })
+    //     .catch(error => {
+    //         console.error('Error:', error);
+    //     });
 }

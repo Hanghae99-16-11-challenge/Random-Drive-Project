@@ -82,9 +82,6 @@ function updateMap(mouseEvent)
     // message += '경도는 ' + latlng.Ma + ' 입니다';
     // console.log(message);
 
-    // adapt_KakaoResponseToRouteData(pathData);//====값 검증용
-    // update(latlng.Ma, latlng.La);
-
     update_refact(latlng.Ma, latlng.La);
 }
 
@@ -141,10 +138,8 @@ function update_refact(lat, lng)
         console.log("refacted 다음 안내지점 => " + point.y + " , " + point.x + " => " + calculateDistance(lat, lng, point.y, point.x));
 
         //20m 이내로 접근한다면 다음 안내
-        if (calculateDistance(lat, lng, point.y, point.x) < (20 * 0.001))
+        if (calculateDistance(lat, lng, point.y, point.x) < (offetUserRadius * 0.001))
         {
-            // getNextGuidPoint(true);
-            // getGuidPoint(true);
             naviInfo_ProcessIndex++;
 
             updateMark();//마크 표시 , getGuidPoint 과 같음
@@ -220,14 +215,20 @@ function update_refact(lat, lng)
 
                         let roadPartLength = calculateDistance(vex[lastRoadIndex + 3], vex[lastRoadIndex + 2],vex[lastRoadIndex + 1], vex[lastRoadIndex]);
                         let PastToPos = calculateDistance(vex[lastRoadIndex + 1], vex[lastRoadIndex], lat, lng);
-                        let CurrectToPos = calculateDistance(vex[lastRoadIndex + 3], vex[lastRoadIndex + 2], lat, lng);
+                        let CurrectToPos = 0;
+                        CurrectToPos = calculateDistance(vex[lastRoadIndex + 3], vex[lastRoadIndex + 2], lat, lng);
 
                         // console.log("roadPartLength : " + (roadPartLength * 1000).toFixed(2)
                         //     + " / " + (PastToPos * 1000).toFixed(2) + " - pos - " + (CurrectToPos * 1000).toFixed(2));
 
+                        if (isNaN(CurrectToPos))
+                        {
+                            CurrectToPos = calculateDistance(vex[lastRoadIndex - 1], vex[lastRoadIndex - 2], lat, lng);
+                            roadPartLength = calculateDistance(vex[lastRoadIndex - 1], vex[lastRoadIndex - 2],vex[lastRoadIndex + 1], vex[lastRoadIndex]);
+                        }
                         if ((((PastToPos + CurrectToPos) - roadPartLength) * 1000) > offetUserRadius)
                         {
-                            outOfPath();
+                            outOfPath(lat, lng);
                         }
                     }//비정확 하지만
 
@@ -318,8 +319,9 @@ function updateMark()
 
 function startNavi()
 {
-    getNextGuidPoint(false);
-    getGuidPoint(true);
+    // getNextGuidPoint(false);
+    // getGuidPoint(true);
+    updateMark();
     startCorutine();
     update_GuidInfo();
 }
@@ -347,18 +349,25 @@ function clearNavi()
     naviInfo_GuidIndex = 1;
     naviInfo_ProcessIndex = 1;
 
-    if (pathData != null)
-        naviInfo_State = getNextGuidPoint(false);
-
     positionMark.setMap(null);
     positionText.close();
     naviInfoMark.setMap(null);
     naviInfoText.close();
 
-    if (pathData != null)
-        drawPolylines(pathData);
 
-    startCorutine();
+    if (routeData != null && routeData != undefined)
+    {
+        updateMark();
+
+        let startPoint = routeData.guides[0];
+        update(startPoint.y, startPoint.x);
+
+        map.setLevel(3, {animate: true});// 사용시 보이는 위치 달라짐
+        panTo(startPoint.y, startPoint.x);
+    }    //========================================= 길 재생성후 이부분 실행 필요
+
+
+    // startCorutine();
 }
 
 
@@ -371,14 +380,18 @@ function panTo(lat , lng) {
     // 만약 이동할 거리가 지도 화면보다 크면 부드러운 효과 없이 이동합니다
     map.panTo(moveLatLon);
 }
-function outOfPath()
+function outOfPath(lat, lng)
 {
+    remakeNavi(lat, lng);
+    clearNavi();
+
     console.warn("경로 이탈");
 }
 
 //=======================
 //  미사용 이지만 아직 의존성 있음
 
+// 이전 코드 , 만약 쓸 경우 update_refact() 으로 넘겨줌
 function update(lat, lng)
 {
     //navigation.html 지도 클릭시 작동
