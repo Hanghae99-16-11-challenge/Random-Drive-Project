@@ -2,6 +2,7 @@ const host = 'http://' + window.location.host
 let responseData = null;
 const url = window.location.href;
 const segments = decodeURIComponent(url).split("/");
+// save , live , live-random , live-all-random
 const type = segments[segments.length - 5]; // 뒤에서 다섯 번째 segment
 const routeId = segments[segments.length - 4]; // 뒤에서 네 번째 segment
 const originAddress = segments[segments.length - 3]; // 뒤에서 세 번째 segment
@@ -386,6 +387,10 @@ function visibilityTime(dur = 0)
     }
 }
 
+function pathType()
+{
+    return type;
+}
 // 추가 경로 재생성 동작
 function remakeNavi(lat, lng) {
     setToken();
