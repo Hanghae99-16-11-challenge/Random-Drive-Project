@@ -1,6 +1,7 @@
 package com.example.randomdriveproject.controller;
 
 
+import com.example.randomdriveproject.navigation.random.service.RandomOffCourseService;
 import com.example.randomdriveproject.navigation.random.service.RandomKakaoRouteSearchService;
 import com.example.randomdriveproject.navigation.random.service.RealRandomRouteSearchService;
 import com.example.randomdriveproject.request.dto.KakaoRouteAllResponseDto;
@@ -24,6 +25,7 @@ public class RandomRouteController {
 
     private final RandomKakaoRouteSearchService kakaoRouteSearchService;
     private final RealRandomRouteSearchService realRandomRouteSearchService;
+    private final RandomOffCourseService randomOffCourseService;
 
     @GetMapping("/all-random-route")
     @Operation(summary = "랜덤경로", description = "반경을 기준으로 랜덤 경로를 가져옵니다.")
@@ -46,7 +48,7 @@ public class RandomRouteController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/real-random-route")
+    @GetMapping("/line-random-route")
     @Operation(summary = "개선된 랜덤경로", description = "목적지와 반경을 설정한 후 랜덤 경로를 가져옵니다.")
     public ResponseEntity<KakaoRouteAllResponseDto> getRealRandomWay(@RequestParam String originAddress,@RequestParam String destinationAddress, @RequestParam Integer count) {
         KakaoRouteAllResponseDto response = realRandomRouteSearchService.requestRandomWay(originAddress,destinationAddress,count);
@@ -78,5 +80,17 @@ public class RandomRouteController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @GetMapping("/offCourse")
+    public ResponseEntity<KakaoRouteAllResponseDto> getOffCourseWays(@RequestParam double originY, @RequestParam double originX,
+                                                                     @RequestParam double destinationY, @RequestParam double destinationX,
+                                                                     @RequestParam String waypointsY, @RequestParam String waypointsX) {
+        KakaoRouteAllResponseDto response = randomOffCourseService.requestOffCourseSearch(originY, originX, destinationY, destinationX, waypointsY, waypointsX);
+        if (response == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 적절한 HTTP 상태 코드로 응답
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 
 }

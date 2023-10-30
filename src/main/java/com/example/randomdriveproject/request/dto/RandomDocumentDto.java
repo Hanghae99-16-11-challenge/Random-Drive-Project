@@ -28,12 +28,12 @@ public class RandomDocumentDto {
     private double y;
 
     public RandomDocumentDto(double x, double y) {
-        this.x = x;
         this.y = y;
+        this.x = x;
     }
     public RandomDocumentDto(DocumentDto documentDto) {
         this.name = documentDto.getAddressName();
-        this.x = documentDto.getLongitude();
         this.y = documentDto.getLatitude();
+        this.x = documentDto.getLongitude();
     }
 }
