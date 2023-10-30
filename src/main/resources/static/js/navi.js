@@ -1,13 +1,16 @@
 const host = 'http://' + window.location.host
 let responseData = null;
 const url = window.location.href;
-const segments = url.split("/");
+const segments = decodeURIComponent(url).split("/");
+// save , live , live-random , live-all-random
 const type = segments[segments.length - 5]; // 뒤에서 다섯 번째 segment
 const routeId = segments[segments.length - 4]; // 뒤에서 네 번째 segment
 const originAddress = segments[segments.length - 3]; // 뒤에서 세 번째 segment
 const destinationAddress = segments[segments.length - 2]; // 뒤에서 두 번째 segment
 const redius = segments[segments.length - 1]; // 마지막 segment
 $(document).ready(function() {
+
+
     if (type === 'save') {
         makeHistoryMap(routeId);
     } else if (type === 'live') {
@@ -62,6 +65,7 @@ function makeHistoryMap(routeId) {
         .then(response => response.json())
         .then(data => {
             responseData = data;
+            routeData = data;
             if (!map) {
                 map = new kakao.maps.Map(document.getElementById('map'), {
                     level: 3
@@ -121,10 +125,11 @@ function makeHistoryMap(routeId) {
 // 기본 길찾기 동작
 function makeNavi(originAddress, destinationAddress) {
     setToken();
-    fetch('/route?originAddress=' + originAddress  + '&destinationAddress=' + destinationAddress)
+    fetch('/api/route?originAddress=' + originAddress  + '&destinationAddress=' + destinationAddress)
         .then(response => response.json())
         .then(data => {
             responseData = data;
+            adapt_KakaoResponseToRouteData(data);
             makeLiveMap(data)
         })
         .catch(error => {
@@ -135,10 +140,11 @@ function makeNavi(originAddress, destinationAddress) {
 // 목적지 기반 랜덤 길찾기 동작
 function makeRandomNavi(originAddress, destinationAddress, redius) {
     setToken();
-    fetch('/random-route?originAddress=' + originAddress  + '&destinationAddress=' + destinationAddress + '&redius=' + redius)
+    fetch('/api/random-route?originAddress=' + originAddress  + '&destinationAddress=' + destinationAddress + '&redius=' + redius)
         .then(response => response.json())
         .then(data => {
             responseData = data;
+            adapt_KakaoResponseToRouteData(data);
             makeLiveMap(data)
         })
         .catch(error => {
@@ -149,7 +155,11 @@ function makeRandomNavi(originAddress, destinationAddress, redius) {
 // 반경 기반 랜덤 길찾기 동작
 function makeAllRandomNavi(originAddress, redius) {
     const auth = getToken();
+<<<<<<< HEAD
     fetch(`/real-all-random-route?originAddress=${originAddress}&distance=${redius}&count=${3}`, {
+=======
+    fetch(`/api/all-random-route?originAddress=${originAddress}&redius=${redius}`, {
+>>>>>>> dev-api
         method: 'GET',
         headers: {
             'Authorization': auth // 토큰을 Authorization 헤더에 실어 보냄
@@ -158,6 +168,7 @@ function makeAllRandomNavi(originAddress, redius) {
         .then(response => response.json())
         .then(data => {
             responseData = data;
+            adapt_KakaoResponseToRouteData(data);
             makeLiveMap(data)
         })
         .catch(error => {
@@ -279,18 +290,18 @@ function getToken() {
 
 function onClick_StartNavi_navi()
 {
-    pathData = responseData;
     if (type === 'save') {
         // getSaveNextGuidPoint(false);
         // getSaveGuidPoint(true);
         // startCorutine();
     }
     else {
-        getNextGuidPoint(false);
-        getGuidPoint(true);
+        // getNextGuidPoint(false);
+        // getGuidPoint(true);
         // startCorutine();
 
     }
+    updateMark();
 
     //guid_info
     if(!document.getElementById("input_StartNavi").classList.contains("disabled"))
@@ -299,7 +310,7 @@ function onClick_StartNavi_navi()
         document.getElementById("guid_info").classList.remove("disabled");
 
 
-    if (pathData != null) {
+    if (routeData != null) {
         if (type === 'save') {
             // update(pathData.roads(0).vertexes[1], pathData.roads(0).vertexes[0]);
             // map.setLevel(3, {animate: true});// 사용시 보이는 위치 달라짐
@@ -307,13 +318,16 @@ function onClick_StartNavi_navi()
         }
 
         else {
-            let startPoint = pathData.routes[0].sections[0].guides[0];
-            update(startPoint.y, startPoint.x);
 
-            map.setLevel(3, {animate: true});// 사용시 보이는 위치 달라짐
-            panTo(startPoint.y, startPoint.x);
         }
+
+        let startPoint = routeData.guides[0];
+        update(startPoint.y, startPoint.x);
+
+        map.setLevel(3, {animate: true});// 사용시 보이는 위치 달라짐
+        panTo(startPoint.y, startPoint.x);
     }
+
 }
 function onClick_StopNavi_navi()
 {
@@ -328,16 +342,17 @@ function onClick_StopNavi_navi()
 
 function Update_GuidIndo_navi()
 {
-    let nextGuid = getGuidPoint(false);
+    // let nextGuid = getGuidPoint(false);
+    let nextGuid = routeData.guides[naviInfo_ProcessIndex];
 
     // document.getElementById('guid-Distance').innerText = "전방 " + nextGuidDistacne.toFixed(1) + "m 에서 " + data.guidance;
     // document.getElementById('guid-EnterTime').innerText = "다음 안내 까지 : " + nexGuidDuration.toFixed(1) + "s";
     // document.getElementById('guid-Des-Distance').innerText = pathLeftDistance.toFixed(1) + "m";
     // document.getElementById('guid-Des-Time').innerText = pathLeftDuration.toFixed(1) + "s";
 
-    console.log("전방 " + visibilityDistance(nextGuidDistacne) + " 에서 " + nextGuid.guidance);
-    console.log("다음 안내까지 : " + visibilityTime(nexGuidDuration));
-    console.log("도착까지  " + visibilityDistance(pathLeftDistance) + " / " + visibilityTime(pathLeftDuration));
+    // console.log("전방 " + visibilityDistance(nextGuidDistacne) + " 에서 " + nextGuid.guidance);
+    // console.log("다음 안내까지 : " + visibilityTime(nextGuidDuration));
+    // console.log("도착까지  " + visibilityDistance(pathLeftDistance) + " / " + visibilityTime(pathLeftDuration));
 
     document.getElementById('guid_ance').innerText
         = "전방 " + visibilityDistance(nextGuidDistacne) + " 에서\n" + nextGuid.guidance;
@@ -374,4 +389,65 @@ function visibilityTime(dur = 0)
     {
         return `${minutes}분`;
     }
+}
+
+function pathType()
+{
+    return type;
+}
+// 추가 경로 재생성 동작
+function remakeNavi(lat, lng) {
+    setToken();
+
+    let currectAddress = "";
+
+    fetch(
+        'https://dapi.kakao.com/v2/local/geo/coord2address?x=' + lng + '&y=' + lat,
+        {
+            headers: { Authorization: 'KakaoAK 4752e5a5b955f574af7718613891f796' }, //rest api 키
+        }
+    )
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.documents && data.documents.length > 0) {
+
+                currectAddress = data.documents[0].address.address_name;
+
+                console.warn(currectAddress + " / " + destinationAddress + " OR " + routeData.destinationAddress);
+                {
+                    setToken();
+                    fetch('/api/route?originAddress=' + currectAddress  + '&destinationAddress=' + destinationAddress)
+                        .then(response => response.json())
+                        .then(data => {
+                            responseData = data;
+                            adapt_KakaoResponseToRouteData(data);
+                            makeLiveMap(data)
+                            clearNavi();
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                }
+
+            } else {
+                throw new Error('Could not find address for this coordinates.');
+            }
+        });
+
+    // let startAddress = {
+    //     lat,
+    //     lng,
+    //     des_lat: routeData.guides[routeData.guides.length - 1].y,
+    //     dex_lng: routeData.guides[routeData.guides.length - 1].x
+    // }
+    // fetch('/api/reroute?lat=' + lat + '&lng=' + lng + '&des_lat=' + startAddress.des_lat + '&des_lng=' + startAddress.dex_lng)//('/api/reroute?startAddress=' + startAddress)
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         responseData = data;
+    //         adapt_KakaoResponseToRouteData(data);
+    //         // reCalculateCurrectToPoint(data)
+    //     })
+    //     .catch(error => {
+    //         console.error('Error:', error);
+    //     });
 }

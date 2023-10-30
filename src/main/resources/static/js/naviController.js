@@ -412,7 +412,7 @@ function update_GuidInfo()
     let data = getGuidPoint(false);
     //data -> 다음 안내 지점
     document.getElementById('guid-Distance').innerText = "전방 " + nextGuidDistacne.toFixed(1) + "m 에서 " + data.guidance;
-    document.getElementById('guid-EnterTime').innerText = "다음 안내 까지 : " + nexGuidDuration.toFixed(1) + "s";
+    document.getElementById('guid-EnterTime').innerText = "다음 안내 까지 : " + nextGuidDuration.toFixed(1) + "s";
     document.getElementById('guid-Des-Distance').innerText = pathLeftDistance.toFixed(1) + "m";
     document.getElementById('guid-Des-Time').innerText = pathLeftDuration.toFixed(1) + "s";
 }
