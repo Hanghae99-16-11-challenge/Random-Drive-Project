@@ -197,3 +197,6 @@ function adapt_KakaoResponseToRouteData(kakaoRes) {
     // }
 
 }
+
+// 경유지 숫자 세기
+var waypointCount = 0;

@@ -37,7 +37,7 @@ public class RealRandomRouteSearchService {
     private String kakaoRestApiKey;
 
     // 반경 기반 랜덤 길찾기
-    public KakaoRouteAllResponseDto requestAllRandomWay(String username, String originAddress, Integer distance, Integer count) {
+    public KakaoRouteAllResponseDto requestAllRandomWay(Long userId, String originAddress, Integer distance, Integer count) {
 
         if (ObjectUtils.isEmpty(originAddress) || ObjectUtils.isEmpty(distance)) return null;
 
@@ -55,8 +55,8 @@ public class RealRandomRouteSearchService {
         double destinationX = destination.getLongitude();
 
         // 목적지 DB에 남김, 만일 동일 사용자가 이미 목적지를 저장해 놓았다면, 삭제
-        RandomDestination randomDestination = new RandomDestination(username, destination.getAddressName());
-        RandomDestination olderRandomDestination = randomDestinationRepository.findByUsername(username);
+        RandomDestination randomDestination = new RandomDestination(userId, destination.getAddressName());
+        RandomDestination olderRandomDestination = randomDestinationRepository.findByUserId(userId);
         if (olderRandomDestination != null)
             randomDestinationRepository.delete(olderRandomDestination);
         randomDestinationRepository.save(randomDestination);

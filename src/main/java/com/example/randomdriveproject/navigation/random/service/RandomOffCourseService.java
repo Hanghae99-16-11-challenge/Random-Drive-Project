@@ -1,10 +1,8 @@
 package com.example.randomdriveproject.navigation.random.service;
 
-import com.example.randomdriveproject.navigation.random.repository.RandomDestinationRepository;
+import com.example.randomdriveproject.request.dto.DocumentDto;
 import com.example.randomdriveproject.request.dto.KakaoRouteAllResponseDto;
-import com.example.randomdriveproject.request.dto.RandomDocumentDto;
 import com.example.randomdriveproject.request.service.KakaoAddressSearchService;
-import com.example.randomdriveproject.request.service.RandomKakaoCategorySearchService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,46 +22,50 @@ import java.util.*;
 public class RandomOffCourseService {
     private final RestTemplate restTemplate;
     private final KakaoAddressSearchService kakaoAddressSearchService;
-    private final RandomKakaoCategorySearchService kakaoCategorySearchService;
-    private final RandomDestinationRepository randomDestinationRepository;
 
     @Value("${kakao.rest.api.key}")
     private String kakaoRestApiKey;
 
-    public KakaoRouteAllResponseDto requestOffCourseSearch(double originY, double originX, double destinationY, double destinationX, String waypointsY, String waypointsX) {
+    public KakaoRouteAllResponseDto requestOffCourseSearch(String currentAddress, double destinationY, double destinationX, String waypointsY, String waypointsX) {
 
-        if (ObjectUtils.isEmpty(originY) || ObjectUtils.isEmpty(originX) || ObjectUtils.isEmpty(destinationY) || ObjectUtils.isEmpty(destinationX)) return null;
-        System.out.println("호출준비");
+        if (ObjectUtils.isEmpty(currentAddress) || ObjectUtils.isEmpty(destinationY) || ObjectUtils.isEmpty(destinationX)) return null;
+        log.info("랜덤 네비게이션 경로 이탈 서비스 실행");
+        DocumentDto origin = kakaoAddressSearchService.requestAddressSearch(currentAddress).getDocumentDtoList().get(0);
+
+        double originY = origin.getLatitude();
+        double originX = origin.getLongitude();
 
         // "위도,경도" 형식의 문자열 생성
         Map<String,Object> uriData = new TreeMap<>();
-        uriData.put("origin",new RandomDocumentDto(originX, originY));
-        uriData.put("destination",new RandomDocumentDto(destinationX, destinationY));
+        uriData.put("origin",new DocumentDto( "현 출발지" , originY, originX));
+        uriData.put("destination",new DocumentDto("이전 목적지", destinationY, destinationX));
 
-        List<RandomDocumentDto> waypoints = new ArrayList<>();
+        if (!waypointsX.equals("0")) {
+            List<DocumentDto> waypoints = new ArrayList<>();
 
-        Queue<Double> waypointsYQueue = new LinkedList<>();
-        String[] waypointsYArray = waypointsY.split(", ");
-        for (String coordinate : waypointsYArray) {
-            double waypointX = Double.parseDouble(coordinate);
-            waypointsYQueue.add(waypointX);
-            // 예외처리
+            Queue<Double> waypointsYQueue = new LinkedList<>();
+            String[] waypointsYArray = waypointsY.split(" ");
+            for (String coordinate : waypointsYArray) {
+                double waypointY = Double.parseDouble(coordinate);
+                waypointsYQueue.add(waypointY);
+                // 예외처리
+            }
+
+            Queue<Double> waypointsXQueue = new LinkedList<>();
+            String[] waypointsXArray = waypointsX.split(" ");
+            for (String coordinate : waypointsXArray) {
+                double waypointX = Double.parseDouble(coordinate);
+                waypointsXQueue.add(waypointX);
+                // 예외처리
+            }
+
+            while (!waypointsYQueue.isEmpty()) {
+                DocumentDto waypoint = new DocumentDto("이전 경유지", waypointsYQueue.poll(), waypointsXQueue.poll());
+                waypoints.add(waypoint);
+            }
+
+            uriData.put("waypoints", waypoints);
         }
-
-        Queue<Double> waypointsXQueue = new LinkedList<>();
-        String[] waypointsXArray = waypointsX.split(", ");
-        for (String coordinate : waypointsXArray) {
-            double waypointY = Double.parseDouble(coordinate);
-            waypointsXQueue.add(waypointY);
-            // 예외처리
-        }
-
-        while (!waypointsYQueue.isEmpty()) {
-            RandomDocumentDto waypoint = new RandomDocumentDto(waypointsXQueue.poll(), waypointsYQueue.poll());
-            waypoints.add(waypoint);
-        }
-
-        uriData.put("waypoints", waypoints);
         uriData.put("priority","RECOMMEND");
 
         URI uri = URI.create("https://apis-navi.kakaomobility.com/v1/waypoints/directions");

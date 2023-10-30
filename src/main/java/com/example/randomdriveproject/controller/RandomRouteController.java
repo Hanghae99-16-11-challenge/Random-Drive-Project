@@ -32,7 +32,7 @@ public class RandomRouteController {
     @GetMapping("/all-random-route")
     @Operation(summary = "랜덤경로", description = "반경을 기준으로 랜덤 경로를 가져옵니다.")
     public ResponseEntity<KakaoRouteAllResponseDto> getRandomWays(@RequestParam String originAddress, @RequestParam Integer redius, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        KakaoRouteAllResponseDto response = kakaoRouteSearchService.requestAllRandomWay(userDetails.getUsername(),originAddress,redius);
+        KakaoRouteAllResponseDto response = kakaoRouteSearchService.requestAllRandomWay(userDetails.getUser().getId(),originAddress,redius);
         if (response == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 적절한 HTTP 상태 코드로 응답
         }
@@ -65,7 +65,7 @@ public class RandomRouteController {
     @Operation(summary = "개선된 랜덤경로", description = "반경을 기준으로 랜덤 경로를 가져옵니다.")
     public ResponseEntity<KakaoRouteAllResponseDto> getLineRandomWays(@RequestParam String originAddress, @RequestParam Integer distance,
                                                                       @RequestParam Integer count, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        KakaoRouteAllResponseDto response = realRandomRouteSearchService.requestAllRandomWay(userDetails.getUsername(), originAddress, distance, count);
+        KakaoRouteAllResponseDto response = realRandomRouteSearchService.requestAllRandomWay(userDetails.getUser().getId(), originAddress, distance, count);
         if (response == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 적절한 HTTP 상태 코드로 응답
         }
@@ -76,7 +76,7 @@ public class RandomRouteController {
     @Operation(summary = "개선된 랜덤경로", description = "반경을 기준으로 랜덤 경로를 가져옵니다.")
     public ResponseEntity<KakaoRouteAllResponseDto> getBoxRandomWays(@RequestParam String originAddress, @RequestParam Integer distance,
                                                                       @RequestParam Integer count, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        KakaoRouteAllResponseDto response = realRandomRouteSearchService.requestAllRandomWay(userDetails.getUsername(), originAddress, distance, count);
+        KakaoRouteAllResponseDto response = realRandomRouteSearchService.requestAllRandomWay(userDetails.getUser().getId(), originAddress, distance, count);
         if (response == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 적절한 HTTP 상태 코드로 응답
         }
@@ -84,10 +84,10 @@ public class RandomRouteController {
     }
 
     @GetMapping("/offCourse")
-    public ResponseEntity<KakaoRouteAllResponseDto> getOffCourseWays(@RequestParam double originY, @RequestParam double originX,
+    public ResponseEntity<KakaoRouteAllResponseDto> getOffCourseWays(@RequestParam String currentAddress,
                                                                      @RequestParam double destinationY, @RequestParam double destinationX,
                                                                      @RequestParam String waypointsY, @RequestParam String waypointsX) {
-        KakaoRouteAllResponseDto response = randomOffCourseService.requestOffCourseSearch(originY, originX, destinationY, destinationX, waypointsY, waypointsX);
+        KakaoRouteAllResponseDto response = randomOffCourseService.requestOffCourseSearch(currentAddress, destinationY, destinationX, waypointsY, waypointsX);
         if (response == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 적절한 HTTP 상태 코드로 응답
         }
