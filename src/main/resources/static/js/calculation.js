@@ -241,7 +241,7 @@ function update_refact(lat, lng)
                 }//안내 정보 + 남은 거리 , 남은 시간 계산
 
 
-                // routeData.guides[naviInfo_ProcessIndex - 1].distance / 현제 도로
+                // routeData.guides[naviInfo_ProcessIndex - 1].distance / 현재 도로
                 nextGuidDistacne =
                     calculateDistance(routeData.guides[naviInfo_ProcessIndex].y, routeData.guides[naviInfo_ProcessIndex].x, lat, lng) * 1000;
                 nextGuidDuration = (nextGuidDistacne / routeData.guides[naviInfo_ProcessIndex].distance)
@@ -270,7 +270,8 @@ function update_refact(lat, lng)
 
 function updateMark()
 {
-    let point = routeData.guides[naviInfo_ProcessIndex];
+    let point = 0;
+    point = routeData.guides[naviInfo_ProcessIndex];
 
     switch (point.type)
     {

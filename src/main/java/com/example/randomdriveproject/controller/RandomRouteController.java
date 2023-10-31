@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequiredArgsConstructor
 @RequestMapping("/api")
 @Slf4j(topic = "RouteController")
-@RequestMapping("/api")
 public class RandomRouteController {
 
     private final RandomKakaoRouteSearchService kakaoRouteSearchService;

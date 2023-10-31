@@ -407,12 +407,12 @@ function remakeNavi(lat, lng) {
         .then((data) => {
             if (data.documents && data.documents.length > 0) {
 
-                currectAddress = data.documents[0].address.address_name;
+                currectAddress = data.documents[0].address.address_name; // 이
 
                 console.warn(currectAddress + " / " + destinationAddress + " OR " + routeData.destinationAddress);
                 {
                     setToken();
-                    fetch('/api/route?originAddress=' + currectAddress  + '&destinationAddress=' + destinationAddress)
+                    fetch('/api/route?currectAddress=' + currectAddress  + '&destinationAddress=' + destinationAddress)
                         .then(response => response.json())
                         .then(data => {
                             responseData = data;

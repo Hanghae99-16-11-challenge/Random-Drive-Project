@@ -20,7 +20,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 
-@Slf4j
+@Slf4j(topic ="KakaoRouteSearchService" )
 @Service
 @RequiredArgsConstructor
 public class KakaoRouteSearchService {
@@ -39,6 +39,7 @@ public class KakaoRouteSearchService {
 
         if (ObjectUtils.isEmpty(originAddress) || ObjectUtils.isEmpty(destinationAddress)) return null;
         System.out.println("호출준비");
+
 
         // 사용자 인증 정보 확인
 //        if(!username.equals(userRepository.findByUsername(username))){
@@ -69,7 +70,8 @@ public class KakaoRouteSearchService {
 //        String username = user.getUsername();
 
         if (ObjectUtils.isEmpty(lat) || ObjectUtils.isEmpty(lng)) return null;
-        System.out.println("호출준비");
+//        System.out.println("호출준비");
+        log.info("기본 경로 이탈시 준비");
 
         // 사용자 인증 정보 확인
 //        if(!username.equals(userRepository.findByUsername(username))){
