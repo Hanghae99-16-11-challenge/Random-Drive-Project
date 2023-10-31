@@ -103,6 +103,7 @@ tr.history-row {
 
 
 .app-footer button.logout-button {
+    white-space: nowrap;
     font-size: 10px; /* 버튼의 텍스트 크기를 작게 조절 */
     padding: 0.3rem 0.7rem; /* 버튼의 여백을 작게 조절 */
     background-color: #611122; /* 로그아웃 버튼의 배경색을 지정 #ff6347*/
@@ -111,7 +112,8 @@ tr.history-row {
     cursor: pointer; /* 마우스 커서를 포인터로 변경하여 클릭 가능한 상태로 표시 */
     position: absolute; /*스크롤 내렸을 때 버튼 고정*/
     bottom: 0; /*버튼 위친 하단*/
-    left: 250px; /*버튼 위치 왼쪽에서 오른쪽으로 밀기*/
+    /*left: 200px; !*버튼 위치 왼쪽에서 오른쪽으로 밀기*!*/
+    right: 0;
     font-family: "SDSamliphopangche_Basic", sans-serif;
     border-radius: 20px;
 }
