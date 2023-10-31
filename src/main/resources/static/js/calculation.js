@@ -337,6 +337,8 @@ function updateMark()
             break;
         case  2:
             stateText = '경유지 도착';
+            console.log("waypointCount +1" + waypointCount)
+            waypointCount += 1;
             break;
         case 3:
             stateText = '곧 목적지 입니다';
@@ -419,11 +421,11 @@ function outOfPath(lat, lng)
     if (pathType() === 'live')
     {
         remakeNavi(lat, lng);//응답시 resetNavi() 실행호출 준비
-    }else
-    {
-        console.warn("경로 이탈시 재성성 미지원");
     }
-
+    else
+    {
+        remakeRandomNavi(lat, lng);
+    }
     console.warn("경로 이탈");
 }
 

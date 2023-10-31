@@ -13,14 +13,14 @@ public class RandomDestination {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "username", nullable = false)
-    private String username;
+    @Column(name = "userId", nullable = false)
+    private Long userId;
 
     @Column(name = "destinationAddress", nullable = false)
     private String destinationAddress;
 
-    public RandomDestination(String username, String destinationAddress) {
-        this.username = username;
+    public RandomDestination(Long userId, String destinationAddress) {
+        this.userId = userId;
         this.destinationAddress = destinationAddress;
     }
 }

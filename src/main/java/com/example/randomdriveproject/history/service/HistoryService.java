@@ -38,7 +38,7 @@ public class HistoryService {
             KakaoRouteAllResponseDto.Section firstSection = routeInfo.getSections()[0]; // 첫 번째 Section을 사용하겠습니다.
 
             if (mapType.equals("live-all-random")) {
-                RandomDestination olderRandomDestination = randomDestinationRepository.findByUsername(user.getUsername());
+                RandomDestination olderRandomDestination = randomDestinationRepository.findByUserId(user.getId());
                 destinationAddress = olderRandomDestination.getDestinationAddress();
             }
 
