@@ -34,7 +34,7 @@ public class RandomKakaoRouteSearchService {
     @Value("${kakao.rest.api.key}")
     private String kakaoRestApiKey;
 
-    public KakaoRouteAllResponseDto requestAllRandomWay(String username, String originAddress, Integer redius) {
+    public KakaoRouteAllResponseDto requestAllRandomWay(Long userId, String originAddress, Integer redius) {
 
        if (ObjectUtils.isEmpty(originAddress) || ObjectUtils.isEmpty(redius)) return null;
 
@@ -64,8 +64,8 @@ public class RandomKakaoRouteSearchService {
         DocumentDto waypoints = responses.getDocumentDtoList().get(waypointsCnt);
 
         // 목적지 DB에 남김, 만일 동일 사용자가 이미 목적지를 저장해 놓았다면, 삭제
-        RandomDestination randomDestination = new RandomDestination(username, destination.getAddressName());
-        RandomDestination olderRandomDestination = randomDestinationRepository.findByUsername(username);
+        RandomDestination randomDestination = new RandomDestination(userId, destination.getAddressName());
+        RandomDestination olderRandomDestination = randomDestinationRepository.findByUserId(userId);
         if (olderRandomDestination != null)
             randomDestinationRepository.delete(olderRandomDestination);
         randomDestinationRepository.save(randomDestination);

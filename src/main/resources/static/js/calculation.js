@@ -145,16 +145,24 @@ function update_refact(lat, lng)
             updateMark();//마크 표시 , getGuidPoint 과 같음
         }
 
-        if (naviInfo_State === 0)
+        switch (naviInfo_State)
         {
-            stopNavi();
-            // reset();
-            onClick_StopNavi_navi();
-            console.log("길 안내 종료");
+            case 0:
+            {
+                stopNavi();
+                // reset();
+                onClick_StopNavi_navi();
+                console.log("길 안내 종료");
 
-            return;
+                return;
+            }
+            case -1:
+            {
+                stopNavi();
+                onClick_StopNavi_navi();
+                console.warn("길 안내 오류");
+            }
         }
-        
 
         {
             clearPolylines();
@@ -174,7 +182,7 @@ function update_refact(lat, lng)
                 
 
                 {
-                    for (let progress = naviInfo_ProcessIndex; progress < routeData.guides.length - 2; progress++)
+                    for (let progress = naviInfo_ProcessIndex; progress < routeData.guides.length - 1; progress++)
                     {
                         if (progress >= routeData.roads.length)
                             break;
@@ -191,7 +199,14 @@ function update_refact(lat, lng)
                     let currectRoads = [];
                     let lastRoadIndex = -1;
 
-                    currectRoads = routeData.roads[naviInfo_ProcessIndex - 1];
+                    if (routeData.roads.length <= (naviInfo_ProcessIndex - 1))
+                    {
+                        console.warn("뭔가 문제 발생 - calculation.js 지나가고 있는 도로 그리는데 오류 발생");
+                        currectRoads = routeData.roads[routeData.roads.length - 1];
+                    }else
+                    {
+                        currectRoads = routeData.roads[naviInfo_ProcessIndex - 1];
+                    }
 
 
                     currectPathLine.push(new kakao.maps.LatLng(lat, lng));
@@ -268,10 +283,28 @@ function update_refact(lat, lng)
     }
 }
 
+//다음에 올 안내지점 반환, naviInfo_State, 마크 설정
 function updateMark()
 {
-    let point = 0;
-    point = routeData.guides[naviInfo_ProcessIndex];
+
+    if (routeData.guides.length <= naviInfo_ProcessIndex)
+    {
+      naviInfo_State = 0;
+      return;
+    }//안내 종료
+    if (naviInfo_ProcessIndex < 0)
+    {
+        naviInfo_State = -1;
+        return;
+    }//안내 정보 오류
+
+    let point = routeData.guides[naviInfo_ProcessIndex];
+
+    if (point.type === 1000 && point.road_index === 0)
+    {
+        naviInfo_ProcessIndex++;
+        point = routeData.guides[naviInfo_ProcessIndex];
+    }// 경유지가 2개인경우 , 도로의 시작점인 경유지를 스킵
 
     switch (point.type)
     {
@@ -305,6 +338,8 @@ function updateMark()
             break;
         case  2:
             stateText = '경유지 도착';
+            console.log("waypointCount +1" + waypointCount)
+            waypointCount += 1;
             break;
         case 3:
             stateText = '곧 목적지 입니다';
@@ -386,13 +421,12 @@ function outOfPath(lat, lng)
 
     if (pathType() === 'live')
     {
-        remakeNavi(lat, lng);
-        clearNavi();
-    }else
-    {
-        console.warn("경로 이탈시 재성성 미지원");
+        remakeNavi(lat, lng);//응답시 resetNavi() 실행호출 준비
     }
-
+    else
+    {
+        remakeRandomNavi(lat, lng);
+    }
     console.warn("경로 이탈");
 }
 

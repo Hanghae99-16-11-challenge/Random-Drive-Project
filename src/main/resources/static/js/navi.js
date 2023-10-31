@@ -64,6 +64,7 @@ function makeHistoryMap(routeId) {
     fetch('/api/route/' + routeId)
         .then(response => response.json())
         .then(data => {
+            waypointCount = 0;
             responseData = data;
             routeData = data;
             if (!map) {
@@ -155,6 +156,7 @@ function makeRandomNavi(originAddress, destinationAddress, redius) {
 // 반경 기반 랜덤 길찾기 동작
 function makeAllRandomNavi(originAddress, redius) {
     const auth = getToken();
+
     fetch(`/api/all-random-route?originAddress=${originAddress}&redius=${redius}`, {
         method: 'GET',
         headers: {
@@ -175,6 +177,7 @@ function makeAllRandomNavi(originAddress, redius) {
 
 // 신규 길찾기, 랜덤 길찾기에서 얻은 response를 가공해서 Map에 띄워줌
 function makeLiveMap(data) {
+    waypointCount = 0;
     clearPolylines(); // 기존의 선들을 모두 제거
     if (!map) {
         map = new kakao.maps.Map(document.getElementById('map'), {
@@ -446,4 +449,76 @@ function remakeNavi(lat, lng) {
     //     .catch(error => {
     //         console.error('Error:', error);
     //     });
+}
+function remakeRandomNavi(lat, lng) {
+    setToken();
+
+    let currentAddress = "";
+
+    fetch(
+        'https://dapi.kakao.com/v2/local/geo/coord2address?x=' + lng + '&y=' + lat,
+        {
+            headers: { Authorization: 'KakaoAK 4752e5a5b955f574af7718613891f796' }, //rest api 키
+        }
+    )
+        .then((response) => response.json())
+        .then((data) => {
+            currentAddress = data.documents[0].address.address_name;
+            console.log(data);
+
+            let destinationLatitude = destinationLocation.lat;
+            let destinationLongitude = destinationLocation.lng;
+
+            if (type === 'save' && offCourseCount === 0) {
+                // routeData.guides 배열의 맨 마지막 요소가 목적지
+                let destinationGuide = routeData.guides[routeData.guides.length - 1];
+                destinationLatitude = destinationGuide.y;
+                destinationLongitude = destinationGuide.x;
+            }
+
+            console.log(routeData.guides
+                .filter(guide => guide.type === 1000));
+
+            offCourseCount++;
+
+            let waypointsX, waypointsY;
+
+            waypointsX = "";
+            waypointsY = "";
+            let isexist = false;
+            for (let i = naviInfo_ProcessIndex; i < routeData.guides.length; i++)
+            {
+                if (routeData.guides[i].type === 1000 && routeData.guides[i].road_index === -1) {
+                    isexist = true;
+                    waypointsX += routeData.guides[i].x + " ";
+                    waypointsY += routeData.guides[i].y + " ";
+                }
+            }
+
+            if (!isexist)
+            {
+                waypointsX = "0";
+                waypointsY = "0";
+            }
+
+            console.log("주소: " + currentAddress);
+            console.log("경유지 y: " + waypointsY + ", 경유지 x:" + waypointsX);
+            console.log("목적지 y: " + destinationLatitude + ", 경유지 x:" + destinationLongitude);
+
+            {
+                fetch('/api/offCourse?currentAddress=' + currentAddress
+                    + '&destinationY=' + destinationLatitude + '&destinationX=' + destinationLongitude
+                    + '&waypointsY=' + waypointsY + '&waypointsX=' + waypointsX)
+                    .then(response => response.json())
+                    .then(data => {
+                        responseData = data;
+                        adapt_KakaoResponseToRouteData(data);
+                        makeLiveMap(data)
+                        clearNavi();
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            }
+        });
 }
