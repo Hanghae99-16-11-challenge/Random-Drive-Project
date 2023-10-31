@@ -103,6 +103,7 @@ tr.history-row {
 
 
 .app-footer button.logout-button {
+    white-space: nowrap;
     font-size: 10px; /* 버튼의 텍스트 크기를 작게 조절 */
     padding: 0.3rem 0.7rem; /* 버튼의 여백을 작게 조절 */
     background-color: #611122; /* 로그아웃 버튼의 배경색을 지정 #ff6347*/
