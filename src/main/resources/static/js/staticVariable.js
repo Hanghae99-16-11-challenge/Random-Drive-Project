@@ -95,6 +95,21 @@ function adapt_KakaoResponseToRouteData(kakaoRes) {
     if (kakaoRes == null)
         console.warn("parameter is null");
 
+    try {
+        kakaoRes.routes[0].summary.origin.name;
+    }catch (e)
+    {
+        let errormsg = JSON.stringify(kakaoRes).split(",");
+        let printmsg = "\n";
+        for (let i = 0; i < errormsg.length; i++)
+        {
+            printmsg += errormsg[i] + "\n";
+        }
+
+        console.error("유효하지 않은 데이터 - 카카오 길찾기 응답 객체가 아닙니다. \n" + e + "\n" + printmsg);
+        return;
+    }
+
     //try
     {
         routeData = {
