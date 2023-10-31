@@ -12,11 +12,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DocumentDto {
 
-//    @JsonProperty("place_name") // 카테고리
-//    private String placeName;
-//
-//    @JsonProperty("distance") // 카테고리
-//    private double distance;
+    @JsonProperty("place_name") // 카테고리
+    private String placeName;
+
+    @JsonProperty("distance") // 카테고리
+    private double distance;
+
+    @JsonProperty("category_name") // 카테고리
+    private String categoryName;
 
     @JsonProperty("address_name")
     private String addressName;
@@ -31,6 +34,24 @@ public class DocumentDto {
     public DocumentDto(double lat, double lng) {
         this.latitude = lat;
         this.longitude = lng;
+    }
+
+
+    public DocumentDto(String addressName, double latitude, double longitude) {
+        this.addressName = addressName;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
+    public String toString() { // 로그 확인용 (placeName,addressName)
+        return "DocumentDto{" +
+                "placeName='" + placeName + '\'' +
+                ", distance=" + distance +
+                ", addressName='" + addressName + '\'' +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                ", categoryName=" + categoryName +
+                '}';
     }
 }
 

@@ -125,7 +125,7 @@ public class RealRandomRouteSearchService {
         double tempX = randomX; // 임시 X 좌표
 
         // 목적지 값을 반경으로 계산해서 가져오는 메소드
-        KakaoApiResponseDto responses = kakaoCategorySearchService.requestPharmacyCategorySearch(randomY, randomX, 2);
+        KakaoApiResponseDto responses = kakaoCategorySearchService.requestAttractionCategorySearch(randomY, randomX, 2);
 
         // 랜덤으로 다중 목적지와 경유지 만들기 알고리즘
         int randomLength = responses.getDocumentDtoList().size();
@@ -134,16 +134,16 @@ public class RealRandomRouteSearchService {
         if (randomLength == 0) { // 출발지 좌표를 기준으로 대칭되는 곳의 좌표를 목적지 좌표로 수정
             randomX -= 2 * (randomX - originX);
             randomY -= 2 * (randomY - originY);
-            responses = kakaoCategorySearchService.requestPharmacyCategorySearch(randomY, randomX, 2);
+            responses = kakaoCategorySearchService.requestAttractionCategorySearch(randomY, randomX, 2);
             randomLength = responses.getDocumentDtoList().size();
             if (randomLength == 0) { // 출발지 좌표를 기준으로 Y좌표가 대칭되는 곳의 좌표를 목적지 좌표로 수정
                 randomX = tempX;
-                responses = kakaoCategorySearchService.requestPharmacyCategorySearch(randomY, randomX, 2);
+                responses = kakaoCategorySearchService.requestAttractionCategorySearch(randomY, randomX, 2);
                 randomLength = responses.getDocumentDtoList().size();
                 if (randomLength == 0) { // 출발지 좌표를 기준으로 X좌표가 대칭되는 곳의 좌표를 목적지 좌표로 수정
                     randomX -= 2 * (randomX - originX);
                     randomY = tempY;
-                    responses = kakaoCategorySearchService.requestPharmacyCategorySearch(randomY, randomX, 2);
+                    responses = kakaoCategorySearchService.requestAttractionCategorySearch(randomY, randomX, 2);
                 }
             }
         }
@@ -270,7 +270,7 @@ public class RealRandomRouteSearchService {
     // 특정 좌표 주변 경유지를 골라주는 메서드
     private RandomDocumentDto getRandomWayPoint(double y, double x, double redius) {
         Random rd = new Random();
-        KakaoApiResponseDto responses = kakaoCategorySearchService.requestPharmacyCategorySearch(y, x, redius);
+        KakaoApiResponseDto responses = kakaoCategorySearchService.requestAttractionCategorySearch(y, x, redius);
         int randomLength = responses.getDocumentDtoList().size();
         if (randomLength == 0)
             return null;

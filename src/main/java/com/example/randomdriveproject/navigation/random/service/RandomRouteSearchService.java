@@ -7,6 +7,9 @@ import com.example.randomdriveproject.request.dto.KakaoApiResponseDto;
 import com.example.randomdriveproject.request.dto.KakaoRouteAllResponseDto;
 import com.example.randomdriveproject.request.service.KakaoAddressSearchService;
 import com.example.randomdriveproject.request.service.RandomKakaoCategorySearchService;
+import com.example.randomdriveproject.request.service.KakaoKeywordSearchService;
+import com.example.randomdriveproject.user.entity.User;
+import com.example.randomdriveproject.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,51 +22,43 @@ import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 import java.util.*;
-import java.util.stream.Collectors;
 
-@Slf4j(topic = "KakaoRouteSearchService")
+@Slf4j(topic = "RandomRouteSearchService")
 @Service
 @RequiredArgsConstructor
-public class RandomKakaoRouteSearchService {
+public class RandomRouteSearchService {
 
     private final RestTemplate restTemplate;
     private final KakaoAddressSearchService kakaoAddressSearchService;
     private final RandomKakaoCategorySearchService kakaoCategorySearchService;
     private final RandomDestinationRepository randomDestinationRepository;
+    private final UserRepository userRepository;
+    private final KakaoKeywordSearchService randomKakaoKeywordSearchService;
 
     @Value("${kakao.rest.api.key}")
     private String kakaoRestApiKey;
 
     public KakaoRouteAllResponseDto requestAllRandomWay(Long userId, String originAddress, Integer redius) {
 
-       if (ObjectUtils.isEmpty(originAddress) || ObjectUtils.isEmpty(redius)) return null;
+        if (ObjectUtils.isEmpty(originAddress) || ObjectUtils.isEmpty(redius)) return null;
+
+        // 유저 인증, 유저 이름 -> 아이디
+
 
         // 출발지와 도착지 주소를 각각 좌표로 변환
         DocumentDto origin = kakaoAddressSearchService.requestAddressSearch(originAddress).getDocumentDtoList().get(0);
 
         /***
-         목적지와 경유지 값을 반경으로 계산해서 가져오는 메소드
+         목적지와 경유지 값을 반경으로 계산해서 가져오는 메소드 -> 관광명소
          ***/
-        KakaoApiResponseDto responses = kakaoCategorySearchService.requestAttractionCategorySearch(origin.getLatitude(), origin.getLongitude(), redius);
+        KakaoApiResponseDto tourResponses = kakaoCategorySearchService.requestAttractionCategorySearch(origin.getLatitude(), origin.getLongitude(), redius);
 
-        List<String> addressNames = responses.getDocumentDtoList().stream()
-                .map(DocumentDto::getAddressName)
-                .collect(Collectors.toList());
-
-        log.info("getDocumentDtoList addressNames : {} " , addressNames.toString());
-
-        List<String> placeNames = responses.getDocumentDtoList().stream()
-                .map(DocumentDto::getPlaceName)
-                .collect(Collectors.toList());
-        log.info("getDocumentDtoList placeNames : {} " , placeNames.toString());
-        // DocumentDto 리스트 확인
 
 
         /***
          랜덤으로 다중 목적지와 경유지 만들기 알고리즘
          ***/
-        int RandomLength = responses.getDocumentDtoList().size();
-
+        int RandomLength = tourResponses.getDocumentDtoList().size();
 
 
         Random rd = new Random();
@@ -78,11 +73,33 @@ public class RandomKakaoRouteSearchService {
             waypointsCnt = destinationCnt - 1;
             // 인덱스 범위 오류 수정
         }
-        log.info("destinationCnt : {}",destinationCnt);
-        log.info("waypointCnt : {}",waypointsCnt);
 
-        DocumentDto destination = responses.getDocumentDtoList().get(destinationCnt);
-        DocumentDto waypoints = responses.getDocumentDtoList().get(waypointsCnt);
+
+        DocumentDto destination = tourResponses.getDocumentDtoList().get(destinationCnt);
+        log.info("destination : {}", destination );
+
+        DocumentDto waypoints = tourResponses.getDocumentDtoList().get(waypointsCnt);
+        log.info("waypoints : {}", waypoints );
+
+        /**
+         추가 : place_name 과 address_name의 주소
+         **/
+
+        // 주소에서 원하는 부분만 추출
+        String[] addressPartsDes = destination.getAddressName().split(" ");
+        String[] addressPartsWay = waypoints.getAddressName().split(" ");
+
+        String refinedAddressDes = (addressPartsDes.length >= 2) ? addressPartsDes[0] + " " + addressPartsDes[1] : destination.getAddressName();
+        String refinedAddressWay = (addressPartsDes.length >= 2) ? addressPartsWay[0] + " " + addressPartsWay[1] : waypoints.getAddressName();
+
+        // 주소와 장소명 결합
+        String combinedKeywordDes = refinedAddressDes + " " + destination.getPlaceName();
+        String combinedKeywordWay = refinedAddressWay + " " + waypoints.getPlaceName();
+        log.info("combinedKeywordDes : {}", combinedKeywordDes );
+        log.info("combinedKeywordWay : {}", combinedKeywordWay );
+
+
+        //----------------------------------------------------------------//
 
         // 목적지 DB에 남김, 만일 동일 사용자가 이미 목적지를 저장해 놓았다면, 삭제
         RandomDestination randomDestination = new RandomDestination(userId, destination.getAddressName());
@@ -90,6 +107,9 @@ public class RandomKakaoRouteSearchService {
         if (olderRandomDestination != null)
             randomDestinationRepository.delete(olderRandomDestination);
         randomDestinationRepository.save(randomDestination);
+
+
+
 
         /***
          요청 헤더 만드는 공식
@@ -146,8 +166,10 @@ public class RandomKakaoRouteSearchService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set(HttpHeaders.AUTHORIZATION, "KakaoAK " + kakaoRestApiKey);
-        HttpEntity <Map<String,Object>> httpEntity = new HttpEntity<>(uriData,headers);
+        HttpEntity<Map<String,Object>> httpEntity = new HttpEntity<>(uriData,headers);
 
         return restTemplate.postForEntity(uri,httpEntity,KakaoRouteAllResponseDto.class).getBody();
     }
 }
+
+

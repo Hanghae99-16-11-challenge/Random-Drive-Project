@@ -28,7 +28,7 @@ function handleCurrentLocationClick() {
             .then((response) => response.json())
             .then((data) => {
                 if (data.documents && data.documents.length > 0) {
-                    document.getElementById('random-originAddress').value = data.documents[0].address_name;
+                    document.getElementById('all-random-originAddress').value = data.documents[0].address_name;
                 } else {
                     throw new Error('Could not find address for this coordinates.');
                 }
@@ -41,7 +41,7 @@ document.getElementById('random-current-location').addEventListener('click', han
 document.getElementById('random-search-origin').addEventListener('click', function() {
     new daum.Postcode({
         oncomplete: function(data) {
-            document.getElementById('random-originAddress').value = data.address;
+            document.getElementById('all-random-originAddress').value = data.address;
         }
     }).open();
 });
@@ -70,7 +70,7 @@ document.getElementById('random-search-form').addEventListener('submit', functio
         return;
     }
 
-    var originAddress = document.getElementById('random-originAddress').value;
+    var originAddress = document.getElementById('all-random-originAddress').value;
     var destinationAddress = document.getElementById('random-destinationAddress').value;
     var redius = document.getElementById('random-redius').value;
 

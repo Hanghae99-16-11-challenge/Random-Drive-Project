@@ -28,7 +28,7 @@ function handleCurrentLocationClick() {
             .then((response) => response.json())
             .then((data) => {
                 if (data.documents && data.documents.length > 0) {
-                    document.getElementById('originAddress').value = data.documents[0].address_name;
+                    document.getElementById('all-random-originAddress').value = data.documents[0].address_name;
                 } else {
                     throw new Error('Could not find address for this coordinates.');
                 }
@@ -41,7 +41,7 @@ document.getElementById('current-location').addEventListener('click', handleCurr
 document.getElementById('search-origin').addEventListener('click', function() {
     new daum.Postcode({
         oncomplete: function(data) {
-            document.getElementById('originAddress').value = data.address;
+            document.getElementById('all-random-originAddress').value = data.address;
         }
     }).open();
 });
@@ -49,7 +49,7 @@ document.getElementById('search-origin').addEventListener('click', function() {
 document.getElementById('search-destination').addEventListener('click', function() {
     new daum.Postcode({
         oncomplete: function(data) {
-            document.getElementById('destinationAddress').value = data.address;
+            document.getElementById('random-destinationAddress').value = data.address;
         }
     }).open();
 });
@@ -69,11 +69,11 @@ document.getElementById('search-form').addEventListener('submit', function(e) {
         return;
     }
 
-    var originAddress = document.getElementById('originAddress').value;
-    var destinationAddress = document.getElementById('destinationAddress').value;
+    var originAddress = document.getElementById('all-random-originAddress').value;
+    var destinationAddress = document.getElementById('random-destinationAddress').value;
 
-    oriAddress = document.getElementById('originAddress').value;
-    desAddress = document.getElementById('destinationAddress').value;
+    oriAddress = document.getElementById('all-random-originAddress').value;
+    desAddress = document.getElementById('random-destinationAddress').value;
     console.log(oriAddress + " ~ " + desAddress);
 
 

@@ -66,3 +66,5 @@ document.getElementById('all-random-search-form').addEventListener('submit', fun
 
     window.location.href = 'navi/' + 'live-all-random' + '/0/' + originAddress + '/route/' + redius;
 });
+
+

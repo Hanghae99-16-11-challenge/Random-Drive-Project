@@ -3,6 +3,7 @@ package com.example.randomdriveproject.controller;
 
 import com.example.randomdriveproject.navigation.random.service.RandomOffCourseService;
 import com.example.randomdriveproject.navigation.random.service.RandomKakaoRouteSearchService;
+import com.example.randomdriveproject.navigation.random.service.RandomRouteSearchService;
 import com.example.randomdriveproject.navigation.random.service.RealRandomRouteSearchService;
 import com.example.randomdriveproject.request.dto.KakaoRouteAllResponseDto;
 import com.example.randomdriveproject.user.security.UserDetailsImpl;
@@ -28,16 +29,44 @@ public class RandomRouteController {
     private final RandomKakaoRouteSearchService kakaoRouteSearchService;
     private final RealRandomRouteSearchService realRandomRouteSearchService;
     private final RandomOffCourseService randomOffCourseService;
+    private final RandomRouteSearchService randomRouteSearchService;
 
+//    @GetMapping("/all-random-route")
+//    @Operation(summary = "랜덤경로", description = "반경을 기준으로 랜덤 경로를 가져옵니다.")
+//    public ResponseEntity<KakaoRouteAllResponseDto> getRandomWays(@RequestParam String originAddress, @RequestParam Integer redius, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+//        KakaoRouteAllResponseDto response = randomKakaoRouteSearchService.requestAllRandomWay(userDetails.getUsername(),originAddress,redius);
+//        if (response == null) {
+//            return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 적절한 HTTP 상태 코드로 응답
+//        }
+//        return new ResponseEntity<>(response, HttpStatus.OK);
+//    }
+//
+//    @GetMapping("/random-route")
+//    @Operation(summary = "랜덤경로", description = "목적지와 반경을 설정한 후 랜덤 경로를 가져옵니다.")
+//    public ResponseEntity<KakaoRouteAllResponseDto> getRandomWay(@RequestParam String originAddress,@RequestParam String destinationAddress, @RequestParam Integer redius) {
+//        KakaoRouteAllResponseDto response = randomKakaoRouteSearchService.requestRamdomWay(originAddress,destinationAddress,redius);
+//
+////        PathUtil.PathInfo(response , "RandomRouteController - random-route");
+//
+//        if (response == null) {
+//            return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 적절한 HTTP 상태 코드로 응답
+//        }
+//        return new ResponseEntity<>(response, HttpStatus.OK);
+//    }
+
+
+    // 최초의 기존 랜덤 경로 kakaoRouteSearchService
+    // 키워드 결합 randomRouteSearchService
     @GetMapping("/all-random-route")
     @Operation(summary = "랜덤경로", description = "반경을 기준으로 랜덤 경로를 가져옵니다.")
     public ResponseEntity<KakaoRouteAllResponseDto> getRandomWays(@RequestParam String originAddress, @RequestParam Integer redius, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        KakaoRouteAllResponseDto response = kakaoRouteSearchService.requestAllRandomWay(userDetails.getUser().getId(),originAddress,redius);
+        KakaoRouteAllResponseDto response = randomRouteSearchService.requestAllRandomWay(userDetails.getUser().getId(),originAddress,redius);
         if (response == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 적절한 HTTP 상태 코드로 응답
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
 
     @GetMapping("/random-route")
     @Operation(summary = "랜덤경로", description = "목적지와 반경을 설정한 후 랜덤 경로를 가져옵니다.")

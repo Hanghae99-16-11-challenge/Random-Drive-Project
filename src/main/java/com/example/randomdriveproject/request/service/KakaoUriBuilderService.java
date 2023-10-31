@@ -20,8 +20,9 @@ public class KakaoUriBuilderService {
     // 카테고리 api
     private static final String KAKAO_LOCAL_CATEGORY_SEARCH_URL = "https://dapi.kakao.com/v2/local/search/category.json";
 
-    //목적지 가져오기
-    private static  RouteRepository routeRepository;
+
+    // 키워드 api
+    private static final String KAKAO_LOCAL_KEYWORD_SEARCH_URL = "https://dapi.kakao.com/v2/local/search/keyword.json";
 
 
     // 주소검색
@@ -60,7 +61,7 @@ public class KakaoUriBuilderService {
         uriBuilder.queryParam("x", x);
         uriBuilder.queryParam("y", y);
         uriBuilder.queryParam("radius", meterRadius); // 반경 순
-        uriBuilder.queryParam("sort", "popularity"); // 인기도 순 정렬
+        uriBuilder.queryParam("sort", "popularity");
 
         URI uri = uriBuilder.build().encode().toUri();
 
@@ -68,6 +69,7 @@ public class KakaoUriBuilderService {
 
         return uri;
     }
+
 
     // 경로 재생성 길찾기
     public URI buildUriByReRouteSearch(double startCoord) {
@@ -85,4 +87,18 @@ public class KakaoUriBuilderService {
         return routeUri;
     }
 
+
+
+    // 키워드
+    public URI buildUriByKeywordSearch(String query){
+
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(KAKAO_LOCAL_KEYWORD_SEARCH_URL);
+        uriBuilder.queryParam("query", query);
+
+        URI uri = uriBuilder.build().encode().toUri(); // encode 제거
+
+        log.info("***[KakaoAddressSearchService buildUriByKeywordSearch] uri : {} ", uri);
+
+        return uri;
+    }
 }
