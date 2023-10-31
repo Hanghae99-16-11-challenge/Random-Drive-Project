@@ -199,22 +199,39 @@ function makeLiveMap(data) {
         {
             title: '출발',
             latlng: new kakao.maps.LatLng(let_ori, lon_ori),
-
+            image: "https://cdn-icons-png.flaticon.com/512/6213/6213694.png"
         },
         {
             title: '도착',
-            latlng: new kakao.maps.LatLng(lat_des, lon_des)
+            latlng: new kakao.maps.LatLng(lat_des, lon_des),
+            image: "https://cdn-icons-png.flaticon.com/512/4856/4856582.png"
         }
     ]
-    // // 마커 이미지의 이미지 주소입니다
-    // var imageSrc = "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png";
+
+    // // 이미지 사이즈
+    // var imageSize = new kakao.maps.Size(64, 69);
+    // // // 마커 이미지의 이미지 주소입니다
+    // var imageStart = "https://cdn-icons-png.flaticon.com/512/6213/6213694.png",
+    //     imageStartOption = {offset: new kakao.maps.Point(lat_des, lon_des)}
+    //
+    // var imageEnd = "https://cdn-icons-png.flaticon.com/512/4856/4856582.png",
+    //     imageEndOption = {offset: new kakao.maps.Point(lat_des, lon_des)};
+    //
+    // var markerImage = new kakao.maps.MarkerImage(imageStart, imageSize, imageStartOption)
+
+
 
     // 마커를 지도에 표시하기
-    for(var i = 0; i < positions.length; i++){
+    for (var i = 0; i < positions.length; i++) {
+        // 마커 이미지 크기
+        var imageSize = new kakao.maps.Size(40, 40);
+        var markerImage = new kakao.maps.MarkerImage(positions[i].image, imageSize);
         var marker = new kakao.maps.Marker({
             map: map,
             position: positions[i].latlng,
-            title: positions[i].title
+            title: positions[i].title,
+            image: markerImage,
+            text: positions[i].image
         })
     }
 
