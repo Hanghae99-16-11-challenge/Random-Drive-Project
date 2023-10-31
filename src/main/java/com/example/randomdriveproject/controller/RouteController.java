@@ -40,18 +40,7 @@ public class RouteController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    // 키워드 기반 이름 -> 리스트 -> 도로명 주소로
-//    @GetMapping("/keyword-random-route")
-//    @Operation(summary = "랜덤경로", description = "목적지와 반경을 설정한 후 랜덤 경로를 가져옵니다.")
-//    public ResponseEntity<KakaoApiResponseDto> getRandom(@RequestParam String query) {
-//        KakaoApiResponseDto response = keywordSearchService.requestKeywordRandomWay(query);
-//
-//        if (response == null || response.getDocumentDtoList().isEmpty()) {
-//            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-//        }
-//
-//        return new ResponseEntity<>(response, HttpStatus.OK);
-//    }
+
 
     @GetMapping("/keyword-random-route")
     @Operation(summary = "랜덤경로", description = "목적지와 반경을 설정한 후 랜덤 경로를 가져옵니다.")

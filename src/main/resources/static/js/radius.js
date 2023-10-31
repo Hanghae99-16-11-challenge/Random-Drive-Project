@@ -68,5 +68,3 @@ document.getElementById('all-random-search-form').addEventListener('submit', fun
 });
 
 
-
-// 키워드 기반 검색

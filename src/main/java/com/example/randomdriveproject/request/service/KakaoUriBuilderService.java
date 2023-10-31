@@ -68,22 +68,13 @@ public class KakaoUriBuilderService {
         return uri;
     }
 
-//    https://dapi.kakao.com/v2/local/search/keyword.json?query=카카오&category_group_code=AT4
-//
-//    https://dapi.kakao.com/v2/local/search/keyword.json?query=카카오&CategoryGroupCode=AT4
+
 
     // 키워드
-    public URI buildUriByKeywordSearch( String query){
-
-//        double meterRadius = radius * 1000;
+    public URI buildUriByKeywordSearch(String query){
 
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(KAKAO_LOCAL_KEYWORD_SEARCH_URL);
         uriBuilder.queryParam("query", query);
-//        uriBuilder.queryParam("category_group_code", category);
-//        uriBuilder.queryParam("x", x);
-//        uriBuilder.queryParam("y", y);
-//        uriBuilder.queryParam("radius", meterRadius); // 반경 순
-//        uriBuilder.queryParam("sort", "popularity");
 
         URI uri = uriBuilder.build().encode().toUri(); // encode 제거
 
