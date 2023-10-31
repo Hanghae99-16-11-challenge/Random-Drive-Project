@@ -415,7 +415,7 @@ function remakeNavi(lat, lng) {
                 console.warn(currectAddress + " / " + destinationAddress + " OR " + routeData.destinationAddress);
                 {
                     setToken();
-                    fetch('/api/route?currectAddress=' + currectAddress  + '&destinationAddress=' + destinationAddress)
+                    fetch('/api/route?originAddress=' + currectAddress  + '&destinationAddress=' + destinationAddress)
                         .then(response => response.json())
                         .then(data => {
                             responseData = data;
