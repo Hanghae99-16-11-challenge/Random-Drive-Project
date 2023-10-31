@@ -57,10 +57,6 @@ public class RandomRouteSearchService {
          ***/
         KakaoApiResponseDto tourResponses = kakaoCategorySearchService.requestAttractionCategorySearch(origin.getLatitude(), origin.getLongitude(), redius);
 
-        /***
-         목적지와 경유지 값을 반경으로 계산해서 가져오는 메소드 -> 문화시설
-         ***/
-        KakaoApiResponseDto cultureResponses = kakaoCategorySearchService.requestCultureCategorySearch(origin.getLatitude(), origin.getLongitude(), redius);
 
 
         /***
