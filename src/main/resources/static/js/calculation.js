@@ -182,7 +182,7 @@ function update_refact(lat, lng)
                 
 
                 {
-                    for (let progress = naviInfo_ProcessIndex; progress < routeData.guides.length - 2; progress++)
+                    for (let progress = naviInfo_ProcessIndex; progress < routeData.guides.length - 1; progress++)
                     {
                         if (progress >= routeData.roads.length)
                             break;
@@ -290,12 +290,12 @@ function updateMark()
     {
       naviInfo_State = 0;
       return;
-    }
+    }//안내 종료
     if (naviInfo_ProcessIndex < 0)
     {
         naviInfo_State = -1;
         return;
-    }
+    }//안내 정보 오류
 
     let point = routeData.guides[naviInfo_ProcessIndex];
 
