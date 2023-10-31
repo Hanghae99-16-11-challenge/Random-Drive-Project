@@ -174,7 +174,7 @@ function update_refact(lat, lng)
                 
 
                 {
-                    for (let progress = naviInfo_ProcessIndex; progress < routeData.guides.length - 2; progress++)
+                    for (let progress = naviInfo_ProcessIndex; progress < routeData.guides.length - 1; progress++)
                     {
                         if (progress >= routeData.roads.length)
                             break;
@@ -270,7 +270,23 @@ function update_refact(lat, lng)
 
 function updateMark()
 {
+    if (routeData.guides.length <= naviInfo_ProcessIndex)
+    {
+        naviInfo_State = 0;
+        return;
+    }
+    if (naviInfo_ProcessIndex < 0)
+    {
+        naviInfo_State = -1;
+        return;
+    }
+
     let point = routeData.guides[naviInfo_ProcessIndex];
+
+    if (point.type === 1000 && point.road_index === 0) {
+        naviInfo_ProcessIndex++;
+        point = routeData.guides[naviInfo_ProcessIndex];
+    }
 
     switch (point.type)
     {

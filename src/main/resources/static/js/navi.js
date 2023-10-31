@@ -475,6 +475,10 @@ function remakeRandomNavi(lat, lng) {
                 .slice(waypointCount)
                 .filter(guide => guide.type === 1000);
 
+            console.log(filteredGuides);
+            console.log(routeData.guides
+                .filter(guide => guide.type === 1000));
+
             if (type === 'save') {
                 filteredGuides = filteredGuides.filter((guide, index) => index % 2 !== 0);
                 // routeData.guides 배열의 맨 마지막 요소가 목적지
