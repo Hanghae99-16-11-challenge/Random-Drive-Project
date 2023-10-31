@@ -87,7 +87,7 @@ function updateMap(mouseEvent)
 
 function update_refact(lat, lng)
 {
-    EditMark(positionMark, positionText, lat, lng, '클릭한 위치');
+    // EditMark(positionMark, positionText, lat, lng, '클릭한 위치');
 
     if(routeData == null)
     {

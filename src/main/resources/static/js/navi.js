@@ -8,7 +8,7 @@ const routeId = segments[segments.length - 4]; // 뒤에서 네 번째 segment
 const originAddress = segments[segments.length - 3]; // 뒤에서 세 번째 segment
 const destinationAddress = segments[segments.length - 2]; // 뒤에서 두 번째 segment
 const redius = segments[segments.length - 1]; // 마지막 segment
-$(document).ready(function() {
+$(document).ready(function () {
 
 
     if (type === 'save') {
@@ -25,7 +25,7 @@ $(document).ready(function() {
 });
 
 // 예 버튼
-document.getElementsByClassName('button-yes')[0].addEventListener('click', function() {
+document.getElementsByClassName('button-yes')[0].addEventListener('click', function () {
     if (type === 'live') {
         saveRoute(responseData, originAddress, destinationAddress)
     } else if (type === 'live-random') {
@@ -38,7 +38,7 @@ document.getElementsByClassName('button-yes')[0].addEventListener('click', funct
 });
 
 // 아니오 버튼
-document.getElementsByClassName('button-no')[0].addEventListener('click', function() {
+document.getElementsByClassName('button-no')[0].addEventListener('click', function () {
     window.location.href = '/view/home';
 });
 
@@ -52,6 +52,7 @@ map = new kakao.maps.Map(container, options);
 
 // 경로 안내 polyline ----------------------------------------------------------------------------------------------------------//
 var polylines = [];
+
 function clearPolylines() {
     for (let i = 0; i < polylines.length; i++) {
         polylines[i].setMap(null);
@@ -83,7 +84,7 @@ function makeHistoryMap(routeId) {
             let hour = Math.floor(duration / 3600);
             let minute = Math.floor((duration % 3600) / 60);
 
-            let km= (distance / 1000).toFixed(1);
+            let km = (distance / 1000).toFixed(1);
 
 
             // 요소에 데이터를 추가
@@ -99,10 +100,10 @@ function makeHistoryMap(routeId) {
             map.setBounds(bounds);
 
 
-            for(let road of data.roads){
+            for (let road of data.roads) {
                 let path = [];
-                for(let i=0; i<road.vertexes.length; i+=2){
-                    path.push(new kakao.maps.LatLng(road.vertexes[i+1], road.vertexes[i]));
+                for (let i = 0; i < road.vertexes.length; i += 2) {
+                    path.push(new kakao.maps.LatLng(road.vertexes[i + 1], road.vertexes[i]));
                 }
 
                 const polyline = new kakao.maps.Polyline({
@@ -126,7 +127,7 @@ function makeHistoryMap(routeId) {
 // 기본 길찾기 동작
 function makeNavi(originAddress, destinationAddress) {
     setToken();
-    fetch('/api/route?originAddress=' + originAddress  + '&destinationAddress=' + destinationAddress)
+    fetch('/api/route?originAddress=' + originAddress + '&destinationAddress=' + destinationAddress)
         .then(response => response.json())
         .then(data => {
             responseData = data;
@@ -141,7 +142,7 @@ function makeNavi(originAddress, destinationAddress) {
 // 목적지 기반 랜덤 길찾기 동작
 function makeRandomNavi(originAddress, destinationAddress, redius) {
     setToken();
-    fetch('/api/random-route?originAddress=' + originAddress  + '&destinationAddress=' + destinationAddress + '&redius=' + redius)
+    fetch('/api/random-route?originAddress=' + originAddress + '&destinationAddress=' + destinationAddress + '&redius=' + redius)
         .then(response => response.json())
         .then(data => {
             responseData = data;
@@ -185,12 +186,44 @@ function makeLiveMap(data) {
         });
     }
 
+
     var bounds = new kakao.maps.LatLngBounds(); // 모든 경로의 좌표를 포함할 수 있는 경계 객체를 만듭니다.
+
+    // 출발지 도착지 마커 표시하기 위한 위도와 경도
+    var let_ori = data.routes[0].summary.origin.y;
+    var lon_ori = data.routes[0].summary.origin.x;
+    var lat_des = data.routes[0].summary.destination.y;
+    var lon_des = data.routes[0].summary.destination.x;
+
+    var positions = [
+        {
+            title: '출발',
+            latlng: new kakao.maps.LatLng(let_ori, lon_ori),
+
+        },
+        {
+            title: '도착',
+            latlng: new kakao.maps.LatLng(lat_des, lon_des)
+        }
+    ]
+    // // 마커 이미지의 이미지 주소입니다
+    // var imageSrc = "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png";
+
+    // 마커를 지도에 표시하기
+    for(var i = 0; i < positions.length; i++){
+        var marker = new kakao.maps.Marker({
+            map: map,
+            position: positions[i].latlng,
+            title: positions[i].title
+        })
+    }
+
 
     // 경로 정보(routes)의 각 섹션(section)별로 반복하여 처리합니다.
     for (let route of data.routes) {
         let distance = route.summary.distance;
         let duration = route.summary.duration;
+
 
         // distance와 duration을 표시할 요소를 선택
         let distanceElement = document.querySelector('.distance');
@@ -273,12 +306,12 @@ function getToken() {
 
     let auth = Cookies.get('Authorization');
 
-    if(auth === undefined) {
+    if (auth === undefined) {
         return '';
     }
 
     // kakao 로그인 사용한 경우 Bearer 추가
-    if(auth.indexOf('Bearer') === -1 && auth !== ''){
+    if (auth.indexOf('Bearer') === -1 && auth !== '') {
         auth = 'Bearer ' + auth;
     }
     return auth;
@@ -287,14 +320,12 @@ function getToken() {
 // 상세교통상황 표시
 // map.addOverlayMapTypeId(kakao.maps.MapTypeId.TRAFFIC);
 
-function onClick_StartNavi_navi()
-{
+function onClick_StartNavi_navi() {
     if (type === 'save') {
         // getSaveNextGuidPoint(false);
         // getSaveGuidPoint(true);
         // startCorutine();
-    }
-    else {
+    } else {
         // getNextGuidPoint(false);
         // getGuidPoint(true);
         // startCorutine();
@@ -303,9 +334,9 @@ function onClick_StartNavi_navi()
     updateMark();
 
     //guid_info
-    if(!document.getElementById("input_StartNavi").classList.contains("disabled"))
+    if (!document.getElementById("input_StartNavi").classList.contains("disabled"))
         document.getElementById("input_StartNavi").classList.add("disabled");
-    if(document.getElementById("guid_info").classList.contains("disabled"))
+    if (document.getElementById("guid_info").classList.contains("disabled"))
         document.getElementById("guid_info").classList.remove("disabled");
 
 
@@ -314,9 +345,7 @@ function onClick_StartNavi_navi()
             // update(pathData.roads(0).vertexes[1], pathData.roads(0).vertexes[0]);
             // map.setLevel(3, {animate: true});// 사용시 보이는 위치 달라짐
             // panTo(pathData.roads(0).vertexes[1], pathData.roads(0).vertexes[0]);
-        }
-
-        else {
+        } else {
 
         }
 
@@ -328,19 +357,18 @@ function onClick_StartNavi_navi()
     }
 
 }
-function onClick_StopNavi_navi()
-{
-    if(document.getElementById("input_StartNavi").classList.contains("disabled"))
+
+function onClick_StopNavi_navi() {
+    if (document.getElementById("input_StartNavi").classList.contains("disabled"))
         document.getElementById("input_StartNavi").classList.remove("disabled");
-    if(!document.getElementById("guid_info").classList.contains("disabled"))
+    if (!document.getElementById("guid_info").classList.contains("disabled"))
         document.getElementById("guid_info").classList.add("disabled");
 
     stopNavi();
     window.location.href = host + '/view/home';
 }
 
-function Update_GuidIndo_navi()
-{
+function Update_GuidIndo_navi() {
     // let nextGuid = getGuidPoint(false);
     let nextGuid = routeData.guides[naviInfo_ProcessIndex];
 
@@ -356,44 +384,39 @@ function Update_GuidIndo_navi()
     document.getElementById('guid_ance').innerText
         = "전방 " + visibilityDistance(nextGuidDistacne) + " 에서\n" + nextGuid.guidance;
     document.getElementById('guid_left').innerText
-        =   "도착까지  " + visibilityDistance(pathLeftDistance) + " / " + visibilityTime(pathLeftDuration);
+        = "도착까지  " + visibilityDistance(pathLeftDistance) + " / " + visibilityTime(pathLeftDuration);
 
 }
 
-function visibilityDistance(dis = 0)
-{
-    if(dis == null)
+function visibilityDistance(dis = 0) {
+    if (dis == null)
         return "0m";
 
-    if (Math.floor(dis * 0.001) > 0)
-    {
+    if (Math.floor(dis * 0.001) > 0) {
         return (dis * 0.001).toFixed(1) + "km";
-    }else
-    {
+    } else {
         return dis.toFixed(1) + "m";
     }
 }
-function visibilityTime(dur = 0)
-{
+
+function visibilityTime(dur = 0) {
     if (dur == null)
         return "0분";
 
     const hours = Math.floor(dur / 3600); // 초를 시간으로 변환
     const minutes = Math.floor((dur % 3600) / 60); // 초를 분으로 변환하고 소수점 첫 번째 자리까지 나타내기
 
-    if (hours > 0)
-    {
+    if (hours > 0) {
         return `${hours}시간${minutes}분`;
-    }else
-    {
+    } else {
         return `${minutes}분`;
     }
 }
 
-function pathType()
-{
+function pathType() {
     return type;
 }
+
 // 추가 경로 재생성 동작
 function remakeNavi(lat, lng) {
     setToken();
@@ -403,7 +426,7 @@ function remakeNavi(lat, lng) {
     fetch(
         'https://dapi.kakao.com/v2/local/geo/coord2address?x=' + lng + '&y=' + lat,
         {
-            headers: { Authorization: 'KakaoAK 4752e5a5b955f574af7718613891f796' }, //rest api 키
+            headers: {Authorization: 'KakaoAK 4752e5a5b955f574af7718613891f796'}, //rest api 키
         }
     )
         .then((response) => response.json())
@@ -415,7 +438,7 @@ function remakeNavi(lat, lng) {
                 console.warn(currectAddress + " / " + destinationAddress + " OR " + routeData.destinationAddress);
                 {
                     setToken();
-                    fetch('/api/route?originAddress=' + currectAddress  + '&destinationAddress=' + destinationAddress)
+                    fetch('/api/route?originAddress=' + currectAddress + '&destinationAddress=' + destinationAddress)
                         .then(response => response.json())
                         .then(data => {
                             responseData = data;
@@ -450,6 +473,7 @@ function remakeNavi(lat, lng) {
     //         console.error('Error:', error);
     //     });
 }
+
 function remakeRandomNavi(lat, lng) {
     setToken();
 
@@ -458,7 +482,7 @@ function remakeRandomNavi(lat, lng) {
     fetch(
         'https://dapi.kakao.com/v2/local/geo/coord2address?x=' + lng + '&y=' + lat,
         {
-            headers: { Authorization: 'KakaoAK 4752e5a5b955f574af7718613891f796' }, //rest api 키
+            headers: {Authorization: 'KakaoAK 4752e5a5b955f574af7718613891f796'}, //rest api 키
         }
     )
         .then((response) => response.json())
@@ -486,8 +510,7 @@ function remakeRandomNavi(lat, lng) {
             waypointsX = "";
             waypointsY = "";
             let isexist = false;
-            for (let i = naviInfo_ProcessIndex; i < routeData.guides.length; i++)
-            {
+            for (let i = naviInfo_ProcessIndex; i < routeData.guides.length; i++) {
                 if (routeData.guides[i].type === 1000 && routeData.guides[i].road_index === -1) {
                     isexist = true;
                     waypointsX += routeData.guides[i].x + " ";
@@ -495,8 +518,7 @@ function remakeRandomNavi(lat, lng) {
                 }
             }
 
-            if (!isexist)
-            {
+            if (!isexist) {
                 waypointsX = "0";
                 waypointsY = "0";
             }
