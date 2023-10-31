@@ -112,7 +112,8 @@ tr.history-row {
     cursor: pointer; /* 마우스 커서를 포인터로 변경하여 클릭 가능한 상태로 표시 */
     position: absolute; /*스크롤 내렸을 때 버튼 고정*/
     bottom: 0; /*버튼 위친 하단*/
-    left: 250px; /*버튼 위치 왼쪽에서 오른쪽으로 밀기*/
+    /*left: 200px; !*버튼 위치 왼쪽에서 오른쪽으로 밀기*!*/
+    right: 0;
     font-family: "SDSamliphopangche_Basic", sans-serif;
     border-radius: 20px;
 }
