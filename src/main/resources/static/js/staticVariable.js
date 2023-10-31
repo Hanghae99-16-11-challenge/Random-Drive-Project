@@ -14,7 +14,8 @@ var routeData = {
             max_y: 0
         },
     guides: [],//카카오 응답 객체 그대로
-    roads: [[{value: 0}]],//이중 배열로 카카오 응답 객체의 Route > sections > roads 의 vertextes만 있는 버전
+    roads: [],//이중 배열로 카카오 응답 객체의 Route > sections > roads 의 vertextes만 있는 버전
+                // [{ vertexes: [] }]
     createAt: ""
 }
 //staticVariable.adapt_KakaoResponseToRouteData() 에서 설정됨
@@ -94,6 +95,21 @@ function adapt_KakaoResponseToRouteData(kakaoRes) {
     if (kakaoRes == null)
         console.warn("parameter is null");
 
+    try {
+        kakaoRes.routes[0].summary.origin.name;
+    }catch (e)
+    {
+        let errormsg = JSON.stringify(kakaoRes).split(",");
+        let printmsg = "\n";
+        for (let i = 0; i < errormsg.length; i++)
+        {
+            printmsg += errormsg[i] + "\n";
+        }
+
+        console.error("유효하지 않은 데이터 - 카카오 길찾기 응답 객체가 아닙니다. \n" + e + "\n" + printmsg);
+        return;
+    }
+
     //try
     {
         routeData = {
@@ -109,7 +125,7 @@ function adapt_KakaoResponseToRouteData(kakaoRes) {
                     max_y: 0
                 },
             guides: [],
-            roads: [[{value: 0}]],
+            roads: [],
             createAt: ""
         }
 
@@ -185,6 +201,14 @@ function adapt_KakaoResponseToRouteData(kakaoRes) {
         routeData.guides.push(kakaoRes.routes[0].sections[0].guides[0]);
         for (let sec = 0; sec < kakaoRes.routes[0].sections.length; sec++) {
             for (let guid = 1; guid < kakaoRes.routes[0].sections[sec].guides.length; guid++) {
+
+                if (kakaoRes.routes[0].sections[sec].guides[guid].type === 1000)
+                {
+                    if (kakaoRes.routes[0].sections[sec].guides[guid].road_index === 0)
+                    {
+                        continue;
+                    }
+                }
                 routeData.guides.push(kakaoRes.routes[0].sections[sec].guides[guid]);
             }
         }
@@ -197,3 +221,7 @@ function adapt_KakaoResponseToRouteData(kakaoRes) {
     // }
 
 }
+
+// 경유지 숫자 세기
+var waypointCount = 0;
+var offCourseCount = 0;

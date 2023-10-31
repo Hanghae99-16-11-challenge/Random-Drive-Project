@@ -39,28 +39,40 @@ $(document).ready(function() {
 function renderHistory(histories) {
     const tbody = document.getElementById('historyTableBody');
 
-    histories.forEach(history => {
-        const row = document.createElement('tr');
-        const formattedOriginAddress = extractOriginAddressParts(history.originAddress);
-        const formattedDestinationAddress = extractDestinationAddressParts(history.destinationAddress);
+    try {
+        histories.forEach(history => {
+            const row = document.createElement('tr');
+            const formattedOriginAddress = extractOriginAddressParts(history.originAddress);
+            const formattedDestinationAddress = extractDestinationAddressParts(history.destinationAddress);
 
-        row.innerHTML = `
+            row.innerHTML = `
                 <td>${extractDateFromDateTime(history.createdAt)}</td>
                 <td>${formattedOriginAddress}</td>
                 <td>${formattedDestinationAddress}</td>
             `;
 
-        row.addEventListener('click', function() {
-            // 클릭한 행의 route_id를 사용하여 원하는 동작 수행
-            window.location.href = 'navi/' + 'save' + '/' + history.route_id + "/blank/blank/0";
+            row.addEventListener('click', function() {
+                // 클릭한 행의 route_id를 사용하여 원하는 동작 수행
+                window.location.href = 'navi/' + 'save' + '/' + history.route_id + "/blank/blank/0";
+            });
+
+            console.log(history.mapType);
+
+            row.setAttribute('data-maptype', history.mapType);
+
+            tbody.appendChild(row);
         });
 
-        console.log(history.mapType);
-
-        row.setAttribute('data-maptype', history.mapType);
-
-        tbody.appendChild(row);
-    });
+        if (histories.length === 0)
+        {
+            console.log("기록이 없어요.");
+        }
+    }catch (e)
+    {
+        console.warn(e.message);
+        console.warn(histories.msg);
+        logout();
+    }
 }
 
 // 날자만 뜨도록 설정
