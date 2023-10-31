@@ -469,31 +469,34 @@ function remakeRandomNavi(lat, lng) {
             let destinationLatitude = destinationLocation.lat;
             let destinationLongitude = destinationLocation.lng;
 
-            console.log(waypointCount)
-
-            let filteredGuides = routeData.guides
-                .slice(waypointCount)
-                .filter(guide => guide.type === 1000);
-
-            console.log(filteredGuides);
-            console.log(routeData.guides
-                .filter(guide => guide.type === 1000));
-
-            if (type === 'save') {
-                filteredGuides = filteredGuides.filter((guide, index) => index % 2 !== 0);
+            if (type === 'save' && offCourseCount === 0) {
                 // routeData.guides 배열의 맨 마지막 요소가 목적지
                 let destinationGuide = routeData.guides[routeData.guides.length - 1];
                 destinationLatitude = destinationGuide.y;
                 destinationLongitude = destinationGuide.x;
             }
 
+            console.log(routeData.guides
+                .filter(guide => guide.type === 1000));
+
+            offCourseCount++;
+
             let waypointsX, waypointsY;
 
-            if (filteredGuides.length > 0) {
-                waypointsX = filteredGuides.map(guide => guide.x).join(" ");
-                waypointsY = filteredGuides.map(guide => guide.y).join(" ");
-            } else {
-                // 만약 필터링된 가이드가 없으면 waypointsX와 waypointsY를 0으로 설정
+            waypointsX = "";
+            waypointsY = "";
+            let isexist = false;
+            for (let i = naviInfo_ProcessIndex; i < routeData.guides.length; i++)
+            {
+                if (routeData.guides[i].type === 1000 && routeData.guides[i].road_index === -1) {
+                    isexist = true;
+                    waypointsX += routeData.guides[i].x + " ";
+                    waypointsY += routeData.guides[i].y + " ";
+                }
+            }
+
+            if (!isexist)
+            {
                 waypointsX = "0";
                 waypointsY = "0";
             }

@@ -404,12 +404,10 @@ function outOfPath(lat, lng)
     if (pathType() === 'live')
     {
         remakeNavi(lat, lng);
-        clearNavi();
     }
     else
     {
         remakeRandomNavi(lat, lng);
-        clearNavi();
     }
     console.warn("경로 이탈");
 }
