@@ -145,16 +145,24 @@ function update_refact(lat, lng)
             updateMark();//마크 표시 , getGuidPoint 과 같음
         }
 
-        if (naviInfo_State === 0)
+        switch (naviInfo_State)
         {
-            stopNavi();
-            // reset();
-            onClick_StopNavi_navi();
-            console.log("길 안내 종료");
+            case 0:
+            {
+                stopNavi();
+                // reset();
+                onClick_StopNavi_navi();
+                console.log("길 안내 종료");
 
-            return;
+                return;
+            }
+            case -1:
+            {
+                stopNavi();
+                onClick_StopNavi_navi();
+                console.warn("길 안내 오류");
+            }
         }
-        
 
         {
             clearPolylines();
@@ -268,8 +276,20 @@ function update_refact(lat, lng)
     }
 }
 
+//다음에 올 안내지점 반환, naviInfo_State, 마크 설정
 function updateMark()
 {
+    if (routeData.guides.length <= naviInfo_ProcessIndex)
+    {
+      naviInfo_State = 0;
+      return;
+    }
+    if (naviInfo_ProcessIndex < 0)
+    {
+        naviInfo_State = -1;
+        return;
+    }
+
     let point = routeData.guides[naviInfo_ProcessIndex];
 
     switch (point.type)
@@ -385,8 +405,7 @@ function outOfPath(lat, lng)
 
     if (pathType() === 'live')
     {
-        remakeNavi(lat, lng);
-        clearNavi();
+        remakeNavi(lat, lng);//응답시 resetNavi() 실행호출 준비
     }else
     {
         console.warn("경로 이탈시 재성성 미지원");

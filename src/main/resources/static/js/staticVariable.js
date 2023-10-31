@@ -14,7 +14,8 @@ var routeData = {
             max_y: 0
         },
     guides: [],//카카오 응답 객체 그대로
-    roads: [[{value: 0}]],//이중 배열로 카카오 응답 객체의 Route > sections > roads 의 vertextes만 있는 버전
+    roads: [],//이중 배열로 카카오 응답 객체의 Route > sections > roads 의 vertextes만 있는 버전
+                // [{ vertexes: [] }]
     createAt: ""
 }
 //staticVariable.adapt_KakaoResponseToRouteData() 에서 설정됨
@@ -109,7 +110,7 @@ function adapt_KakaoResponseToRouteData(kakaoRes) {
                     max_y: 0
                 },
             guides: [],
-            roads: [[{value: 0}]],
+            roads: [],
             createAt: ""
         }
 
