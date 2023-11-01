@@ -199,12 +199,14 @@ function makeLiveMap(data) {
         {
             title: '출발',
             latlng: new kakao.maps.LatLng(let_ori, lon_ori),
-            image: "https://cdn-icons-png.flaticon.com/512/6213/6213694.png"
+            image: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/red_b.png'
+            //"https://cdn-icons-png.flaticon.com/512/6213/6213694.png"
         },
         {
             title: '도착',
             latlng: new kakao.maps.LatLng(lat_des, lon_des),
-            image: "https://cdn-icons-png.flaticon.com/512/4856/4856582.png"
+            image: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/blue_b.png'
+            //"https://cdn-icons-png.flaticon.com/512/4856/4856582.png"
         }
     ]
 
@@ -224,14 +226,14 @@ function makeLiveMap(data) {
     // 마커를 지도에 표시하기
     for (var i = 0; i < positions.length; i++) {
         // 마커 이미지 크기
-        var imageSize = new kakao.maps.Size(40, 40);
+        var imageSize = new kakao.maps.Size(30, 40);
         var markerImage = new kakao.maps.MarkerImage(positions[i].image, imageSize);
         var marker = new kakao.maps.Marker({
             map: map,
             position: positions[i].latlng,
             title: positions[i].title,
             image: markerImage,
-            text: positions[i].image
+            text: positions[i].title //마커 위에 텍스트 표시 현재 적용 안됨
         })
     }
 
