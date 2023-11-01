@@ -74,5 +74,26 @@ document.getElementById('random-search-form').addEventListener('submit', functio
     var destinationAddress = document.getElementById('random-destinationAddress').value;
     var redius = document.getElementById('random-redius').value;
 
+    {
+        try {
+            if (originAddress === "" || destinationAddress === "" || redius === "")
+                throw new Error("값이 입력 되지 않았습니다.");
+            if (Number.isInteger(Number.parseInt(redius)))
+            {
+                if (Number.parseInt(redius) <= 0)
+                {
+                    throw new Error("반경 값이 0이하 입니다.");
+                }
+            }else
+            {
+                throw new Error("반경 값이 숫자가 아닙니다.");
+            }
+        }catch (e)
+        {
+            alert(e.message);
+            return;
+        }
+    }
+
     window.location.href = 'navi/' + 'live-random' + '/0/' + originAddress + '/' + destinationAddress + '/' + redius;
 });

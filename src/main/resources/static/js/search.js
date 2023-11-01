@@ -76,6 +76,16 @@ document.getElementById('search-form').addEventListener('submit', function(e) {
     desAddress = document.getElementById('random-destinationAddress').value;
     console.log(oriAddress + " ~ " + desAddress);
 
+    {
+        try {
+            if (originAddress === "" || destinationAddress === "")
+                throw new Error("값이 입력 되지 않았습니다.");
+        }catch (e)
+        {
+            alert(e.message);
+            return;
+        }
+    }
 
     window.location.href = 'navi/' + 'live' + '/0/' + originAddress + '/' + destinationAddress + '/0';
 });

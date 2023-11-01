@@ -135,6 +135,10 @@ function makeNavi(originAddress, destinationAddress) {
         })
         .catch(error => {
             console.error('Error:', error);
+
+            setTimeout(() => {
+                window.location.href = '/view/home';
+            }, 1000);
         });
 }
 
@@ -150,6 +154,10 @@ function makeRandomNavi(originAddress, destinationAddress, redius) {
         })
         .catch(error => {
             console.error('Random-Error:', error);
+
+            setTimeout(() => {
+                window.location.href = '/view/home';
+            }, 1000);
         });
 }
 
@@ -171,6 +179,10 @@ function makeAllRandomNavi(originAddress, redius) {
         })
         .catch(error => {
             console.error('All-Random-Error:', error);
+
+            setTimeout(() => {
+                window.location.href = '/view/home';
+            }, 1000);
         });
 }
 
@@ -422,6 +434,7 @@ function remakeNavi(lat, lng) {
                             adapt_KakaoResponseToRouteData(data);
                             makeLiveMap(data)
                             clearNavi();
+                            panToStart();
                         })
                         .catch(error => {
                             console.error('Error:', error);
@@ -515,6 +528,7 @@ function remakeRandomNavi(lat, lng) {
                         adapt_KakaoResponseToRouteData(data);
                         makeLiveMap(data)
                         clearNavi();
+                        panToStart();
                     })
                     .catch(error => {
                         console.error('Error:', error);
