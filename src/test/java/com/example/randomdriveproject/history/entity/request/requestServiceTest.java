@@ -130,7 +130,7 @@ public class requestServiceTest {
         double lat = 33.5004439520997;
 
         try {
-            double startCoord = Double.parseDouble(lat + "," + lng);
+            double startCoord = Double.parseDouble(lat + "," + lng);//실제로 이렇게 씀  (navigation>basic>service>KakaoRouteSearchService 89줄)
 
             var result = kakaoUriBuilderService.buildUriByReRouteSearch(startCoord);
 
@@ -138,8 +138,7 @@ public class requestServiceTest {
         }catch (Exception e)
         {
             // 실제로 startCoord = Double.parseDouble(lat + "," + lng); 이렇게 씀 안될껀데....
-//            Assertions.fail();
-            throw new NumberFormatException("double형에 왜  , 를 왜 넣어요?");
+            throw new NumberFormatException("double형에   , 가 있어요.");
         }
 
     }

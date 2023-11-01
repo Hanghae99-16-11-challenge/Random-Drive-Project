@@ -2,6 +2,8 @@ package com.example.randomdriveproject.history.entity;
 
 import org.junit.jupiter.api.*;
 
+//@EnableConfigurationProperties//테스트에서 property를 사용
+//@SpringBootTest()//모든 빈 사용
 public class JUnitCycleTest {
     @BeforeAll // 전체 테스트를 시작하기 전에 1회 실행하므로 메서드는 static으로 선언
     static void beforeAll() {
