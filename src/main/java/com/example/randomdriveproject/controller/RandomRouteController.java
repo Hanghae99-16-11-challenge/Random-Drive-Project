@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api")
 @Slf4j(topic = "RouteController")
-//@ControllerAdvice
+@ControllerAdvice
 public class RandomRouteController {
 
     private final RandomKakaoRouteSearchService kakaoRouteSearchService;
@@ -122,10 +122,4 @@ public class RandomRouteController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<?> handleNotFoundEntity(Exception e)
-    {
-        return ResponseEntity.badRequest().body("RandomRoute : " + e.getMessage());
-    }
 }
