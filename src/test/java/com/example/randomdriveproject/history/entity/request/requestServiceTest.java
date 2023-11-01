@@ -4,14 +4,21 @@ import com.example.randomdriveproject.request.service.KakaoAddressSearchService;
 import com.example.randomdriveproject.request.service.KakaoKeywordSearchService;
 import com.example.randomdriveproject.request.service.KakaoUriBuilderService;
 import com.example.randomdriveproject.request.service.RandomKakaoCategorySearchService;
+import com.example.randomdriveproject.user.service.UserService;
 import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.web.ErrorResponse;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.client.RestTemplate;
 
 import javax.swing.*;
 
-//@EnableConfigurationProperties//== @Value 쓰기위해 그런데 안됨
-//@SpringBootTest(classes = KakaoAddressSearchService.class)
+@EnableConfigurationProperties//테스트에서 property를 사용
+@SpringBootTest()//모든 빈 사용
 public class requestServiceTest {
 
     KakaoAddressSearchService kakaoAddressSearchService;
@@ -21,6 +28,8 @@ public class requestServiceTest {
 
     RestTemplate restTemplate;
 
+    @Value("${kakao.rest.api.key}")
+    private String kakaoRestApiKey;
 
     @BeforeEach
     void setup()
@@ -32,17 +41,15 @@ public class requestServiceTest {
         kakaoKeywordSearchService = new KakaoKeywordSearchService(kakaoUriBuilderService, restTemplate);
         categorySearchService = new RandomKakaoCategorySearchService(kakaoUriBuilderService, restTemplate);
 
-        String restAPIKey = "4752e5a5b955f574af7718613891f796";
-
         ReflectionTestUtils.setField(kakaoAddressSearchService,
                 "kakaoRestApiKey",
-                restAPIKey);//@Vaild 가 작동이 안되 , 리플렉션으로 넣어줌
+                kakaoRestApiKey);//@Vaild 가 작동이 안되 , 리플렉션으로 넣어줌
         ReflectionTestUtils.setField(kakaoKeywordSearchService,
                 "kakaoRestApiKey",
-                restAPIKey);//@Vaild 가 작동이 안되 , 리플렉션으로 넣어줌
+                kakaoRestApiKey);//@Vaild 가 작동이 안되 , 리플렉션으로 넣어줌
         ReflectionTestUtils.setField(categorySearchService,
                 "kakaoRestApiKey",
-                restAPIKey);//@Vaild 가 작동이 안되 , 리플렉션으로 넣어줌
+                kakaoRestApiKey);//@Vaild 가 작동이 안되 , 리플렉션으로 넣어줌
     }
 
     @DisplayName("주소 to 위경도 변환")
@@ -121,9 +128,9 @@ public class requestServiceTest {
     {
         double lng = 126.513124645234;
         double lat = 33.5004439520997;
-        Double startCoord = null;
+
         try {
-            startCoord = Double.parseDouble(lat + "," + lng);
+            double startCoord = Double.parseDouble(lat + "," + lng);
 
             var result = kakaoUriBuilderService.buildUriByReRouteSearch(startCoord);
 
@@ -131,8 +138,10 @@ public class requestServiceTest {
         }catch (Exception e)
         {
             // 실제로 startCoord = Double.parseDouble(lat + "," + lng); 이렇게 씀 안될껀데....
+//            Assertions.fail();
+            throw new NumberFormatException("double형에 왜  , 를 왜 넣어요?");
         }
-        Assertions.assertNotNull(startCoord);
+
     }
 
     @DisplayName("키워드 주소 생성")
