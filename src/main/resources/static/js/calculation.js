@@ -244,6 +244,7 @@ function update_refact(lat, lng)
                         if ((((PastToPos + CurrectToPos) - roadPartLength) * 1000) > offetUserRadius)
                         {
                             outOfPath(lat, lng);
+                            return;
                         }
                     }//비정확 하지만
 
@@ -415,6 +416,13 @@ function panTo(lat , lng) {
     // 지도 중심을 부드럽게 이동시킵니다
     // 만약 이동할 거리가 지도 화면보다 크면 부드러운 효과 없이 이동합니다
     map.panTo(moveLatLon);
+}
+function panToStart()
+{
+    let startPoint = routeData.guides[0];
+
+    map.setLevel(3, {animate: true});// 사용시 보이는 위치 달라짐
+    panTo(startPoint.y, startPoint.x);
 }
 function outOfPath(lat, lng)
 {
