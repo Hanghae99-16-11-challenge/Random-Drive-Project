@@ -37,7 +37,7 @@ public class RealRandomRouteSearchService {
     private String kakaoRestApiKey;
 
     // 반경 기반 랜덤 길찾기
-    public KakaoRouteAllResponseDto requestAllRandomWay(Long userId, String originAddress, Integer distance, Integer count) {
+    public KakaoRouteAllResponseDto requestAllRandomWay(Long userId, String originAddress, Integer distance, Integer count, int type) {
 
         if (ObjectUtils.isEmpty(originAddress) || ObjectUtils.isEmpty(distance)) return null;
 
@@ -61,21 +61,25 @@ public class RealRandomRouteSearchService {
             randomDestinationRepository.delete(olderRandomDestination);
         randomDestinationRepository.save(randomDestination);
 
-        // 선형 랜덤 경유지 추천
-        List<RandomDocumentDto> waypoints = getWayPointsAroundLine(originY, originX, destinationY, destinationX, count);
-        return makeRequestForm(origin,destination,waypoints);
-
-        // 박스형 랜덤 경유지
-//        List<RandomDocumentDto> waypoints = getWayPointsInBox(originY, originX, destinationY, destinationX, count);
-//        return makeRequestForm(origin,destination,waypoints);
-
-        // 순환형 랜덤 경유지
-//        List<RandomDocumentDto> waypoints = getWayPointsCircular(originY, originX, convertedDistance/2, count);
-//        return makeRequestForm(origin, origin, waypoints);
+        if (type == 1) {
+            // 선형 랜덤 경유지 추천
+            List<RandomDocumentDto> waypoints = getWayPointsAroundLine(originY, originX, destinationY, destinationX, count);
+            return makeRequestForm(origin,destination,waypoints);
+        }
+        else if (type == 2) {
+            // 박스형 랜덤 경유지
+            List<RandomDocumentDto> waypoints = getWayPointsInBox(originY, originX, destinationY, destinationX, count);
+            return makeRequestForm(origin,destination,waypoints);
+        }
+        else { // type == 3
+            // 순환형 랜덤 경유지
+            List<RandomDocumentDto> waypoints = getWayPointsCircular(originY, originX, convertedDistance/2, count);
+            return makeRequestForm(origin, origin, waypoints);
+        }
     }
 
     // 목적지 기반 랜덤 길찾기
-    public KakaoRouteAllResponseDto requestRandomWay(String originAddress, String destinationAddress, Integer count) {
+    public KakaoRouteAllResponseDto requestRandomWay(String originAddress, String destinationAddress, Integer count, int type) {
 
         if (ObjectUtils.isEmpty(originAddress) || ObjectUtils.isEmpty(count) || ObjectUtils.isEmpty(destinationAddress)) return null;
 
@@ -87,11 +91,14 @@ public class RealRandomRouteSearchService {
         //목적지 주소를 좌표로 전환
         DocumentDto destination = kakaoAddressSearchService.requestAddressSearch(destinationAddress).getDocumentDtoList().get(0);
 
-//        List<RandomDocumentDto> waypoints = getWayPointsAroundLine(originY, originX, destination.getLatitude(), destination.getLongitude(), count);
-        List<RandomDocumentDto> waypoints = getWayPointsInBox(originY, originX, destination.getLatitude(), destination.getLongitude(), count);
-
-        return makeRequestForm(origin,destination,waypoints);
-
+        if (type == 1) {
+            List<RandomDocumentDto> waypoints = getWayPointsAroundLine(originY, originX, destination.getLatitude(), destination.getLongitude(), count);
+            return makeRequestForm(origin,destination,waypoints);
+        }
+        else { // type == 2
+            List<RandomDocumentDto> waypoints = getWayPointsInBox(originY, originX, destination.getLatitude(), destination.getLongitude(), count);
+            return makeRequestForm(origin,destination,waypoints);
+        }
 
     }
 

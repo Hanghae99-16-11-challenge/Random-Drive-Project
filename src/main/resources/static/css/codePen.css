@@ -586,7 +586,22 @@ a {
 .w-btn2:active {
     transform: translate3d(0, 2px, 0);
 }
-
+/*-----select 속성 추가----*/
+.select-container {
+    display: flex;
+    align-items: center; /* 선택 창을 수직 가운데로 정렬 */
+    margin-bottom: 10px; /* 각 선택 창 사이의 간격 조절 */
+}
+.select-container label {
+    margin-right: 20px; /* 라벨과 선택 창 사이의 간격 조정 (원하는 간격으로 조절) */
+}
+.select-container select {
+    width: 150px;
+    height: 25px;
+    text-align-last: center;
+    font-family: 'SDSamliphopangche_Basic', sans-serif; /* 버튼 글씨 */
+    font-size: 14px; /* 글씨 크기 */
+}
 /*-----모달 창 추가----*/
 .modal {
     display: none;

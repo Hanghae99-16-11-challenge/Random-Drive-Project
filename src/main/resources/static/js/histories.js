@@ -53,7 +53,7 @@ function renderHistory(histories) {
 
             row.addEventListener('click', function() {
                 // 클릭한 행의 route_id를 사용하여 원하는 동작 수행
-                window.location.href = 'navi/' + 'save' + '/' + history.route_id + "/blank/blank/0";
+                window.location.href = 'navi/' + 'save' + '/' + history.route_id + "/blank/blank/0/0/blank";
             });
 
             console.log(history.mapType);

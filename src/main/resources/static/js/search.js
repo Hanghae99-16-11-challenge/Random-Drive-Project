@@ -87,5 +87,5 @@ document.getElementById('search-form').addEventListener('submit', function(e) {
         }
     }
 
-    window.location.href = 'navi/' + 'live' + '/0/' + originAddress + '/' + destinationAddress + '/0';
+    window.location.href = 'navi/' + 'live' + '/0/' + originAddress + '/' + destinationAddress + '/0' + '/0' + '/live';
 });

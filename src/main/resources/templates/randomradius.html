@@ -41,9 +41,43 @@
                     </div>
 
                     <div>
-                        <label for="all-random-redius" class="search kr-font">반경</label><br>
-                        <input class="kr2" type="text" id="all-random-redius" name="all-random-redius"
-                               placeholder="반경을 입력하세요"><br>
+                        <div class="select-container">
+                            <label for="all-random-redius">탐색 범위</label><br>
+                            <select id="all-random-redius" name="all-random-redius">
+                                <!--                            <option value="custom">직접 입력</option>-->
+                                <option value="very-short">매우 짧게 (4km)</option>
+                                <option value="short">짧게 (10km)</option>
+                                <option value="moderate">적당히 (20km)</option>
+                                <option value="long">길게 (30km)</option>
+                                <option value="very-long">매우 길게 (40km)</option>
+                            </select>
+                            <!--                        <br>-->
+                            <!--                        <input class="kr2" type="text" id="custom-redius" name="custom-redius" placeholder="반경을 입력하세요">-->
+                        </div>
+
+                        <div class="select-container">
+                            <label for="all-random-waypoint-number">경유지 수</label>
+                            <select id="all-random-waypoint-number" name="all-random-waypoint-number">
+                                <!--                            <option value="custom">직접 입력</option>-->
+                                <option value="1">하나</option>
+                                <option value="2">둘</option>
+                                <option value="3">셋</option>
+                                <option value="5">많이 (5)</option>
+                                <option value="8">매우 많이 (8)</option>
+                            </select>
+                            <!--                        <br>-->
+                            <!--                        <input class="kr2" type="text" id="custom-waypoint-number" name="custom-waypoint-number" placeholder="경유지 개수를 입력하세요" disabled>-->
+                        </div>
+
+                        <div class="select-container">
+                            <label for="all-random-type">경로 타입</label>
+                            <select id="all-random-type" name="all-random-type">
+                                <option value="line">직선</option>
+                                <option value="zig-zeg">지그재그</option>
+                                <option value="circle">순환형</option>
+                            </select>
+                        </div>
+
                         <button type='submit' class='w-btn w-btn-indigo'>길 찾기</button>
                     </div>
                 </form>
