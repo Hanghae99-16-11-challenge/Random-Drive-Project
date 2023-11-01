@@ -284,6 +284,7 @@ function makeLiveMap(data) {
             image: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/blue_b.png'
             //"https://cdn-icons-png.flaticon.com/512/4856/4856582.png"
         }
+
     ]
 // 마커를 지도에 표시하기
     for (var i = 0; i < positions.length; i++) {
