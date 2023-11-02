@@ -53,5 +53,17 @@ public class DocumentDto {
                 ", categoryName=" + categoryName +
                 '}';
     }
+
+    public DocumentDto (DocumentDto origin){
+        if(origin.getPlaceName() == null){
+            this.placeName = "출발지";
+        } else {
+            this.placeName = origin.getPlaceName();
+        }
+
+        this.addressName = origin.getAddressName();
+        this.longitude = origin.getLongitude();
+        this.latitude = origin.getLatitude();
+    }
 }
 

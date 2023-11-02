@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>카카오 지도 API 예제</title>
+</head>
+<body>
+
+<div>
+    <label>출발지:</label>
+    <input type="text" id="origin-input" placeholder="출발지를 입력하세요">
+    <label>반경:</label>
+    <input type="number" id="radius-input" placeholder="반경을 입력하세요 (m)">
+    <button onclick="searchRoute()">검색</button>
+</div>
+
+<div id="map" style="width:100%;height:400px;"></div>
+
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=c87b1c2e1d4bcdc3401e35160e8e7d95"></script>
+<script>
+    const mapContainer = document.getElementById('map'),
+        mapOption = {
+            center: new kakao.maps.LatLng(37.566826, 126.9786567),
+            level: 7
+        };
+
+    const map = new kakao.maps.Map(mapContainer, mapOption);
+
+
+    // latitude -> y , longitude -> x
+    function searchRoute() {
+        const origin = document.getElementById("origin-input").value;
+        const radius = document.getElementById("radius-input").value;
+
+        // 백엔드에서 경로 정보 가져오기
+        fetch(`/getRoute?origin=${origin}&radius=${radius}`)
+            .then(response => response.json())
+            .then(data => {
+                const start = new kakao.maps.LatLng(data.start.y, data.start.x);
+                const waypoints = new kakao.maps.LatLng(data.waypoints.y, data.waypoints.x);
+                const destination = new kakao.maps.LatLng(data.destination.y, data.destination.x);
+
+                const linePath = [start, waypoints, destination];
+                const polyline = new kakao.maps.Polyline({
+                    path: linePath,
+                    strokeWeight: 5,
+                    strokeColor: '#FF0000',
+                    strokeOpacity: 0.7
+                });
+
+                polyline.setMap(map);
+                map.setCenter(start);
+            });
+    }
+</script>
+
+</body>
+</html>

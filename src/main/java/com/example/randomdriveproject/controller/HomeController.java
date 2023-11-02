@@ -87,4 +87,10 @@ public class HomeController {
         model.addAttribute("redius", redius);
         return "navi";
     }
+
+    // test
+    @GetMapping("/getRoute")
+    public String testPage() {
+        return "test";
+    } //
 }
