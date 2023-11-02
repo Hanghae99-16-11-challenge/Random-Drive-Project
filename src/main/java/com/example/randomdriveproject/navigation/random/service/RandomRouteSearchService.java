@@ -26,7 +26,7 @@ import java.util.*;
 @Slf4j(topic = "RandomRouteSearchService")
 @Service
 @RequiredArgsConstructor
-public class RandomRouteSearchService {
+public class RandomRouteSearchService { // RandomKakaoRouteSearchService -> 기능은 동일, -> 키워드 + 도로명 결합 부분만 추가
 
     private final RestTemplate restTemplate;
     private final KakaoAddressSearchService kakaoAddressSearchService;
@@ -102,7 +102,7 @@ public class RandomRouteSearchService {
         //----------------------------------------------------------------//
 
         // 목적지 DB에 남김, 만일 동일 사용자가 이미 목적지를 저장해 놓았다면, 삭제
-        RandomDestination randomDestination = new RandomDestination(userId, destination.getAddressName());
+        RandomDestination randomDestination = new RandomDestination(userId, destination.getAddressName()); // combinedKeywordDes 얘로 저장 -> 지번 + 키워드
         RandomDestination olderRandomDestination = randomDestinationRepository.findByUserId(userId);
         if (olderRandomDestination != null)
             randomDestinationRepository.delete(olderRandomDestination);
