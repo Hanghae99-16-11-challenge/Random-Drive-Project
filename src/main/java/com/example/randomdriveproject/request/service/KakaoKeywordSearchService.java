@@ -1,6 +1,7 @@
 package com.example.randomdriveproject.request.service;
 
 import com.example.randomdriveproject.request.dto.KakaoApiResponseDto;
+import com.example.randomdriveproject.request.exception.KakaoApiExceptionHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,7 +27,7 @@ public class KakaoKeywordSearchService {
     private String kakaoRestApiKey;
 
 
-    // KakaoAddressSearch -> 주소 -> 위도,경도 -> 값을 매핑
+
     // 관광명소 기반
     public KakaoApiResponseDto requestAttractionKeywordSearch(String query) {
 
@@ -35,10 +36,12 @@ public class KakaoKeywordSearchService {
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.AUTHORIZATION, "KakaoAK " + kakaoRestApiKey);
         HttpEntity httpEntity = new HttpEntity(headers);
-        log.info("*** 키워드 주소 api");
+        log.info("*** 키워드 주소 api 호출");
 
         // kakao api 호출
-        return restTemplate.exchange(uri, HttpMethod.GET, httpEntity, KakaoApiResponseDto.class).getBody();
+        KakaoApiResponseDto response = KakaoApiExceptionHandler.handleApiCall(() ->
+                        restTemplate.exchange(uri, HttpMethod.GET, httpEntity, KakaoApiResponseDto.class).getBody(),uri);
+        return response;
     }
 
 }

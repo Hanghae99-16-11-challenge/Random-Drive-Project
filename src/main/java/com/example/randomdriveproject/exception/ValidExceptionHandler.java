@@ -1,5 +1,6 @@
 package com.example.randomdriveproject.exception;
 
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.HashMap;
 import java.util.Map;
 
+@Order(1)
 @RestControllerAdvice
 public class ValidExceptionHandler {
 
@@ -35,10 +37,5 @@ public class ValidExceptionHandler {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(errors);
     }
-//    @ExceptionHandler(IllegalArgumentException.class)
-//    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
-//        // 예외 메시지를 그대로 클라이언트에 반환
-//        return ResponseEntity.badRequest().body(ex.getMessage());
-////        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage()); // 상태 코드 설정
-//    }
+
 }

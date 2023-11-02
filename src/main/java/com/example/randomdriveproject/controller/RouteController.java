@@ -6,13 +6,16 @@ import com.example.randomdriveproject.request.dto.DocumentDto;
 import com.example.randomdriveproject.request.dto.KakaoApiResponseDto;
 import com.example.randomdriveproject.request.dto.KakaoRouteAllResponseDto;
 import com.example.randomdriveproject.request.service.KakaoKeywordSearchService;
+import com.example.randomdriveproject.user.security.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,12 +31,12 @@ public class RouteController {
     private final KakaoRouteSearchService kakaoRouteSearchService;
     private final KeywordSearchService keywordSearchService;
 
+    // 기본 길찾기
     @GetMapping("/route")
     public ResponseEntity<KakaoRouteAllResponseDto> getRoute(@RequestParam String originAddress,
-                                                             @RequestParam String destinationAddress) {
-        KakaoRouteAllResponseDto response = kakaoRouteSearchService.requestRouteSearch(originAddress, destinationAddress);
-
-//        PathUtil.PathInfo(response, "RouteController");
+                                                             @RequestParam String destinationAddress,
+                                                             @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        KakaoRouteAllResponseDto response = kakaoRouteSearchService.requestRouteSearch(originAddress, destinationAddress,userDetails.getUser().getId());
 
         if (response == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -43,13 +46,11 @@ public class RouteController {
     }
 
 
-//    // 기본 경로 재생성
+     // 기본 경로 재생성
     @GetMapping("/reroute")
     public ResponseEntity<KakaoRouteAllResponseDto> getReRoute(@RequestParam double lat, double lng) {
         KakaoRouteAllResponseDto response = kakaoRouteSearchService.requestRouteReSearch(lat, lng);
 
-//        PathUtil.PathInfo(response, "RouteController");
-
         if (response == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -57,6 +58,7 @@ public class RouteController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    // 키워드 검색-> 도로명
     @GetMapping("/keyword-random-route")
     @Operation(summary = "키워드 검색", description = "키워드 검색을 도로명 주소로")
     public ResponseEntity<List<List<String>>> getRandom(@RequestParam String query) {
