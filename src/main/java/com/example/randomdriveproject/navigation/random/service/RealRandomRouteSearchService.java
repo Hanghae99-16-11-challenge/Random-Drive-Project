@@ -43,6 +43,13 @@ public class RealRandomRouteSearchService {
             throw new IllegalArgumentException("출발지 또는 목적지 주소 또는 경유지 수 또는 거리가 비어있습니다.");
         }
 
+        if (distance < 10) {
+            count = Math.min(count, 3);
+        }
+        else if (distance < 20) {
+            count = Math.min(count, 5);
+        }
+
         // 출발지 주소를 좌표로 변환
         List<DocumentDto> originList = kakaoAddressSearchService.requestAddressSearch(originAddress).getDocumentDtoList();
         if (originList.isEmpty()) {
@@ -117,13 +124,25 @@ public class RealRandomRouteSearchService {
             throw new IllegalArgumentException("도착지 주소를 찾을 수 없습니다.");
         }
         DocumentDto destination = destinationList.get(0);
+        double destinationY = destination.getLatitude();
+        double destinationX = destination.getLongitude();
+
+        double distance = calculateDistance(originY, originX, destinationY, destinationX);
+        double realDistance = distance * 100;
+
+        if (realDistance < 10) {
+            count = Math.min(count, 3);
+        }
+        else if (realDistance < 20) {
+            count = Math.min(count, 5);
+        }
 
         if (type == 1) {
-            List<RandomDocumentDto> waypoints = getWayPointsAroundLine(originY, originX, destination.getLatitude(), destination.getLongitude(), count);
+            List<RandomDocumentDto> waypoints = getWayPointsAroundLine(originY, originX, destinationY, destinationX, count);
             return makeRequestForm(origin,destination,waypoints);
         }
         else { // type == 2
-            List<RandomDocumentDto> waypoints = getWayPointsInBox(originY, originX, destination.getLatitude(), destination.getLongitude(), count);
+            List<RandomDocumentDto> waypoints = getWayPointsInBox(originY, originX, destinationY, destinationX, count);
             return makeRequestForm(origin,destination,waypoints);
         }
 
