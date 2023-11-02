@@ -36,17 +36,17 @@ public class KakaoRouteSearchService {
     private String kakaoRestApiKey;
 
 
-    public KakaoRouteAllResponseDto requestRouteSearch(String originAddress, String destinationAddress, Long userId) {
+    public KakaoRouteAllResponseDto requestRouteSearch(String originAddress, String destinationAddress) {
 
         if (ObjectUtils.isEmpty(originAddress) || ObjectUtils.isEmpty(destinationAddress)) {
             throw new IllegalArgumentException("출발지 혹은 목적지 주소가 비어있습니다.");
         }
 
-        // 사용자 인증 정보 확인
-        User user = userRepository.findById(userId).orElse(null);
-        if (user == null) {
-            throw new IllegalArgumentException("사용자 정보가 없거나 일치하지 않습니다.");
-        }
+//        // 사용자 인증 정보 확인
+//        User user = userRepository.findById(userId).orElse(null);
+//        if (user == null) {
+//            throw new IllegalArgumentException("사용자 정보가 없거나 일치하지 않습니다.");
+//        }
 
 
         // 기존 kakaoAddressSearchService.requestAddressSearch(destinationAddress).getDocumentDtoList().get(0); -> index 오류

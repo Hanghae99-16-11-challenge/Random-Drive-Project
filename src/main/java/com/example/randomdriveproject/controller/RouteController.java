@@ -34,9 +34,8 @@ public class RouteController {
     // 기본 길찾기
     @GetMapping("/route")
     public ResponseEntity<KakaoRouteAllResponseDto> getRoute(@RequestParam String originAddress,
-                                                             @RequestParam String destinationAddress,
-                                                             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        KakaoRouteAllResponseDto response = kakaoRouteSearchService.requestRouteSearch(originAddress, destinationAddress,userDetails.getUser().getId());
+                                                             @RequestParam String destinationAddress) {
+        KakaoRouteAllResponseDto response = kakaoRouteSearchService.requestRouteSearch(originAddress, destinationAddress);
 
         if (response == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
