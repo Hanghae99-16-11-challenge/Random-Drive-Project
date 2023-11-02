@@ -14,10 +14,11 @@ import com.example.randomdriveproject.navigation.random.entity.RandomDestination
 import com.example.randomdriveproject.navigation.random.repository.RandomDestinationRepository;
 import com.example.randomdriveproject.request.dto.KakaoRouteAllResponseDto;
 import com.example.randomdriveproject.user.entity.User;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,12 +34,20 @@ public class HistoryService {
     private final GuideRepository guideRepository;
 
     public void saveHistory(KakaoRouteAllResponseDto requestDto, String originAddress, String destinationAddress, String mapType, User user) {
+
+        if (ObjectUtils.isEmpty(originAddress) || ObjectUtils.isEmpty(requestDto) || ObjectUtils.isEmpty(destinationAddress) || ObjectUtils.isEmpty(mapType)) {
+            throw new IllegalArgumentException("출발지 또는 목적지 주소 또는 도로 정보가 전달되지 않았습니다.");
+        }
+
         for (KakaoRouteAllResponseDto.RouteInfo routeInfo : requestDto.getRoutes()) {
             KakaoRouteAllResponseDto.Summary summary = routeInfo.getSummary();
             KakaoRouteAllResponseDto.Section firstSection = routeInfo.getSections()[0]; // 첫 번째 Section을 사용하겠습니다.
 
             if (mapType.equals("live-all-random")) {
                 RandomDestination olderRandomDestination = randomDestinationRepository.findByUserId(user.getId());
+                if (olderRandomDestination == null) {
+                    throw new EntityNotFoundException("경로를 저장할 수 없습니다.");
+                }
                 destinationAddress = olderRandomDestination.getDestinationAddress();
             }
 
@@ -132,7 +141,7 @@ public class HistoryService {
 
         if (route == null) {
             // 해당 routeId에 대한 정보가 없을 경우 예외 처리 또는 적절한 응답을 반환
-            throw new IllegalArgumentException("Route not found with ID: " + routeId);
+            throw new IllegalArgumentException("해당 경로를 가져올 수 없습니다.");
         }
 
         // Bound, Road 정보 가져오기

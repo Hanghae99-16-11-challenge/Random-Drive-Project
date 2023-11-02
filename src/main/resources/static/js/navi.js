@@ -10,8 +10,7 @@ const destinationAddress = segments[segments.length - 4];
 const redius = segments[segments.length - 3];
 const waypointNum = segments[segments.length - 2];
 const secondType = segments[segments.length - 1];
-$(document).ready(function () {
-
+$(document).ready(function() {
     if (type === 'save') {
         makeHistoryMap(routeId);
     } else if (type === 'live') {
@@ -53,7 +52,6 @@ map = new kakao.maps.Map(container, options);
 
 // 경로 안내 polyline ----------------------------------------------------------------------------------------------------------//
 var polylines = [];
-
 function clearPolylines() {
     for (let i = 0; i < polylines.length; i++) {
         polylines[i].setMap(null);
@@ -121,7 +119,9 @@ function makeHistoryMap(routeId) {
             }
         })
         .catch(error => {
-            console.error('Error:', error);
+            alert("경로를 생성할 수 없습니다. 다시 시도해 주세요");
+            console.log(error);
+            window.location.href = '/view/home';
         });
 }
 
@@ -136,7 +136,9 @@ function makeNavi(originAddress, destinationAddress) {
             makeLiveMap(data)
         })
         .catch(error => {
-            console.error('Error:', error);
+            alert("경로를 생성할 수 없습니다. 다시 시도해 주세요");
+            console.log(error);
+            window.location.href = '/view/home';
         });
 }
 
@@ -152,7 +154,9 @@ function makeRandomNavi(originAddress, destinationAddress, redius) {
                 makeLiveMap(data)
             })
             .catch(error => {
-                console.error('Random-Error:', error);
+                alert("경로를 생성할 수 없습니다. 다시 시도해 주세요");
+                console.log(error);
+                window.location.href = '/view/home';
             });
     } else if (secondType === 'zigzag') {
         fetch('/api/zigzag-random-route?originAddress=' + originAddress + '&destinationAddress=' + destinationAddress + '&count=' + waypointNum)
@@ -163,7 +167,9 @@ function makeRandomNavi(originAddress, destinationAddress, redius) {
                 makeLiveMap(data)
             })
             .catch(error => {
-                console.error('Random-Error:', error);
+                alert("경로를 생성할 수 없습니다. 다시 시도해 주세요");
+                console.log(error);
+                window.location.href = '/view/home';
             });
     } else {
         fetch('/api/random-route?originAddress=' + originAddress + '&destinationAddress=' + destinationAddress + '&redius=' + redius)
@@ -174,7 +180,9 @@ function makeRandomNavi(originAddress, destinationAddress, redius) {
                 makeLiveMap(data)
             })
             .catch(error => {
-                console.error('Random-Error:', error);
+                alert("경로를 생성할 수 없습니다. 다시 시도해 주세요");
+                console.log(error);
+                window.location.href = '/view/home';
             });
     }
 }
@@ -197,7 +205,9 @@ function makeAllRandomNavi(originAddress, redius) {
                 makeLiveMap(data)
             })
             .catch(error => {
-                console.error('All-Random-Error:', error);
+                alert("경로를 생성할 수 없습니다. 다시 시도해 주세요");
+                console.log(error);
+                window.location.href = '/view/home';
             });
     } else if (secondType === 'zigzag') {
         fetch(`/api/zigzag-all-random-route?originAddress=${originAddress}&distance=${redius}&count=${waypointNum}`, {
@@ -213,7 +223,9 @@ function makeAllRandomNavi(originAddress, redius) {
                 makeLiveMap(data)
             })
             .catch(error => {
-                console.error('All-Random-Error:', error);
+                alert("경로를 생성할 수 없습니다. 다시 시도해 주세요");
+                console.log(error);
+                window.location.href = '/view/home';
             });
     } else if (secondType === 'circle') {
         fetch(`/api/circle-all-random-route?originAddress=${originAddress}&distance=${redius}&count=${waypointNum}`, {
@@ -229,7 +241,9 @@ function makeAllRandomNavi(originAddress, redius) {
                 makeLiveMap(data)
             })
             .catch(error => {
-                console.error('All-Random-Error:', error);
+                alert("경로를 생성할 수 없습니다. 다시 시도해 주세요");
+                console.log(error);
+                window.location.href = '/view/home';
             });
     } else {
         fetch(`/api/all-random-route?originAddress=${originAddress}&redius=${redius}`, {
@@ -245,7 +259,9 @@ function makeAllRandomNavi(originAddress, redius) {
                 makeLiveMap(data)
             })
             .catch(error => {
-                console.error('All-Random-Error:', error);
+                alert("경로를 생성할 수 없습니다. 다시 시도해 주세요");
+                console.log(error);
+                window.location.href = '/view/home';
             });
     }
 }
@@ -267,7 +283,6 @@ function makeLiveMap(data) {
     var lon_ori = data.routes[0].summary.origin.x;
     var lat_des = data.routes[0].summary.destination.y;
     var lon_des = data.routes[0].summary.destination.x;
-
     var positions = [
         {
             title: '출발',
@@ -281,7 +296,6 @@ function makeLiveMap(data) {
             image: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/blue_b.png'
             //"https://cdn-icons-png.flaticon.com/512/4856/4856582.png"
         }
-
     ]
 // 마커를 지도에 표시하기
     for (var i = 0; i < positions.length; i++) {
@@ -519,7 +533,6 @@ function visibilityTime(dur = 0) {
 function pathType() {
     return type;
 }
-
 // 추가 경로 재생성 동작
 function remakeNavi(lat, lng) {
     setToken();
@@ -550,7 +563,9 @@ function remakeNavi(lat, lng) {
                             clearNavi();
                         })
                         .catch(error => {
-                            console.error('Error:', error);
+                            alert("경로를 생성할 수 없습니다. 다시 시도해 주세요");
+                            console.log(error);
+                            window.location.href = '/view/home';
                         });
                 }
 
@@ -621,7 +636,6 @@ function remakeRandomNavi(lat, lng) {
                     waypointsX += routeData.guides[i].x + " ";
                     waypointsY += routeData.guides[i].y + " ";
                 }
-
             }
 
             if (!isexist) {
@@ -645,7 +659,9 @@ function remakeRandomNavi(lat, lng) {
                         clearNavi();
                     })
                     .catch(error => {
-                        console.error('Error:', error);
+                        alert("경로를 생성할 수 없습니다. 다시 시도해 주세요");
+                        console.log(error);
+                        window.location.href = '/view/home';
                     });
             }
         });

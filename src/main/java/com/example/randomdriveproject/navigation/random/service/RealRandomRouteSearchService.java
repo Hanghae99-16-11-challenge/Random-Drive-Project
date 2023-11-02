@@ -39,10 +39,16 @@ public class RealRandomRouteSearchService {
     // 반경 기반 랜덤 길찾기
     public KakaoRouteAllResponseDto requestAllRandomWay(Long userId, String originAddress, Integer distance, Integer count, int type) {
 
-        if (ObjectUtils.isEmpty(originAddress) || ObjectUtils.isEmpty(distance)) return null;
+        if (ObjectUtils.isEmpty(originAddress) || ObjectUtils.isEmpty(distance)) {
+            throw new IllegalArgumentException("출발지 또는 목적지 주소 또는 경유지 수 또는 거리가 비어있습니다.");
+        }
 
         // 출발지 주소를 좌표로 변환
-        DocumentDto origin = kakaoAddressSearchService.requestAddressSearch(originAddress).getDocumentDtoList().get(0);
+        List<DocumentDto> originList = kakaoAddressSearchService.requestAddressSearch(originAddress).getDocumentDtoList();
+        if (originList.isEmpty()) {
+            throw new IllegalArgumentException("출발지 주소를 찾을 수 없습니다.");
+        }
+        DocumentDto origin = originList.get(0);
         double originY = origin.getLatitude();
         double originX = origin.getLongitude();
 
@@ -50,6 +56,17 @@ public class RealRandomRouteSearchService {
 
         // 목적지를 거리 기반으로 무작위적으로 가져오는 메소드
         DocumentDto destination = getDestination(originY, originX, convertedDistance);
+
+        // 목적지를 가져오지 못하면 3번 더 반복
+        for (int i = 0; i < 3; i++) {
+            if (destination == null)
+                destination = getDestination(originY, originX, convertedDistance);
+            else
+                break;
+        }
+        if (destination == null) {
+            throw new NullPointerException("목적지를 찾을 수 없습니다. 범위를 수정해보거나 다시 시도해주세요.");
+        }
 
         double destinationY = destination.getLatitude();
         double destinationX = destination.getLongitude();
@@ -81,15 +98,25 @@ public class RealRandomRouteSearchService {
     // 목적지 기반 랜덤 길찾기
     public KakaoRouteAllResponseDto requestRandomWay(String originAddress, String destinationAddress, Integer count, int type) {
 
-        if (ObjectUtils.isEmpty(originAddress) || ObjectUtils.isEmpty(count) || ObjectUtils.isEmpty(destinationAddress)) return null;
+        if (ObjectUtils.isEmpty(originAddress) || ObjectUtils.isEmpty(count) || ObjectUtils.isEmpty(destinationAddress)) {
+            throw new IllegalArgumentException("출발지 또는 목적지 주소 혹은 경유지 수가 비어있습니다.");
+        }
 
         // 출발지 주소를 좌표로 변환
-        DocumentDto origin = kakaoAddressSearchService.requestAddressSearch(originAddress).getDocumentDtoList().get(0);
+        List<DocumentDto> originList = kakaoAddressSearchService.requestAddressSearch(originAddress).getDocumentDtoList();
+        if (originList.isEmpty()) {
+            throw new IllegalArgumentException("출발지 주소를 찾을 수 없습니다.");
+        }
+        DocumentDto origin = originList.get(0);
         double originY = origin.getLatitude();
         double originX = origin.getLongitude();
 
         //목적지 주소를 좌표로 전환
-        DocumentDto destination = kakaoAddressSearchService.requestAddressSearch(destinationAddress).getDocumentDtoList().get(0);
+        List<DocumentDto> destinationList = kakaoAddressSearchService.requestAddressSearch(destinationAddress).getDocumentDtoList();
+        if (destinationList.isEmpty()) {
+            throw new IllegalArgumentException("도착지 주소를 찾을 수 없습니다.");
+        }
+        DocumentDto destination = destinationList.get(0);
 
         if (type == 1) {
             List<RandomDocumentDto> waypoints = getWayPointsAroundLine(originY, originX, destination.getLatitude(), destination.getLongitude(), count);
@@ -134,7 +161,6 @@ public class RealRandomRouteSearchService {
         // 목적지 값을 반경으로 계산해서 가져오는 메소드
         KakaoApiResponseDto responses = kakaoCategorySearchService.requestAttractionCategorySearch(randomY, randomX, 2);
 
-        // 랜덤으로 다중 목적지와 경유지 만들기 알고리즘
         int randomLength = responses.getDocumentDtoList().size();
 
         // 만일 찍은 좌표 주변에 아무것도 없다면..?
@@ -154,6 +180,9 @@ public class RealRandomRouteSearchService {
                 }
             }
         }
+        if (randomLength == 0) {
+            return null;
+        }
         Random rd = new Random();
         int destinationCnt = rd.nextInt(randomLength);
         DocumentDto destination = responses.getDocumentDtoList().get(destinationCnt);
@@ -170,7 +199,8 @@ public class RealRandomRouteSearchService {
             double tempX = originX + (destinationX - originX) * i / count;
             double redius = Math.min(realDistance/count, 20);
             RandomDocumentDto wayPoint = getRandomWayPoint(tempY, tempX, redius);
-            wayPoints.add(wayPoint);
+            if (wayPoint != null)
+                wayPoints.add(wayPoint);
         }
         return wayPoints;
     }
@@ -185,24 +215,36 @@ public class RealRandomRouteSearchService {
         double sideLength = Math.max(distanceY, distanceX);
 
         if (sideLength == distanceY) {
-            if(originY > middleY) {
+            if (originY > middleY) {
                 for (int i = 0; i < count; i++) {
                     Random rd = new Random();
-                    double randomY = originY - sideLength / count / 2  - sideLength / count * i;
-                    double randomX = middleX - sideLength / 2 + sideLength / count * rd.nextInt(count);
-                    double redius = Math.min(sideLength/count * 100, 20);
-                    RandomDocumentDto wayPoint = getRandomWayPoint(randomY, randomX, redius);
-                    wayPoints.add(wayPoint);
+                    int randomNum = rd.nextInt(count);
+                    double randomY = originY - sideLength / count / 2 - sideLength / count * i;
+                    for (int j = 0; j < count; j++) { // 경유지 찾을 때까지 해당 범위의 모든 구역 탐색
+                        double randomX = middleX - sideLength / 2 + sideLength / count * ((randomNum+j)%count);
+                        double redius = Math.min(sideLength/count * 100, 20);
+                        RandomDocumentDto wayPoint = getRandomWayPoint(randomY, randomX, redius);
+                        if (wayPoint != null) {
+                            wayPoints.add(wayPoint);
+                            break;
+                        }
+                    }
                 }
             }
             else {
                 for (int i = 0; i < count; i++) {
                     Random rd = new Random();
-                    double randomY = originY + sideLength / count / 2  + sideLength / count * i;
-                    double randomX = middleX - sideLength / 2 + sideLength / count * rd.nextInt(count);
-                    double redius = Math.min(sideLength/count * 100, 20);
-                    RandomDocumentDto wayPoint = getRandomWayPoint(randomY, randomX, redius);
-                    wayPoints.add(wayPoint);
+                    int randomNum = rd.nextInt(count);
+                    double randomY = originY + sideLength / count / 2 + sideLength / count * i;
+                    for (int j = 0; j < count; j++) { // 경유지 찾을 때까지 해당 범위의 모든 구역 탐색
+                        double randomX = middleX - sideLength / 2 + sideLength / count * ((randomNum+j)%count);
+                        double redius = Math.min(sideLength/count * 100, 20);
+                        RandomDocumentDto wayPoint = getRandomWayPoint(randomY, randomX, redius);
+                        if (wayPoint != null) {
+                            wayPoints.add(wayPoint);
+                            break;
+                        }
+                    }
                 }
             }
         }
@@ -210,21 +252,33 @@ public class RealRandomRouteSearchService {
             if(originX > middleX) {
                 for (int i = 0; i < count; i++) {
                     Random rd = new Random();
+                    int randomNum = rd.nextInt(count);
                     double randomX = originX - sideLength / count / 2 - sideLength / count * i;
-                    double randomY = middleY - sideLength / 2 + sideLength / count * rd.nextInt(count);
-                    double redius = Math.min(sideLength/count * 100, 20);
-                    RandomDocumentDto wayPoint = getRandomWayPoint(randomY, randomX, redius);
-                    wayPoints.add(wayPoint);
+                    for (int j = 0; j < count; j++) { // 경유지 찾을 때까지 해당 범위의 모든 구역 탐색
+                        double randomY = middleY - sideLength / 2 + sideLength / count * ((randomNum+j)%count);
+                        double redius = Math.min(sideLength/count * 100, 20);
+                        RandomDocumentDto wayPoint = getRandomWayPoint(randomY, randomX, redius);
+                        if (wayPoint != null) {
+                            wayPoints.add(wayPoint);
+                            break;
+                        }
+                    }
                 }
             }
             else {
                 for (int i = 0; i < count; i++) {
                     Random rd = new Random();
+                    int randomNum = rd.nextInt(count);
                     double randomX = originX + sideLength / count / 2 + sideLength / count * i;
-                    double randomY = middleY - sideLength / 2 + sideLength / count * rd.nextInt(count);
-                    double redius = Math.min(sideLength/count * 100, 20);
-                    RandomDocumentDto wayPoint = getRandomWayPoint(randomY, randomX, redius);
-                    wayPoints.add(wayPoint);
+                    for (int j = 0; j < count; j++) { // 경유지 찾을 때까지 해당 범위의 모든 구역 탐색
+                        double randomY = middleY - sideLength / 2 + sideLength / count * ((randomNum+j)%count);
+                        double redius = Math.min(sideLength/count * 100, 20);
+                        RandomDocumentDto wayPoint = getRandomWayPoint(randomY, randomX, redius);
+                        if (wayPoint != null) {
+                            wayPoints.add(wayPoint);
+                            break;
+                        }
+                    }
                 }
             }
         }
@@ -244,12 +298,16 @@ public class RealRandomRouteSearchService {
         for (int i = 0; i < count; i++) {
             double wayPointRadian = Math.toRadians(degree + 180 + getRandomAngle(rangeDegree)+ rangeDegree * i);
             System.out.println("각도 : " + wayPointRadian);
-            double wayPointY = rediusY + redius * Math.sin(wayPointRadian);
-            double wayPointX = rediusX + redius * Math.cos(wayPointRadian);
-            System.out.println("정점" + (i+1) + " : " + wayPointY + ", " + wayPointX);
-            RandomDocumentDto wayPoint = getRandomWayPoint(wayPointY, wayPointX, 2);
-            if (wayPoint != null)
-                wayPoints.add(wayPoint);
+            for (double temp = redius; temp > 0.02; temp -= 0.02) { // 경유지 찾을 때까지 반지름 내부 모든 구역 탐색
+                double wayPointY = rediusY + redius * Math.sin(wayPointRadian);
+                double wayPointX = rediusX + redius * Math.cos(wayPointRadian);
+                System.out.println("정점" + (i+1) + " : " + wayPointY + ", " + wayPointX);
+                RandomDocumentDto wayPoint = getRandomWayPoint(wayPointY, wayPointX, 2);
+                if (wayPoint != null) {
+                    wayPoints.add(wayPoint);
+                    break;
+                }
+            }
         }
         return wayPoints;
     }

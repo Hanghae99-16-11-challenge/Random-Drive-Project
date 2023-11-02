@@ -111,7 +111,7 @@ document.getElementById('random-search-form').addEventListener('submit', functio
 
     {
         try {
-            if (originAddress === "" || destinationAddress === "")
+            if (originAddress === "" || destinationAddress === "" || waypointNum === "" || secondType === "")
                 throw new Error("값이 입력 되지 않았습니다.");
         }catch (e)
         {

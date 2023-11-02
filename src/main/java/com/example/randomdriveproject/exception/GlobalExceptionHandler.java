@@ -40,7 +40,7 @@ public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler {
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<Object> handleEntityNotFoundException(EntityNotFoundException ex) {
         logger.warn("EntityNotFoundException 발생: {}", ex.getMessage(), ex);
-        ApiError apiError = new ApiError(HttpStatus.NOT_FOUND, "요청한 리소스를 찾을 수 없습니다."); // or 사용자 메시지
+        ApiError apiError = new ApiError(HttpStatus.NOT_FOUND, ex.getMessage()); // or 사용자 메시지
         return new ResponseEntity<>(apiError, apiError.getStatus());
     }
 
