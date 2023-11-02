@@ -1,18 +1,18 @@
 // 로그아웃 버튼 클릭 이벤트
 // 추가한 코드
 const box_pst = document.querySelectorAll(".logout-button")[0].offsetTop
-document.getElementsByClassName('logout-button')[0].addEventListener('click', function() {
+document.getElementsByClassName('logout-button')[0].addEventListener('click', function () {
     logout();
     // 주가한 코드
-    window.scrollTo({left : 0, top : box_pst-100})
+    window.scrollTo({left: 0, top: box_pst - 100})
 });
 
 // 주요 기능
-$(document).ready(function() {
+$(document).ready(function () {
     const auth = getToken();
 
     if (auth !== undefined && auth !== '') {
-        $.ajaxPrefilter(function(options, originalOptions, jqXHR) {
+        $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
             jqXHR.setRequestHeader('Authorization', auth);
         });
 
@@ -21,11 +21,13 @@ $(document).ready(function() {
             method: 'GET',
             headers: {
                 'Authorization': auth
-            }})
+            }
+        })
             .then(response => response.json())
             .then(data => {
                 // 받아온 데이터를 화면에 렌더링
                 renderHistory(data);
+                makeMarker(data);
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -51,9 +53,12 @@ function renderHistory(histories) {
                 <td>${formattedDestinationAddress}</td>
             `;
 
-            row.addEventListener('click', function() {
+            row.addEventListener('click', function () {
                 // 클릭한 행의 route_id를 사용하여 원하는 동작 수행
                 window.location.href = 'navi/' + 'save' + '/' + history.route_id + "/blank/blank/0/0/blank";
+                const historiesData = history.route_id;
+                historiesMarker(historiesData); // 현재 적용 안됨
+
             });
 
             console.log(history.mapType);
@@ -63,12 +68,10 @@ function renderHistory(histories) {
             tbody.appendChild(row);
         });
 
-        if (histories.length === 0)
-        {
+        if (histories.length === 0) {
             console.log("기록이 없어요.");
         }
-    }catch (e)
-    {
+    } catch (e) {
         console.warn(e.message);
         console.warn(histories.msg);
         logout();
@@ -133,14 +136,100 @@ function getToken() {
 
     let auth = Cookies.get('Authorization');
 
-    if(auth === undefined) {
+    if (auth === undefined) {
         return '';
     }
 
     // kakao 로그인 사용한 경우 Bearer 추가
-    if(auth.indexOf('Bearer') === -1 && auth !== ''){
+    if (auth.indexOf('Bearer') === -1 && auth !== '') {
         auth = 'Bearer ' + auth;
     }
     return auth;
 }
 
+// 히스토리 마커
+function historiesMarker(historiesData){
+    history.forEach(item => {
+        const routeData = item;
+
+        const originAddress = routeData.originAddress;
+        const destinationAddress = routeData.destinationAddress;
+
+        // 주소-좌표 변환 객체를 생성합니다
+        var geocoder = new kakao.maps.services.Geocoder();
+
+        var addresses = [originAddress, destinationAddress];
+        addresses.forEach(address => {
+            geocoder.addressSearch(address, function (result, status) {
+                // 정상적으로 검색이 완료됐으면
+                if (status === kakao.maps.services.Status.OK) {
+                    historiesMakeMarker(result);
+                    const json = JSON.stringify(address);
+                    console.log(document.write(json));
+                }
+            });
+        });
+    });
+}
+
+function historiesMakeMarker(result) {
+    // 출발지 도착지 마커 표시하기
+    var let_ori = result[0].y;
+    var lon_ori = result[0].x;
+    var lat_des = result[1].y;
+    var lon_des = result[1].x;
+
+    var positions = [
+        {
+            title: '출발',
+            latlng: new kakao.maps.LatLng(let_ori, lon_ori),
+            image: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/red_b.png'
+            //"https://cdn-icons-png.flaticon.com/512/6213/6213694.png"
+        },
+        {
+            title: '도착',
+            latlng: new kakao.maps.LatLng(lat_des, lon_des),
+            image: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/blue_b.png'
+            //"https://cdn-icons-png.flaticon.com/512/4856/4856582.png"
+        }
+
+    ]
+// 마커를 지도에 표시하기
+    for (var i = 0; i < positions.length; i++) {
+        // 마커 이미지 크기
+        var imageSize = new kakao.maps.Size(30, 40);
+        var markerImage = new kakao.maps.MarkerImage(positions[i].image, imageSize);
+        var marker = new kakao.maps.Marker({
+            map: map,
+            position: positions[i].latlng,
+            title: positions[i].title,
+            image: markerImage,
+        })
+    }
+
+// 경유지 마커 표시
+    var imageWay = 'https://file.notion.so/f/f/0bb6a7f0-5b10-43e2-ad69-0657263c6dff/ccc1ee90-0fa2-4d98-a1a6-80f40600896f/%EA%B2%BD%EC%9C%A0%EC%A7%80-01.png?id=6eaca2df-ea86-468a-bf07-51df643bf11b&table=block&spaceId=0bb6a7f0-5b10-43e2-ad69-0657263c6dff&expirationTimestamp=1698933600000&signature=256uSQ0yL4SEQ_vhA4Ejx0_PTykB_Nj-2KJev6apoOI&downloadName=%EA%B2%BD%EC%9C%A0%EC%A7%80-01.png';
+    var imageSize = new kakao.maps.Size(40, 35);
+    // 마커 이미지를 생성합니다
+    var markerImage = new kakao.maps.MarkerImage(imageWay, imageSize);
+
+    // 경유지 마커 표시하기
+    for (var i = 0; i < data.routes[0].sections.length; i++) {
+        var section = data.routes[0].sections[i];
+        for (var j = 0; j < section.guides.length; j++) {
+            var guide = section.guides[j];
+            if (guide.type === 1000) {
+                var lat_way = guide.y;
+                var lon_way = guide.x;
+
+                var latlng = new kakao.maps.LatLng(lat_way, lon_way)
+
+                var marker = new kakao.maps.Marker({
+                    map: map,
+                    position: latlng,
+                    image: markerImage
+                });
+            }
+        }
+    }
+}

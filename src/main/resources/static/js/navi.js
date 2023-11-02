@@ -134,6 +134,7 @@ function makeNavi(originAddress, destinationAddress) {
             responseData = data;
             adapt_KakaoResponseToRouteData(data);
             makeLiveMap(data)
+            makeMarker(data)
         })
         .catch(error => {
             alert("경로를 생성할 수 없습니다. 다시 시도해 주세요");
@@ -151,7 +152,8 @@ function makeRandomNavi(originAddress, destinationAddress, redius) {
             .then(data => {
                 responseData = data;
                 adapt_KakaoResponseToRouteData(data);
-                makeLiveMap(data)
+                makeLiveMap(data);
+                makeMarker(data);
             })
             .catch(error => {
                 alert("경로를 생성할 수 없습니다. 다시 시도해 주세요");
@@ -165,6 +167,7 @@ function makeRandomNavi(originAddress, destinationAddress, redius) {
                 responseData = data;
                 adapt_KakaoResponseToRouteData(data);
                 makeLiveMap(data)
+                makeMarker(data);
             })
             .catch(error => {
                 alert("경로를 생성할 수 없습니다. 다시 시도해 주세요");
@@ -178,6 +181,7 @@ function makeRandomNavi(originAddress, destinationAddress, redius) {
                 responseData = data;
                 adapt_KakaoResponseToRouteData(data);
                 makeLiveMap(data)
+                makeMarker(data);
             })
             .catch(error => {
                 alert("경로를 생성할 수 없습니다. 다시 시도해 주세요");
@@ -203,6 +207,7 @@ function makeAllRandomNavi(originAddress, redius) {
                 responseData = data;
                 adapt_KakaoResponseToRouteData(data);
                 makeLiveMap(data)
+                makeMarker(data);
             })
             .catch(error => {
                 alert("경로를 생성할 수 없습니다. 다시 시도해 주세요");
@@ -221,6 +226,7 @@ function makeAllRandomNavi(originAddress, redius) {
                 responseData = data;
                 adapt_KakaoResponseToRouteData(data);
                 makeLiveMap(data)
+                makeMarker(data);
             })
             .catch(error => {
                 alert("경로를 생성할 수 없습니다. 다시 시도해 주세요");
@@ -239,6 +245,7 @@ function makeAllRandomNavi(originAddress, redius) {
                 responseData = data;
                 adapt_KakaoResponseToRouteData(data);
                 makeLiveMap(data)
+                makeMarker(data);
             })
             .catch(error => {
                 alert("경로를 생성할 수 없습니다. 다시 시도해 주세요");
@@ -257,6 +264,7 @@ function makeAllRandomNavi(originAddress, redius) {
                 responseData = data;
                 adapt_KakaoResponseToRouteData(data);
                 makeLiveMap(data)
+                makeMarker(data);
             })
             .catch(error => {
                 alert("경로를 생성할 수 없습니다. 다시 시도해 주세요");
@@ -278,64 +286,6 @@ function makeLiveMap(data) {
     }
 
     var bounds = new kakao.maps.LatLngBounds(); // 모든 경로의 좌표를 포함할 수 있는 경계 객체를 만듭니다.
-
-    var let_ori = data.routes[0].summary.origin.y;
-    var lon_ori = data.routes[0].summary.origin.x;
-    var lat_des = data.routes[0].summary.destination.y;
-    var lon_des = data.routes[0].summary.destination.x;
-    var positions = [
-        {
-            title: '출발',
-            latlng: new kakao.maps.LatLng(let_ori, lon_ori),
-            image: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/red_b.png'
-            //"https://cdn-icons-png.flaticon.com/512/6213/6213694.png"
-        },
-        {
-            title: '도착',
-            latlng: new kakao.maps.LatLng(lat_des, lon_des),
-            image: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/blue_b.png'
-            //"https://cdn-icons-png.flaticon.com/512/4856/4856582.png"
-        }
-    ]
-// 마커를 지도에 표시하기
-    for (var i = 0; i < positions.length; i++) {
-        // 마커 이미지 크기
-        var imageSize = new kakao.maps.Size(30, 40);
-        var markerImage = new kakao.maps.MarkerImage(positions[i].image, imageSize);
-        var marker = new kakao.maps.Marker({
-            map: map,
-            position: positions[i].latlng,
-            title: positions[i].title,
-            image: markerImage,
-        })
-    }
-
-// 경유지 마커 표시
-    var imageWay = 'https://file.notion.so/f/f/0bb6a7f0-5b10-43e2-ad69-0657263c6dff/ccc1ee90-0fa2-4d98-a1a6-80f40600896f/%EA%B2%BD%EC%9C%A0%EC%A7%80-01.png?id=6eaca2df-ea86-468a-bf07-51df643bf11b&table=block&spaceId=0bb6a7f0-5b10-43e2-ad69-0657263c6dff&expirationTimestamp=1698933600000&signature=256uSQ0yL4SEQ_vhA4Ejx0_PTykB_Nj-2KJev6apoOI&downloadName=%EA%B2%BD%EC%9C%A0%EC%A7%80-01.png';
-    var imageSize = new kakao.maps.Size(40, 35);
-    // 마커 이미지를 생성합니다
-    var markerImage = new kakao.maps.MarkerImage(imageWay, imageSize);
-
-    // 경유지 마커 표시하기
-    for (var i = 0; i < data.routes[0].sections.length; i++) {
-        var section = data.routes[0].sections[i];
-        for (var j = 0; j < section.guides.length; j++) {
-            var guide = section.guides[j];
-            if (guide.type === 1000) {
-                var lat_way = guide.y;
-                var lon_way = guide.x;
-
-                var latlng = new kakao.maps.LatLng(lat_way, lon_way)
-
-                var marker = new kakao.maps.Marker({
-                    map: map,
-                    position: latlng,
-                    image: markerImage
-                });
-            }
-        }
-    }
-
 
     // 경로 정보(routes)의 각 섹션(section)별로 반복하여 처리합니다.
     for (let route of data.routes) {
@@ -389,6 +339,8 @@ function saveRoute(data, originAddress, destinationAddress) {
     const auth = getToken();
     var decodedOriginAddress = decodeURIComponent(originAddress);
     var decodedDestinationAddress = decodeURIComponent(destinationAddress);
+
+
 
     fetch('/api/routes', {
         method: 'POST',
@@ -665,4 +617,67 @@ function remakeRandomNavi(lat, lng) {
                     });
             }
         });
+}
+
+// 마커 표시하기
+function makeMarker(data) {
+    // 출발지 도착지 마커 표시하기
+    var let_ori = data.routes[0].summary.origin.y;
+    var lon_ori = data.routes[0].summary.origin.x;
+    var lat_des = data.routes[0].summary.destination.y;
+    var lon_des = data.routes[0].summary.destination.x;
+
+    var positions = [
+        {
+            title: '출발',
+            latlng: new kakao.maps.LatLng(let_ori, lon_ori),
+            image: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/red_b.png'
+            //"https://cdn-icons-png.flaticon.com/512/6213/6213694.png"
+        },
+        {
+            title: '도착',
+            latlng: new kakao.maps.LatLng(lat_des, lon_des),
+            image: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/blue_b.png'
+            //"https://cdn-icons-png.flaticon.com/512/4856/4856582.png"
+        }
+
+    ]
+// 마커를 지도에 표시하기
+    for (var i = 0; i < positions.length; i++) {
+        // 마커 이미지 크기
+        var imageSize = new kakao.maps.Size(30, 40);
+        var markerImage = new kakao.maps.MarkerImage(positions[i].image, imageSize);
+        var marker = new kakao.maps.Marker({
+            map: map,
+            position: positions[i].latlng,
+            title: positions[i].title,
+            image: markerImage,
+        })
+    }
+
+// 경유지 마커 표시
+    var imageWay = 'https://file.notion.so/f/f/0bb6a7f0-5b10-43e2-ad69-0657263c6dff/ccc1ee90-0fa2-4d98-a1a6-80f40600896f/%EA%B2%BD%EC%9C%A0%EC%A7%80-01.png?id=6eaca2df-ea86-468a-bf07-51df643bf11b&table=block&spaceId=0bb6a7f0-5b10-43e2-ad69-0657263c6dff&expirationTimestamp=1698933600000&signature=256uSQ0yL4SEQ_vhA4Ejx0_PTykB_Nj-2KJev6apoOI&downloadName=%EA%B2%BD%EC%9C%A0%EC%A7%80-01.png';
+    var imageSize = new kakao.maps.Size(40, 35);
+    // 마커 이미지를 생성합니다
+    var markerImage = new kakao.maps.MarkerImage(imageWay, imageSize);
+
+    // 경유지 마커 표시하기
+    for (var i = 0; i < data.routes[0].sections.length; i++) {
+        var section = data.routes[0].sections[i];
+        for (var j = 0; j < section.guides.length; j++) {
+            var guide = section.guides[j];
+            if (guide.type === 1000) {
+                var lat_way = guide.y;
+                var lon_way = guide.x;
+
+                var latlng = new kakao.maps.LatLng(lat_way, lon_way)
+
+                var marker = new kakao.maps.Marker({
+                    map: map,
+                    position: latlng,
+                    image: markerImage
+                });
+            }
+        }
+    }
 }
