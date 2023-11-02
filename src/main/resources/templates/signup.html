@@ -105,9 +105,16 @@
 
                 //response에서 JSON 데이터 추출
                 var errors = JSON.parse(response.responseText);
+                var errorMessage = "";
+
+                // 일반 오류 메시지 처리
+                if(errors.message) {
+                    errorMessage += errors.message + "\n";
+                }
 
                 // 오류 메시지를 보기 좋게 줄 바꿈하여 표시
-                var errorMessage = "";
+                // @Valid 예외 처리
+
                 if(errors.password) {
                     errorMessage += "password: " + errors.password + "\n"; // 비밀번호 오류 메시지
                 }
