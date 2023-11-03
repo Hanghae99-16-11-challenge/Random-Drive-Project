@@ -39,8 +39,8 @@ public class RealRandomRouteSearchService {
     // 반경 기반 랜덤 길찾기
     public KakaoRouteAllResponseDto requestAllRandomWay(Long userId, String originAddress, Integer distance, Integer count, int type) {
 
-        if (ObjectUtils.isEmpty(originAddress) || ObjectUtils.isEmpty(distance)) {
-            throw new IllegalArgumentException("출발지 또는 목적지 주소 또는 경유지 수 또는 거리가 비어있습니다.");
+        if (ObjectUtils.isEmpty(originAddress) || ObjectUtils.isEmpty(distance) || ObjectUtils.isEmpty(count)) {
+            throw new IllegalArgumentException("출발지 또는 경유지 수 또는 거리가 비어있습니다.");
         }
 
         if (distance < 10) {
@@ -63,17 +63,6 @@ public class RealRandomRouteSearchService {
 
         // 목적지를 거리 기반으로 무작위적으로 가져오는 메소드
         DocumentDto destination = getDestination(originY, originX, convertedDistance);
-
-        // 목적지를 가져오지 못하면 3번 더 반복
-        for (int i = 0; i < 3; i++) {
-            if (destination == null)
-                destination = getDestination(originY, originX, convertedDistance);
-            else
-                break;
-        }
-        if (destination == null) {
-            throw new NullPointerException("목적지를 찾을 수 없습니다. 범위를 수정해보거나 다시 시도해주세요.");
-        }
 
         double destinationY = destination.getLatitude();
         double destinationX = destination.getLongitude();
@@ -200,11 +189,12 @@ public class RealRandomRouteSearchService {
             }
         }
         if (randomLength == 0) {
-            return null;
+            throw new NullPointerException("목적지를 찾을 수 없습니다. 범위를 수정해보거나 다시 시도해주세요.");
         }
         Random rd = new Random();
         int destinationCnt = rd.nextInt(randomLength);
         DocumentDto destination = responses.getDocumentDtoList().get(destinationCnt);
+        System.out.println("목적지 x 좌표: " + destination.getLongitude());
         return destination;
     }
 

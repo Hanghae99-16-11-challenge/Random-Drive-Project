@@ -1,4 +1,4 @@
-package com.example.randomdriveproject.history.entity.navigation;
+package com.example.randomdriveproject.navigation;
 
 import com.example.randomdriveproject.navigation.random.repository.RandomDestinationRepository;
 import com.example.randomdriveproject.navigation.random.service.RandomKakaoRouteSearchService;

@@ -7,7 +7,4 @@ import java.util.List;
 
 public interface RouteRepository extends JpaRepository<Route, Long> {
     List<Route> findAllByUserId(Long userId);
-
-
-//    List<Route> findByDestinationAddressAfter();
 }

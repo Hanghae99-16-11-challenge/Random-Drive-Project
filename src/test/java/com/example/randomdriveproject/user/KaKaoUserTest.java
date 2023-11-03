@@ -1,4 +1,4 @@
-package com.example.randomdriveproject.history.entity;
+package com.example.randomdriveproject.user;
 
 import com.example.randomdriveproject.user.dto.KakaoUserInfoDto;
 import com.example.randomdriveproject.user.entity.User;

@@ -17,6 +17,14 @@ public class KakaoRouteAllResponseDto {
     @JsonProperty("routes")
     private RouteInfo[] routes;
 
+    public int getWaypointsLength() {
+        if (routes[0] != null && routes[0].getSummary() != null && routes[0].getSummary().getWaypoints() != null) {
+            return routes[0].getSummary().getWaypoints().length;
+        }
+        System.out.println("경로 못찾음");
+        return 0;
+    }
+
     @Getter
     public static class RouteInfo {
         @JsonProperty("result_code")
