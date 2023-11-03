@@ -33,7 +33,7 @@ public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler {
     @ExceptionHandler(NullPointerException.class)
     public ResponseEntity<Object> handleNullPointerException(NullPointerException ex) {
         logger.error("NullPointerException 발생: {}", ex.getMessage(), ex);
-        ApiError apiError = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류가 발생했습니다."); // or 사용자 메시지
+        ApiError apiError = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage()); // or 사용자 메시지
         return new ResponseEntity<>(apiError, apiError.getStatus());
     }
 

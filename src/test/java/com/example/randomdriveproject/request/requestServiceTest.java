@@ -1,4 +1,4 @@
-package com.example.randomdriveproject.history.entity.request;
+package com.example.randomdriveproject.request;
 
 import com.example.randomdriveproject.request.service.KakaoAddressSearchService;
 import com.example.randomdriveproject.request.service.KakaoKeywordSearchService;
