@@ -27,7 +27,7 @@ $(document).ready(function () {
             .then(data => {
                 // 받아온 데이터를 화면에 렌더링
                 renderHistory(data);
-                makeMarker(data);
+
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -40,12 +40,17 @@ $(document).ready(function () {
 // 보여질 정보 가져오기
 function renderHistory(histories) {
     const tbody = document.getElementById('historyTableBody');
+    // historiesMarker(histories);
 
     try {
         histories.forEach(history => {
             const row = document.createElement('tr');
             const formattedOriginAddress = extractOriginAddressParts(history.originAddress);
             const formattedDestinationAddress = extractDestinationAddressParts(history.destinationAddress);
+
+            //마커용
+            const markerOriginAddress = history.originAddress;
+            const markerDestinationAddress = history.destinationAddress;
 
             row.innerHTML = `
                 <td>${extractDateFromDateTime(history.createdAt)}</td>
@@ -56,9 +61,10 @@ function renderHistory(histories) {
             row.addEventListener('click', function () {
                 // 클릭한 행의 route_id를 사용하여 원하는 동작 수행
                 window.location.href = 'navi/' + 'save' + '/' + history.route_id + "/blank/blank/0/0/blank";
-                const historiesData = history.route_id;
-                historiesMarker(historiesData); // 현재 적용 안됨
 
+                if (markerOriginAddress !== null || markerDestinationAddress !== null) {
+                    historiesMarker(markerOriginAddress, markerDestinationAddress);
+                }
             });
 
             console.log(history.mapType);
@@ -66,7 +72,11 @@ function renderHistory(histories) {
             row.setAttribute('data-maptype', history.mapType);
 
             tbody.appendChild(row);
+
         });
+
+
+
 
         if (histories.length === 0) {
             console.log("기록이 없어요.");
@@ -148,29 +158,22 @@ function getToken() {
 }
 
 // 히스토리 마커
-function historiesMarker(historiesData){
-    history.forEach(item => {
-        const routeData = item;
+function historiesMarker(formattedOriginAddress, formattedDestinationAddress, row) {
 
-        const originAddress = routeData.originAddress;
-        const destinationAddress = routeData.destinationAddress;
+    // 주소-좌표 변환 객체를 생성합니다
+    var geocoder = new kakao.maps.services.Geocoder();
 
-        // 주소-좌표 변환 객체를 생성합니다
-        var geocoder = new kakao.maps.services.Geocoder();
-
-        var addresses = [originAddress, destinationAddress];
-        addresses.forEach(address => {
-            geocoder.addressSearch(address, function (result, status) {
-                // 정상적으로 검색이 완료됐으면
-                if (status === kakao.maps.services.Status.OK) {
-                    historiesMakeMarker(result);
-                    const json = JSON.stringify(address);
-                    console.log(document.write(json));
-                }
-            });
+    var addresses = [formattedOriginAddress, formattedDestinationAddress];
+    addresses.forEach(address => {
+        geocoder.addressSearch(address, function (result, status) {
+            // 정상적으로 검색이 완료됐으면
+            if (status === kakao.maps.services.Status.OK) {
+                historiesMakeMarker(result);
+            }
         });
     });
 }
+
 
 function historiesMakeMarker(result) {
     // 출발지 도착지 마커 표시하기
