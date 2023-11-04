@@ -38,8 +38,8 @@ function calculateCurrectToPoint(data)
         //response.getRoutes()[0].getSummary().getDuration()
         let spend = data.routes[0].summary.duration;
 
-        console.warn("=====현제위치와 출발지간의 직선거리 : " + calculateDistance(C_lat, C_lon, let_ori, lon_ori) + "km" +
-            "\n현제위치와 도착지 간의 직선거리 : " + calculateDistance(C_lat, C_lon, lat_des, lon_des) + "km" +
+        console.warn("=====현재위치와 출발지간의 직선거리 : " + calculateDistance(C_lat, C_lon, let_ori, lon_ori) + "km" +
+            "\n현재위치와 도착지 간의 직선거리 : " + calculateDistance(C_lat, C_lon, lat_des, lon_des) + "km" +
             "\n경로 길이 : " + data.routes[0].summary.distance +"m , 소요 시간 : " +
             Math.floor(spend / 60) + "분" + (spend - (Math.floor(spend / 60) * 60)) + "초");
 
@@ -87,7 +87,7 @@ function updateMap(mouseEvent)
 
 function update_refact(lat, lng)
 {
-    // EditMark(positionMark, positionText, lat, lng, '클릭한 위치');
+    EditMark(positionMark, positionText, lat, lng, '현재 위치');
 
     if(routeData == null)
     {
@@ -451,7 +451,7 @@ function update(lat, lng)
     update_refact(lat, lng);
     return;
 
-    EditMark(positionMark, positionText, lat, lng, '클릭한 위치');
+    EditMark(positionMark, positionText, lat, lng, '현재 위치');
 
     // calculateCurrectToPoint(pathData);//이건 잘됨
 
