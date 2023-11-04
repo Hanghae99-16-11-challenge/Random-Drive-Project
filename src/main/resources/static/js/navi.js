@@ -755,7 +755,7 @@ function makeMarker(data) {
     }
 
 // 경유지 마커 표시
-    var imageWay = 'https://file.notion.so/f/f/0bb6a7f0-5b10-43e2-ad69-0657263c6dff/ccc1ee90-0fa2-4d98-a1a6-80f40600896f/%EA%B2%BD%EC%9C%A0%EC%A7%80-01.png?id=6eaca2df-ea86-468a-bf07-51df643bf11b&table=block&spaceId=0bb6a7f0-5b10-43e2-ad69-0657263c6dff&expirationTimestamp=1698933600000&signature=256uSQ0yL4SEQ_vhA4Ejx0_PTykB_Nj-2KJev6apoOI&downloadName=%EA%B2%BD%EC%9C%A0%EC%A7%80-01.png';
+    var imageWay = 'https://cdn-icons-png.flaticon.com/128/4198/4198066.png';
     var imageSize = new kakao.maps.Size(40, 35);
     // 마커 이미지를 생성합니다
     var markerImage = new kakao.maps.MarkerImage(imageWay, imageSize);
