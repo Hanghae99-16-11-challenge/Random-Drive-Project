@@ -10,7 +10,7 @@ const destinationAddress = segments[segments.length - 4];
 const redius = segments[segments.length - 3];
 const waypointNum = segments[segments.length - 2];
 const secondType = segments[segments.length - 1];
-$(document).ready(function() {
+$(document).ready(function () {
     if (type === 'save') {
         makeHistoryMap(routeId);
     } else if (type === 'live') {
@@ -52,6 +52,7 @@ map = new kakao.maps.Map(container, options);
 
 // 경로 안내 polyline ----------------------------------------------------------------------------------------------------------//
 var polylines = [];
+
 function clearPolylines() {
     for (let i = 0; i < polylines.length; i++) {
         polylines[i].setMap(null);
@@ -64,65 +65,163 @@ function makeHistoryMap(routeId) {
     fetch('/api/route/' + routeId)
         .then(response => response.json())
         .then(data => {
-            waypointCount = 0;
-            responseData = data;
-            routeData = data;
-            if (!map) {
-                map = new kakao.maps.Map(document.getElementById('map'), {
-                    level: 3
-                });
-            }
-            let bound = data.bounds;
-            let distance = data.distance;
-            let duration = data.duration;
+                waypointCount = 0;
+                responseData = data;
+                routeData = data
 
-            // distance와 duration을 표시할 요소를 선택
-            let distanceElement = document.querySelector('.distance');
-            let durationElement = document.querySelector('.duration');
+                if (!map) {
+                    map = new kakao.maps.Map(document.getElementById('map'), {
+                        level: 3
+                    });
+                }
+                // 히스토리 마커용 추가
 
-            let hour = Math.floor(duration / 3600);
-            let minute = Math.floor((duration % 3600) / 60);
+                // // Initialize markers for departure and arrival
+                // let departureMarker, arrivalMarker;
+                //
+                // for (var i = 0; i < data.guides.length; i++) {
+                //     if (data.guides[i].type === 100) {
+                //         var lat_ori = data.guides[i].y;
+                //         var lng_ori = data.guides[i].x;
+                //
+                //         departureMarker = new kakao.maps.Marker({
+                //             position: new kakao.maps.LatLng(lat_ori, lng_ori),
+                //             title: '출발',
+                //             image: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/red_b.png'
+                //         });
+                //     }
+                //
+                //     if (data.guides[i].type === 101) {
+                //         var lat_des = data.guides[i].y;
+                //         var lng_des = data.guides[i].x;
+                //
+                //         arrivalMarker = new kakao.maps.Marker({
+                //             position: new kakao.maps.LatLng(lat_des, lng_des),
+                //             title: '도착',
+                //             image: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/blue_b.png'
+                //         });
+                //     }
+                // }
 
-            let km = (distance / 1000).toFixed(1);
+                var imageSize = new kakao.maps.Size(30, 40);
+                for (var i = 0; i < data.guides.length; i++) {
+                    if (data.guides[i].type === 100) {
+                        var lat_ori = data.guides[i].y;
+                        var lng_ori = data.guides[i].x;
+                    }
+
+                    if (data.guides[i].type === 101) {
+                        var lat_des = data.guides[i].y;
+                        var lng_des = data.guides[i].x;
+                    }
 
 
-            // 요소에 데이터를 추가
-            distanceElement.textContent = '소요 시간: ' + hour + '시간 ' + minute + '분';
-            durationElement.textContent = '총 거리: ' + km + ' km';
+                    var positions = [
+                        {
+                            title: '출발',
+                            latlng: new kakao.maps.LatLng(lat_ori, lng_ori),
+                            image: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/red_b.png'
+                            //"https://cdn-icons-png.flaticon.com/512/6213/6213694.png"
+                        },
+                        {
+                            title: '도착',
+                            latlng: new kakao.maps.LatLng(lat_des, lng_des),
+                            image: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/blue_b.png'
+                            //"https://cdn-icons-png.flaticon.com/512/4856/4856582.png"
+                        }
+                    ]
 
+                }
+                // 마커를 지도에 표시하기
+                for (var i = 0; i < positions.length; i++) {
+                    // 마커 이미지 크기
 
-            var bounds = new kakao.maps.LatLngBounds(
-                new kakao.maps.LatLng(bound.min_y, bound.min_x),
-                new kakao.maps.LatLng(bound.max_y, bound.max_x)
-            );
-
-            map.setBounds(bounds);
-
-
-            for (let road of data.roads) {
-                let path = [];
-                for (let i = 0; i < road.vertexes.length; i += 2) {
-                    path.push(new kakao.maps.LatLng(road.vertexes[i + 1], road.vertexes[i]));
+                    var markerImage = new kakao.maps.MarkerImage(positions[i].image, imageSize);
+                    var marker = new kakao.maps.Marker({
+                        map: map,
+                        position: positions[i].latlng,
+                        title: positions[i].title,
+                        image: markerImage,
+                    })
                 }
 
-                const polyline = new kakao.maps.Polyline({
-                    path: path,
-                    strokeWeight: 5,
-                    strokeColor: '#007bff',
-                    strokeOpacity: 0.7,
-                    strokeStyle: 'solid'
-                });
+                // 경유지 마커 표시
+                var imageWay = 'https://cdn-icons-png.flaticon.com/128/4198/4198066.png';
+                var imageSize = new kakao.maps.Size(40, 35);
+                // 마커 이미지를 생성합니다
+                var markerImage = new kakao.maps.MarkerImage(imageWay, imageSize);
+                // 경유지 마커 표시하기
+                for (var i = 0; i < data.guides.length; i++) {
+                    if (data.guides[i].type === 1000) {
+                        var lat_way = data.guides[i].y;
+                        var lon_way = data.guides[i].x;
 
-                polyline.setMap(map);
+                        var latlng = new kakao.maps.LatLng(lat_way, lon_way)
 
-                polylines.push(polyline);
+                        var marker = new kakao.maps.Marker({
+                            map: map,
+                            position: latlng,
+                            image: markerImage
+                        });
+                    }
+                }
+
+                marker.setMap(map)
+
+
+                // 기존 코드
+                let bound = data.bounds;
+                let distance = data.distance;
+                let duration = data.duration;
+
+                // distance와 duration을 표시할 요소를 선택
+                let distanceElement = document.querySelector('.distance');
+                let durationElement = document.querySelector('.duration');
+
+                let hour = Math.floor(duration / 3600);
+                let minute = Math.floor((duration % 3600) / 60);
+
+                let km = (distance / 1000).toFixed(1);
+
+
+                // 요소에 데이터를 추가
+                distanceElement.textContent = '소요 시간: ' + hour + '시간 ' + minute + '분';
+                durationElement.textContent = '총 거리: ' + km + ' km';
+
+
+                var bounds = new kakao.maps.LatLngBounds(
+                    new kakao.maps.LatLng(bound.min_y, bound.min_x),
+                    new kakao.maps.LatLng(bound.max_y, bound.max_x)
+                );
+
+                map.setBounds(bounds);
+
+
+                for (let road of data.roads) {
+                    let path = [];
+                    for (let i = 0; i < road.vertexes.length; i += 2) {
+                        path.push(new kakao.maps.LatLng(road.vertexes[i + 1], road.vertexes[i]));
+                    }
+
+                    const polyline = new kakao.maps.Polyline({
+                        path: path,
+                        strokeWeight: 5,
+                        strokeColor: '#007bff',
+                        strokeOpacity: 0.7,
+                        strokeStyle: 'solid'
+                    });
+
+                    polyline.setMap(map);
+                    polylines.push(polyline);
+                }
             }
-        })
+        )
         .catch(error => {
             alert("경로를 생성할 수 없습니다. 다시 시도해 주세요");
             console.log(error);
             window.location.href = '/view/home';
         });
+
 }
 
 // 기본 길찾기 동작
@@ -341,7 +440,6 @@ function saveRoute(data, originAddress, destinationAddress) {
     var decodedDestinationAddress = decodeURIComponent(destinationAddress);
 
 
-
     fetch('/api/routes', {
         method: 'POST',
         headers: {
@@ -485,6 +583,7 @@ function visibilityTime(dur = 0) {
 function pathType() {
     return type;
 }
+
 // 추가 경로 재생성 동작
 function remakeNavi(lat, lng) {
     setToken();
@@ -680,4 +779,117 @@ function makeMarker(data) {
             }
         }
     }
+}
+
+// 히스토리 마커 만들기
+// 마커 표시하기
+function historiesMakeMarker(data) {
+    // 히스토리 마커용 추가
+    for (var i = 0; i < data.guides.length; i++) {
+        if (data.guides[i].type === 100) {
+            var lat_ori = data.guides[i].y;
+            var lng_ori = data.guides[i].x;
+        }
+
+        if (data.guides[i].type === 101) {
+            var lat_des = data.guides[i].y;
+            var lng_des = data.guides[i].x;
+        }
+        var positions = [
+            {
+                title: '출발',
+                latlng: new kakao.maps.LatLng(lat_ori, lng_ori),
+                image: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/red_b.png'
+                //"https://cdn-icons-png.flaticon.com/512/6213/6213694.png"
+            },
+            {
+                title: '도착',
+                latlng: new kakao.maps.LatLng(lat_des, lng_des),
+                image: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/blue_b.png'
+                //"https://cdn-icons-png.flaticon.com/512/4856/4856582.png"
+            }
+
+        ]
+
+        // 마커를 지도에 표시하기
+        for (var i = 0; i < positions.length; i++) {
+            // 마커 이미지 크기
+            var imageSize = new kakao.maps.Size(30, 40);
+            var markerImage = new kakao.maps.MarkerImage(positions[i].image, imageSize);
+            var marker = new kakao.maps.Marker({
+                map: map,
+                position: positions[i].latlng,
+                title: positions[i].title,
+                image: markerImage,
+            })
+
+        }
+
+    }
+
+//     // 출발지 도착지 마커 표시하기
+//     for (var i = 0; i < data.guides.length; i++) {
+//         var guide = guides[i];
+//         if (guide.type === 100) {
+//             var lat_ori = guide.y;
+//             var lon_ori = guide.x;
+//         }
+//
+//         if (guide.type === 101) {
+//             var lat_des = guide.y;
+//             var lon_des = guide.x;
+//         }
+//     }
+//
+//     var positions = [
+//         {
+//             title: '출발',
+//             latlng: new kakao.maps.LatLng(lat_ori, lon_ori),
+//             image: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/red_b.png'
+//             //"https://cdn-icons-png.flaticon.com/512/6213/6213694.png"
+//         },
+//         {
+//             title: '도착',
+//             latlng: new kakao.maps.LatLng(lat_des, lon_des),
+//             image: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/blue_b.png'
+//             //"https://cdn-icons-png.flaticon.com/512/4856/4856582.png"
+//         }
+//
+//     ]
+// // 마커를 지도에 표시하기
+//     for (var i = 0; i < positions.length; i++) {
+//         // 마커 이미지 크기
+//         var imageSize = new kakao.maps.Size(30, 40);
+//         var markerImage = new kakao.maps.MarkerImage(positions[i].image, imageSize);
+//         var marker = new kakao.maps.Marker({
+//             map: map,
+//             position: positions[i].latlng,
+//             title: positions[i].title,
+//             image: markerImage,
+//         })
+//     }
+//
+// // 경유지 마커 표시
+//     var imageWay = 'https://file.notion.so/f/f/0bb6a7f0-5b10-43e2-ad69-0657263c6dff/ccc1ee90-0fa2-4d98-a1a6-80f40600896f/%EA%B2%BD%EC%9C%A0%EC%A7%80-01.png?id=6eaca2df-ea86-468a-bf07-51df643bf11b&table=block&spaceId=0bb6a7f0-5b10-43e2-ad69-0657263c6dff&expirationTimestamp=1698933600000&signature=256uSQ0yL4SEQ_vhA4Ejx0_PTykB_Nj-2KJev6apoOI&downloadName=%EA%B2%BD%EC%9C%A0%EC%A7%80-01.png';
+//     var imageSize = new kakao.maps.Size(40, 35);
+//     // 마커 이미지를 생성합니다
+//     var markerImage = new kakao.maps.MarkerImage(imageWay, imageSize);
+//
+//     // 경유지 마커 표시하기
+//     for (var j = 0; j < data.guides.length; j++) {
+//         var guide = guides[j];
+//         if (guide.type === 1000) {
+//             var lat_way = guide.y;
+//             var lon_way = guide.x;
+//
+//             var latlng = new kakao.maps.LatLng(lat_way, lon_way)
+//
+//             var marker = new kakao.maps.Marker({
+//                 map: map,
+//                 position: latlng,
+//                 image: markerImage
+//             });
+//         }
+//     }
+
 }
