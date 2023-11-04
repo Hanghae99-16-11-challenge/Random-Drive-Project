@@ -77,7 +77,7 @@ public class RealRandomRouteSearchService {
         if (type == 1) {
             // 선형 랜덤 경유지 추천
             List<RandomDocumentDto> waypoints = getWayPointsAroundLine(originY, originX, destinationY, destinationX, count);
-            return makeRequestForm(origin,destination,waypoints);
+            return makeRequestForm(origin,destination,waypoints); // uri 데이터 생성시 null은 나오지 않음
         }
         else if (type == 2) {
             // 박스형 랜덤 경유지

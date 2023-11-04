@@ -6,10 +6,7 @@ import com.example.randomdriveproject.history.entity.Bound;
 import com.example.randomdriveproject.history.entity.Guide;
 import com.example.randomdriveproject.history.entity.Road;
 import com.example.randomdriveproject.history.entity.Route;
-import com.example.randomdriveproject.history.repository.BoundRepository;
-import com.example.randomdriveproject.history.repository.GuideRepository;
-import com.example.randomdriveproject.history.repository.RoadRepository;
-import com.example.randomdriveproject.history.repository.RouteRepository;
+import com.example.randomdriveproject.history.repository.*;
 import com.example.randomdriveproject.navigation.random.entity.RandomDestination;
 import com.example.randomdriveproject.navigation.random.repository.RandomDestinationRepository;
 import com.example.randomdriveproject.request.dto.KakaoRouteAllResponseDto;
@@ -19,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,6 +30,9 @@ public class HistoryService {
     private final RoadRepository roadRepository;
     private final RandomDestinationRepository randomDestinationRepository;
     private final GuideRepository guideRepository;
+
+    private final RoadJDBCRepository roadJDBCRepository;
+    private final GuideJDBCRepository guideJDBCRepository;
 
     public void saveHistory(KakaoRouteAllResponseDto requestDto, String originAddress, String destinationAddress, String mapType, User user) {
 
@@ -91,6 +92,9 @@ public class HistoryService {
             // Road 객체 생성 및 설정
             KakaoRouteAllResponseDto.Section[] sections = routeInfo.getSections();
 
+            List<Road> roadList = new ArrayList<>();
+            List<Guide> guideList = new ArrayList<>();
+
             // for문 돌면서 모든 Road의 vertexes를 vertexString에 띄어쓰기로 구분해서 넣어라
             for (KakaoRouteAllResponseDto.Section allSection : sections) {
                 KakaoRouteAllResponseDto.Road[] roads = allSection.getRoads();
@@ -99,7 +103,7 @@ public class HistoryService {
                     String vertexesString = "";
                     vertexesString += Arrays.stream(roadDto.getVertexes()).mapToObj(String::valueOf).collect(Collectors.joining(" "));
                     Road roadEntity = new Road(vertexesString, route);
-                    roadRepository.save(roadEntity);
+                    roadList.add(roadEntity);
                 }
                 for (KakaoRouteAllResponseDto.Guide guideDto : guides) {
                     String name = guideDto.getName();
@@ -110,12 +114,19 @@ public class HistoryService {
                     int type = guideDto.getType();
                     String guidance = guideDto.getGuidance();
                     int roadIndex = guideDto.getRoadIndex();
-
                     Guide guideEntity = new Guide(name, x, y, distance, duration, type, guidance, roadIndex, route);
-                    guideRepository.save(guideEntity);
+                    guideList.add(guideEntity);
                 }
-
             }
+            long startTime = System.currentTimeMillis();
+//            roadRepository.saveAll(roadList);
+            roadJDBCRepository.batchInsert(roadList);
+            long endTime = System.currentTimeMillis();
+//            guideRepository.saveAll(guideList);
+            guideJDBCRepository.batchInsert(guideList);
+            long totalEndTime = System.currentTimeMillis();
+            System.out.println("\n\n\n\n\n\n\n실행 시간" + (endTime - startTime));
+            System.out.println("전체 실행 시간" + (totalEndTime - startTime));
         }
     }
 
