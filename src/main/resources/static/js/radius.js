@@ -46,6 +46,64 @@ document.getElementById('all-random-search-origin').addEventListener('click', fu
     }).open();
 });
 
+// 사용자가 반경을 옵션으로 선택 -----------------------------------------------------------------------------------------------//
+const selectElement = document.getElementById("all-random-redius");
+
+function getSelectedRadius() {
+    const selectedValue = selectElement.value;
+    switch (selectedValue) {
+        case "very-short":
+            return 4;
+        case "short":
+            return 10;
+        case "moderate":
+            return 20;
+        case "long":
+            return 30;
+        case "very-long":
+            return 40;
+        default:
+            return 10;
+    }
+}
+
+
+// 원하는 경유지 수 받아옴 -----------------------------------------------------------------------------------------------//
+const selectWaypointNumber = document.getElementById("all-random-waypoint-number");
+function getSelectedWaypointNumber() {
+    const selectedValue = selectWaypointNumber.value;
+    switch (selectedValue) {
+        case "1":
+            return 1;
+        case "2":
+            return 2;
+        case "3":
+            return 3;
+        case "5":
+            return 5;
+        case "8":
+            return 8;
+        default:
+            return 1;
+    }
+}
+
+// 원하는 경로 타입 지정 ------------------------------------------------------------------------------------------------//
+function getSelectedRouteType() {
+    const selectElement = document.getElementById("all-random-type");
+    const selectedValue = selectElement.value;
+    switch (selectedValue) {
+        case "line":
+            return "line";
+        case "zig-zeg":
+            return "zigzag";
+        case "circle":
+            return "circle";
+        default:
+            return "original"; // 기본값으로 '평탄'을 반환합니다. 다른 기본값으로 설정하려면 해당 값을 반환하면 됩니다.
+    }
+}
+
 // 사용자가 반경 길 찾기 버튼을 눌렀을 때
 document.getElementById('all-random-search-form').addEventListener('submit', function(e) {
     e.preventDefault(); // 기본 submit 동작을 막습니다.
@@ -57,12 +115,27 @@ document.getElementById('all-random-search-form').addEventListener('submit', fun
             jqXHR.setRequestHeader('Authorization', auth);
         });
     } else {
-        window.location.href = host + '/api/user/login-page';
+        window.location.href = host + '/view/user/login-page';
         return;
     }
 
     var originAddress = document.getElementById('all-random-originAddress').value;
-    var redius = document.getElementById('all-random-redius').value;
+    var redius = getSelectedRadius();
+    var waypointNum = getSelectedWaypointNumber();
+    var secondType = getSelectedRouteType();
 
-    window.location.href = 'navi/' + 'live-all-random' + '/0/' + originAddress + '/route/' + redius;
+    {
+        try {
+            if (originAddress === "" || redius === "" || waypointNum === "" || secondType === "")
+                throw new Error("값이 입력 되지 않았습니다.");
+        }catch (e)
+        {
+            alert(e.message);
+            return;
+        }
+    }
+
+    window.location.href = 'navi/' + 'live-all-random' + '/0/' + originAddress + '/route/' + redius + '/' + waypointNum + '/' + secondType;
 });
+
+

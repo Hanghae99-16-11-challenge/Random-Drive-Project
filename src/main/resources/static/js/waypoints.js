@@ -28,7 +28,7 @@ function handleCurrentLocationClick() {
             .then((response) => response.json())
             .then((data) => {
                 if (data.documents && data.documents.length > 0) {
-                    document.getElementById('random-originAddress').value = data.documents[0].address_name;
+                    document.getElementById('all-random-originAddress').value = data.documents[0].address_name;
                 } else {
                     throw new Error('Could not find address for this coordinates.');
                 }
@@ -41,7 +41,7 @@ document.getElementById('random-current-location').addEventListener('click', han
 document.getElementById('random-search-origin').addEventListener('click', function() {
     new daum.Postcode({
         oncomplete: function(data) {
-            document.getElementById('random-originAddress').value = data.address;
+            document.getElementById('all-random-originAddress').value = data.address;
         }
     }).open();
 });
@@ -55,6 +55,40 @@ document.getElementById('random-search-destination').addEventListener('click', f
     }).open();
 });
 
+// 원하는 경유지 수 받아옴 -----------------------------------------------------------------------------------------------//
+const selectWaypointNumber = document.getElementById("all-random-waypoint-number");
+function getSelectedWaypointNumber() {
+    const selectedValue = selectWaypointNumber.value;
+    switch (selectedValue) {
+        case "1":
+            return 1;
+        case "2":
+            return 2;
+        case "3":
+            return 3;
+        case "5":
+            return 5;
+        case "8":
+            return 8;
+        default:
+            return 1;
+    }
+}
+
+// 원하는 경로 타입 지정 ------------------------------------------------------------------------------------------------//
+function getSelectedRouteType() {
+    const selectElement = document.getElementById("all-random-type");
+    const selectedValue = selectElement.value;
+    switch (selectedValue) {
+        case "line":
+            return "line";
+        case "zig-zeg":
+            return "zigzag";
+        default:
+            return "original"; // 기본값으로 '평탄'을 반환합니다. 다른 기본값으로 설정하려면 해당 값을 반환하면 됩니다.
+    }
+}
+
 // 사용자가 목적지 반경 길 찾기 버튼을 눌렀을 때
 document.getElementById('random-search-form').addEventListener('submit', function(e) {
     e.preventDefault(); // 기본 submit 동작을 막습니다.
@@ -66,13 +100,25 @@ document.getElementById('random-search-form').addEventListener('submit', functio
             jqXHR.setRequestHeader('Authorization', auth);
         });
     } else {
-        window.location.href = host + '/api/user/login-page';
+        window.location.href = host + '/view/user/login-page';
         return;
     }
 
-    var originAddress = document.getElementById('random-originAddress').value;
+    var originAddress = document.getElementById('all-random-originAddress').value;
     var destinationAddress = document.getElementById('random-destinationAddress').value;
-    var redius = document.getElementById('random-redius').value;
+    var waypointNum = getSelectedWaypointNumber();
+    var secondType = getSelectedRouteType();
 
-    window.location.href = 'navi/' + 'live-random' + '/0/' + originAddress + '/' + destinationAddress + '/' + redius;
+    {
+        try {
+            if (originAddress === "" || destinationAddress === "" || waypointNum === "" || secondType === "")
+                throw new Error("값이 입력 되지 않았습니다.");
+        }catch (e)
+        {
+            alert(e.message);
+            return;
+        }
+    }
+
+    window.location.href = 'navi/' + 'live-random' + '/0/' + originAddress + '/' + destinationAddress + '/10' + '/' + waypointNum + '/' + secondType;
 });

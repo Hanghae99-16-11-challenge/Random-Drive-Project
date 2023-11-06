@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,7 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Slf4j(topic = "Home Controller")
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/view")
+@ControllerAdvice
 public class HomeController {
     //https://adjh54.tistory.com/m/72
     //http://localhost:8080/swagger-ui/index.html#/
@@ -27,35 +29,30 @@ public class HomeController {
         return "index"; // 뷰 이름은 templates 폴더에 있는 템플릿 파일명과 일치해야 합니다.
     }
 
-    @GetMapping("/user/login")
-    public String login() {
-        return "home";
-    }
+//    @GetMapping("/user/login")
+//    public String login() {
+//        return "home";
+//    }
 
     @GetMapping("/user/login-page")
     public String loginPage() {
         return "login";
-    }
+    } //
 
     @GetMapping("/user/signup")
     public String signupPage() {
         return "signup";
-    }
+    } //
 
-    @GetMapping("/search")
-    public String search(Model model){
-        model.addAttribute("message", "안녕하세요!");
-        return "search"; // 뷰 이름은 templates 폴더에 있는 템플릿 파일명과 일치해야 합니다.
-    }
 
-    @GetMapping("/home")
+    @GetMapping("/home") //
     @Operation(summary = "HOME", description = "HOME 화면을 보여줍니다.")
     public String home(Model model){
         model.addAttribute("message", "안녕하세요!");
         return "home"; // 뷰 이름은 templates 폴더에 있는 템플릿 파일명과 일치해야 합니다.
     }
 
-    @GetMapping("/navigation-search")
+    @GetMapping("/navigation-search") //
     @Operation(summary = "기본 네비게이션", description = "네비게이션 화면을 출력합니다.")
     public String searchNavigation() {
         return "search";
@@ -80,16 +77,19 @@ public class HomeController {
         return "histories";
     }
 
-    @GetMapping("/navi/{type}/{routeId}/{originAddress}/{destinationAddress}/{redius}")
+    @GetMapping("/navi/{type}/{routeId}/{originAddress}/{destinationAddress}/{redius}/{waypointNum}/{secondType}")
     @Operation(summary = "네비게이션", description = "네비게이션 화면을 출력합니다.")
     public String showNavi(@PathVariable Long routeId,@PathVariable String type,
                            @PathVariable String originAddress,@PathVariable String destinationAddress,
-                           @PathVariable int redius, Model model) {
+                           @PathVariable int redius, @PathVariable int waypointNum,
+                           @PathVariable String secondType, Model model) {
         model.addAttribute("routeId", routeId);
         model.addAttribute("type", type);
         model.addAttribute("originAddress", originAddress);
         model.addAttribute("destinationAddress", destinationAddress);
         model.addAttribute("redius", redius);
+        model.addAttribute("waypointNum", waypointNum);
+        model.addAttribute("secondType", secondType);
         return "navi";
     }
 }

@@ -9,7 +9,7 @@ $(document).ready(function () {
             jqXHR.setRequestHeader('Authorization', auth);
         });
     } else {
-        window.location.href = host + '/api/user/login-page';
+        window.location.href = host + '/view/user/login-page';
         return;
     }
     console.log(getToken());
@@ -93,4 +93,9 @@ function displayMarker(locPosition, message) {
 
     // 지도 중심좌표를 접속위치로 변경합니다
     map.setCenter(locPosition);
+}
+
+// 주소 창도 이동
+function redirectToSearch() {
+    location.href='/view/navigation-search';
 }

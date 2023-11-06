@@ -463,6 +463,25 @@ a {
 
 }
 
+/*키워드 버튼 추가 -> 3개의 버튼이 나란히 보이게*/
+.btn-group {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+
+/* 버튼들의 너비를 동일하게 설정 */
+.w-btn2, .w-btn {
+    flex: 1;
+    text-align: center;
+    margin: 0 5px;
+    padding: 5px 5px; /* 좌우 패딩을 조절 */
+    font-size: 14px; /* 폰트 크기를 조절 */
+    overflow: hidden; /* 텍스트가 버튼 밖으로 나오지 않게 함 */
+}
+
+
 .btn {
     background-color: #3949d5; /* 배경색 지정 */
     color: white; /* 텍스트 색상 */
@@ -518,12 +537,12 @@ a {
     height: 30px;
     position: relative;
     border: none;
-    display: inline-block;
+    /*display: inline-block;*/
     margin: 15px 0 50px 0;
-    padding: 15px 30px;
+    padding: 5px 5px;
     border-radius: 15px; /* 테두리 설정 */
     font-family: 'SDSamliphopangche_Basic', sans-serif; /* 버튼 글씨 */
-    font-size: 20px; /* 글씨 크기 */
+    font-size: 14px; /* 글씨 크기 */
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
     text-decoration: none;
     font-weight: 500; /* 글꼴 두께 */
@@ -534,12 +553,12 @@ a {
     height: 30px;
     position: relative;
     border: none;
-    display: inline-block;
+    /*display: inline-block;*/
     margin: 15px 0 30px 0;
-    padding: 15px 30px;
+    padding: 5px 5px;
     border-radius: 15px; /* 테두리 설정 */
     font-family: 'SDSamliphopangche_Basic', sans-serif; /* 버튼 글씨 */
-    font-size: 20px; /* 글씨 크기 */
+    font-size: 14px; /* 글씨 크기 */
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
     text-decoration: none;
     font-weight: 500; /* 글꼴 두께 */
@@ -567,5 +586,70 @@ a {
 .w-btn2:active {
     transform: translate3d(0, 2px, 0);
 }
+/*-----select 속성 추가----*/
+.select-container {
+    display: flex;
+    align-items: center; /* 선택 창을 수직 가운데로 정렬 */
+    margin-bottom: 10px; /* 각 선택 창 사이의 간격 조절 */
+}
+.select-container label {
+    margin-right: 20px; /* 라벨과 선택 창 사이의 간격 조정 (원하는 간격으로 조절) */
+}
+.select-container select {
+    width: 150px;
+    height: 25px;
+    text-align-last: center;
+    font-family: 'SDSamliphopangche_Basic', sans-serif; /* 버튼 글씨 */
+    font-size: 14px; /* 글씨 크기 */
+}
+/*-----모달 창 추가----*/
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+}
 
+.modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.close-btn {
+    float: right;
+    cursor: pointer;
+}
+
+/*모달 안에 내용*/
+.modal-content {
+    max-height: calc(32rem - 10rem);  /* .phone-screen의 높이에서 약간 뺀 값으로 설정 */
+    width: 16rem;  /* .phone-screen의 너비보다 약간 작게 설정 */
+    overflow-y: auto;  /* 세로 스크롤 적용 */
+    margin: auto;  /* 모달 내용을 중앙에 배치 */
+}
+
+.modal-content ul {
+    list-style-type: none;  /* 리스트 스타일 제거 */
+    padding: 0;
+    margin: 0;
+}
+
+.modal-content li {
+    padding: 5px 10px;  /* 리스트 항목의 패딩 추가 */
+    cursor: pointer;  /* 마우스 포인터 변경 */
+    font-size: 0.8rem;  /* 글씨 크기 조절 */
+}
+
+.modal-content li:hover {
+    background-color: #eee;  /* 마우스 호버 시 배경색 변경 */
+}
 

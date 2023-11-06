@@ -1,14 +1,18 @@
 // 로그아웃 버튼 클릭 이벤트
-document.getElementsByClassName('logout-button')[0].addEventListener('click', function() {
+// 추가한 코드
+const box_pst = document.querySelectorAll(".logout-button")[0].offsetTop
+document.getElementsByClassName('logout-button')[0].addEventListener('click', function () {
     logout();
+    // 주가한 코드
+    window.scrollTo({left: 0, top: box_pst - 100})
 });
 
 // 주요 기능
-$(document).ready(function() {
+$(document).ready(function () {
     const auth = getToken();
 
     if (auth !== undefined && auth !== '') {
-        $.ajaxPrefilter(function(options, originalOptions, jqXHR) {
+        $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
             jqXHR.setRequestHeader('Authorization', auth);
         });
 
@@ -17,46 +21,64 @@ $(document).ready(function() {
             method: 'GET',
             headers: {
                 'Authorization': auth
-            }})
+            }
+        })
             .then(response => response.json())
             .then(data => {
                 // 받아온 데이터를 화면에 렌더링
                 renderHistory(data);
+
             })
             .catch(error => {
                 console.error('Error:', error);
             });
     } else {
-        window.location.href = host + '/api/user/login-page';
+        window.location.href = host + '/view/user/login-page';
     }
 });
 
 // 보여질 정보 가져오기
 function renderHistory(histories) {
     const tbody = document.getElementById('historyTableBody');
+    // historiesMarker(histories);
 
-    histories.forEach(history => {
-        const row = document.createElement('tr');
-        const formattedOriginAddress = extractOriginAddressParts(history.originAddress);
-        const formattedDestinationAddress = extractDestinationAddressParts(history.destinationAddress);
+    try {
+        histories.forEach(history => {
+            const row = document.createElement('tr');
+            const formattedOriginAddress = extractOriginAddressParts(history.originAddress);
+            const formattedDestinationAddress = extractDestinationAddressParts(history.destinationAddress);
 
-        row.innerHTML = `
+            row.innerHTML = `
                 <td>${extractDateFromDateTime(history.createdAt)}</td>
                 <td>${formattedOriginAddress}</td>
                 <td>${formattedDestinationAddress}</td>
             `;
 
-        row.addEventListener('click', function() {
-            // 클릭한 행의 route_id를 사용하여 원하는 동작 수행
-            window.location.href = 'navi/' + 'save' + '/' + history.route_id + "/blank/blank/0";
+            row.addEventListener('click', function () {
+                // 클릭한 행의 route_id를 사용하여 원하는 동작 수행
+                window.location.href = 'navi/' + 'save' + '/' + history.route_id + "/blank/blank/0/0/blank";
+
+            });
+
+            console.log(history.mapType);
+
+            row.setAttribute('data-maptype', history.mapType);
+
+            tbody.appendChild(row);
+
         });
 
-        console.log(history.mapType);
 
-        row.setAttribute('data-maptype', history.mapType);
 
-        tbody.appendChild(row);
-    });
+
+        if (histories.length === 0) {
+            console.log("기록이 없어요.");
+        }
+    } catch (e) {
+        console.warn(e.message);
+        console.warn(histories.msg);
+        logout();
+    }
 }
 
 // 날자만 뜨도록 설정
@@ -109,7 +131,7 @@ function logout() {
     // 토큰 삭제
     Cookies.remove('Authorization', {path: '/'});
     // window.location.reload(); // 현재 페이지 리로드
-    window.location.href = '/api/user/login-page';
+    window.location.href = '/view/user/login-page';
 }
 
 // 토큰 가져오기
@@ -117,12 +139,12 @@ function getToken() {
 
     let auth = Cookies.get('Authorization');
 
-    if(auth === undefined) {
+    if (auth === undefined) {
         return '';
     }
 
     // kakao 로그인 사용한 경우 Bearer 추가
-    if(auth.indexOf('Bearer') === -1 && auth !== ''){
+    if (auth.indexOf('Bearer') === -1 && auth !== '') {
         auth = 'Bearer ' + auth;
     }
     return auth;

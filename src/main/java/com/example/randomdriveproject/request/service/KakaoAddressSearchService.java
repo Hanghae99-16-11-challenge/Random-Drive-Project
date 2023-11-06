@@ -1,6 +1,7 @@
 package com.example.randomdriveproject.request.service;
 
 import com.example.randomdriveproject.request.dto.KakaoApiResponseDto;
+import com.example.randomdriveproject.request.exception.KakaoApiExceptionHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,7 +38,8 @@ public class KakaoAddressSearchService {
         HttpEntity httpEntity = new HttpEntity(headers);
 
         // kakao api 호출
-        return restTemplate.exchange(uri, HttpMethod.GET, httpEntity, KakaoApiResponseDto.class).getBody();
-
+        KakaoApiResponseDto response = KakaoApiExceptionHandler.handleApiCall(() ->
+                restTemplate.exchange(uri, HttpMethod.GET, httpEntity, KakaoApiResponseDto.class).getBody(),uri);
+        return response;
     }
 }

@@ -38,8 +38,8 @@ function calculateCurrectToPoint(data)
         //response.getRoutes()[0].getSummary().getDuration()
         let spend = data.routes[0].summary.duration;
 
-        console.warn("=====현제위치와 출발지간의 직선거리 : " + calculateDistance(C_lat, C_lon, let_ori, lon_ori) + "km" +
-            "\n현제위치와 도착지 간의 직선거리 : " + calculateDistance(C_lat, C_lon, lat_des, lon_des) + "km" +
+        console.warn("=====현재위치와 출발지간의 직선거리 : " + calculateDistance(C_lat, C_lon, let_ori, lon_ori) + "km" +
+            "\n현재위치와 도착지 간의 직선거리 : " + calculateDistance(C_lat, C_lon, lat_des, lon_des) + "km" +
             "\n경로 길이 : " + data.routes[0].summary.distance +"m , 소요 시간 : " +
             Math.floor(spend / 60) + "분" + (spend - (Math.floor(spend / 60) * 60)) + "초");
 
@@ -82,15 +82,377 @@ function updateMap(mouseEvent)
     // message += '경도는 ' + latlng.Ma + ' 입니다';
     // console.log(message);
 
-    update(latlng.Ma, latlng.La);
+    update_refact(latlng.Ma, latlng.La);
 }
 
+function update_refact(lat, lng)
+{
+    EditMark(positionMark, positionText, lat, lng, '현재 위치');
+
+    if(routeData == null)
+    {
+        console.log("길 찾기 정보 없음");
+    }else
+    {
+        if (routeData.guides.length === 0)
+            return;
+
+        let closeData = {
+            data: null,
+            squaredLength: -1
+        }
+        panTo(lat, lng);//화면 이동
+
+        let progress = 0;
+        //routeData.roads
+        for (let sec = 0; sec < routeData.roads.length; sec++)// for (let sec = 0; sec < pathData.routes[0].sections.length; sec++)
+        {
+            for (var guid = 0; guid < routeData.roads[sec].length; guid++, progress++)
+            {
+                // var guidData = pathData.routes[0].sections[sec].guides[guid];
+                let guidData = routeData.guides[progress];
+
+                if (closeData.squaredLength < 0)
+                {
+                    closeData.data = guidData;
+                    closeData.squaredLength = calculateDistance(lat, lng, guidData.y, guidData.x);
+                }else
+                {
+                    if (guidData === undefined)
+                        break;
+
+                    var tempPoint = calculateDistance(lat, lng, guidData.y, guidData.x);
+
+                    if (closeData.squaredLength > tempPoint)
+                    {
+                        closeData.data = guidData;
+                        closeData.squaredLength = tempPoint;
+                    }
+                    // 이전 값과 거리비교
+                }
+            }
+        }// 클릭한 지점에서 가장 가까운 안내 지점
+
+        let point = routeData.guides[naviInfo_ProcessIndex];
+
+        console.log("refacted 다음 안내지점 => " + point.y + " , " + point.x + " => " + calculateDistance(lat, lng, point.y, point.x));
+
+        //20m 이내로 접근한다면 다음 안내
+        if (calculateDistance(lat, lng, point.y, point.x) < (offetUserRadius * 0.001))
+        {
+            naviInfo_ProcessIndex++;
+
+            updateMark();//마크 표시 , getGuidPoint 과 같음
+        }
+
+        switch (naviInfo_State)
+        {
+            case 0:
+            {
+                stopNavi();
+                // reset();
+                onClick_StopNavi_navi();
+                console.log("길 안내 종료");
+
+                return;
+            }
+            case -1:
+            {
+                stopNavi();
+                onClick_StopNavi_navi();
+                console.warn("길 안내 오류");
+            }
+        }
+
+        {
+            clearPolylines();
+
+            let linePath_Calculate = [];//leftDistance_road(lat, lng);
+            let currectPathLine = [];
+
+            {
+                pathLeftDistance = 0;
+                pathLeftDuration = 0;
+                nextGuidDistacne = 0;
+                nextGuidDuration = 0;
+            }//남은 시간, 거리 리셋
+
+            {
+                //roads 크기와 Guids 크기 같음 , 대신 Guids에는 출발지,도착지 구분하는 항목이 들어가있음 (그래서 길이,소요시간 값 없음)
+                
+
+                {
+                    for (let progress = naviInfo_ProcessIndex; progress < routeData.guides.length - 1; progress++)
+                    {
+                        if (progress >= routeData.roads.length)
+                            break;
+
+                        for(let i = 0; i < routeData.roads[progress].vertexes.length; i += 2)
+                        {
+                            linePath_Calculate.push(new kakao.maps.LatLng(routeData.roads[progress].vertexes[i + 1], routeData.roads[progress].vertexes[i]));
+                        }
+                    }//지나가지 않은 경로 ,  Guids에는 출발지,도착지 구분하는 항목이 들어가있어 길이에 2를 뺌
+                }//지나가지 않은 경로
+
+
+                {
+                    let currectRoads = [];
+                    let lastRoadIndex = -1;
+
+                    if (routeData.roads.length <= (naviInfo_ProcessIndex - 1))
+                    {
+                        console.warn("뭔가 문제 발생 - calculation.js 지나가고 있는 도로 그리는데 오류 발생");
+                        currectRoads = routeData.roads[routeData.roads.length - 1];
+                    }else
+                    {
+                        currectRoads = routeData.roads[naviInfo_ProcessIndex - 1];
+                    }
+
+
+                    currectPathLine.push(new kakao.maps.LatLng(lat, lng));
+
+                    for(let i = 0; i < currectRoads.vertexes.length; i += 2)
+                    {
+                        if (calculateDistance(currectRoads.vertexes[1], currectRoads.vertexes[0], currectRoads.vertexes[i + 1], currectRoads.vertexes[i])
+                            > calculateDistance(currectRoads.vertexes[1], currectRoads.vertexes[0], lat, lng))
+                        {
+                            currectPathLine.push(new kakao.maps.LatLng(currectRoads.vertexes[i + 1], currectRoads.vertexes[i]));
+                        }else
+                        {
+                            lastRoadIndex = i;
+                        }
+                    }
+
+
+                    if (lastRoadIndex >= 0)
+                    {
+                        let vex = currectRoads.vertexes;
+
+                        let roadPartLength = calculateDistance(vex[lastRoadIndex + 3], vex[lastRoadIndex + 2],vex[lastRoadIndex + 1], vex[lastRoadIndex]);
+                        let PastToPos = calculateDistance(vex[lastRoadIndex + 1], vex[lastRoadIndex], lat, lng);
+                        let CurrectToPos = 0;
+                        CurrectToPos = calculateDistance(vex[lastRoadIndex + 3], vex[lastRoadIndex + 2], lat, lng);
+
+                        // console.log("roadPartLength : " + (roadPartLength * 1000).toFixed(2)
+                        //     + " / " + (PastToPos * 1000).toFixed(2) + " - pos - " + (CurrectToPos * 1000).toFixed(2));
+
+                        if (isNaN(CurrectToPos))
+                        {
+                            CurrectToPos = calculateDistance(vex[lastRoadIndex - 1], vex[lastRoadIndex - 2], lat, lng);
+                            roadPartLength = calculateDistance(vex[lastRoadIndex - 1], vex[lastRoadIndex - 2],vex[lastRoadIndex + 1], vex[lastRoadIndex]);
+                        }
+                        let leftroad = (((PastToPos + CurrectToPos) - roadPartLength) * 1000);
+                        if ((leftroad > offetUserRadius * 2))
+                        {
+                            outOfPath(lat, lng);
+                            return;
+                        }
+                    }//비정확 하지만
+
+                }//지나가고있는 도로의 Vertex 저장 + 경로 이탈 감지
+
+                for (let progress = naviInfo_ProcessIndex; progress < routeData.guides.length; progress++)
+                {
+                    pathLeftDistance += routeData.guides[progress].distance;
+                    pathLeftDuration += routeData.guides[progress].duration;
+                }//안내 정보 + 남은 거리 , 남은 시간 계산
+
+
+                // routeData.guides[naviInfo_ProcessIndex - 1].distance / 현재 도로
+                nextGuidDistacne =
+                    calculateDistance(routeData.guides[naviInfo_ProcessIndex].y, routeData.guides[naviInfo_ProcessIndex].x, lat, lng) * 1000;
+                nextGuidDuration = (nextGuidDistacne / routeData.guides[naviInfo_ProcessIndex].distance)
+                                    * routeData.guides[naviInfo_ProcessIndex].duration;
+
+                pathLeftDistance += nextGuidDistacne;
+                pathLeftDuration += nextGuidDuration;
+            }//경로 , 남은 시간 , 남은 거리 계산 + 경로 이탈 계산
+
+            Update_GuidIndo_navi();
+
+            let polyline = new kakao.maps.Polyline({
+                path: currectPathLine.concat(linePath_Calculate),//linePath_Calculate
+                strokeWeight: 5,
+                strokeColor: '#007bff',
+                strokeOpacity: 0.7,
+                strokeStyle: 'solid'
+            });
+
+            polyline.setMap(map);
+
+            polylines.push(polyline); // 선을 배열에 추가
+        }//경로 그리기 + 경로 계산
+    }
+}
+
+//다음에 올 안내지점 반환, naviInfo_State, 마크 설정
+function updateMark()
+{
+
+    if (routeData.guides.length <= naviInfo_ProcessIndex)
+    {
+      naviInfo_State = 0;
+      return;
+    }//안내 종료
+    if (naviInfo_ProcessIndex < 0)
+    {
+        naviInfo_State = -1;
+        return;
+    }//안내 정보 오류
+
+    let point = routeData.guides[naviInfo_ProcessIndex];
+
+    if (point.type === 1000 && point.road_index === 0)
+    {
+        naviInfo_ProcessIndex++;
+        point = routeData.guides[naviInfo_ProcessIndex];
+    }// 경유지가 2개인경우 , 도로의 시작점인 경유지를 스킵
+
+    switch (point.type)
+    {
+        case 101:
+        {
+            naviInfo_State = 3;
+            break;
+        }//목적지
+        case 1000:
+        {
+            naviInfo_State = 2;
+            break;
+        }//경유지
+        default:
+        {
+            naviInfo_State = 1;
+        }
+    }
+
+    let stateText = '';
+    switch (naviInfo_State)
+    {
+        case -1:
+            stateText = '경로가 없음';
+            break;
+        case 0:
+            stateText = '도착 하였습니다';
+            break;
+        case  1:
+            stateText = '다음 안내 지점';
+            break;
+        case  2:
+            stateText = '경유지 도착';
+            console.log("waypointCount +1" + waypointCount)
+            waypointCount += 1;
+            break;
+        case 3:
+            stateText = '곧 목적지 입니다';
+            break;
+        default:
+            stateText = '';
+    }
+
+    EditMark(naviInfoMark, naviInfoText, point.y, point.x, stateText);
+}
+
+
+
+function startNavi()
+{
+    // getNextGuidPoint(false);
+    // getGuidPoint(true);
+    updateMark();
+    startCorutine();
+    update_GuidInfo();
+}
+function stopNavi()
+{
+    naviInfo_SectionIndex = 0;
+    naviInfo_GuidIndex = 1;
+    naviInfo_ProcessIndex = 1;
+    naviInfo_State = -1;
+
+    positionMark.setMap(null);
+    positionText.close();
+    naviInfoMark.setMap(null);
+    naviInfoText.close();
+
+    routeData = null;
+    stopCoroutine();
+    clearPolylines();
+}
+
+//네비게이션 안내 초기화
+function clearNavi()
+{
+    naviInfo_SectionIndex = 0;
+    naviInfo_GuidIndex = 1;
+    naviInfo_ProcessIndex = 1;
+
+    positionMark.setMap(null);
+    positionText.close();
+    naviInfoMark.setMap(null);
+    naviInfoText.close();
+
+
+    if (routeData != null && routeData != undefined)
+    {
+        updateMark();
+
+        let startPoint = routeData.guides[0];
+        update(startPoint.y, startPoint.x);
+
+        map.setLevel(3, {animate: true});// 사용시 보이는 위치 달라짐
+        panTo(startPoint.y, startPoint.x);
+    }    //========================================= 길 재생성후 이부분 실행 필요
+
+
+    // startCorutine();
+}
+
+
+
+function panTo(lat , lng) {
+    // 이동할 위도 경도 위치를 생성합니다
+    var moveLatLon = new kakao.maps.LatLng(lat, lng);
+
+    // 지도 중심을 부드럽게 이동시킵니다
+    // 만약 이동할 거리가 지도 화면보다 크면 부드러운 효과 없이 이동합니다
+    map.panTo(moveLatLon);
+}
+function panToStart()
+{
+    let startPoint = routeData.guides[0];
+
+    map.setLevel(3, {animate: true});// 사용시 보이는 위치 달라짐
+    panTo(startPoint.y, startPoint.x);
+}
+function outOfPath(lat, lng)
+{
+
+    if (pathType() === 'live')
+    {
+        remakeNavi(lat, lng);//응답시 resetNavi() 실행호출 준비
+    }
+    else
+    {
+        remakeRandomNavi(lat, lng);
+    }
+    console.warn("경로 이탈");
+}
+
+//=======================
+//  미사용 이지만 아직 의존성 있음
+
+// 이전 코드 , 만약 쓸 경우 update_refact() 으로 넘겨줌
 function update(lat, lng)
 {
     //navigation.html 지도 클릭시 작동
     //\n 클릭한 위도, 경도 정보를 가져옵니다
 
-    EditMark(positionMark, positionText, lat, lng, '클릭한 위치');
+    console.warn("Replace update_refact");
+    update_refact(lat, lng);
+    return;
+
+    EditMark(positionMark, positionText, lat, lng, '현재 위치');
 
     // calculateCurrectToPoint(pathData);//이건 잘됨
 
@@ -199,6 +561,115 @@ function update(lat, lng)
 
     }
 }
+//다음에 올 안내 정보를 찾음 (Section, Guid 인덱스 을 저장)
+// 반환이 0 일때 이미 도착지점일때 , -1 : 유효하지 않은 경로일때 , 1 : 성공 , 2 : 구간 시작점, 3 : 다음이 도착지점일때
+function getNextGuidPoint(add = true)
+{
+    // getGuidPoint(true);
+
+    {
+        try {
+            pathData.routes[0].sections[0].guides[1];
+        }catch (e)
+        {
+            console.log(e.message);
+
+            naviInfo_State = -1;
+            return -1;
+        }
+    }//유효성 검사
+
+    var LastSectionIdex = pathData.routes[0].sections.length - 1;
+
+
+    if (naviInfo_SectionIndex >= LastSectionIdex)
+    {
+        if ((naviInfo_GuidIndex + 1) === (pathData.routes[0].sections[LastSectionIdex].guides.length - 1))
+        {
+            if (add)
+            {
+                // naviInfo_SectionIndex = naviInfo_SectionIndex + 1;/xxx
+                naviInfo_GuidIndex = naviInfo_GuidIndex + 1;
+                naviInfo_ProcessIndex++;
+            }
+
+            // console.log("곧 목적지 입니다. => " + naviInfo_SectionIndex + " : " + naviInfo_GuidIndex);
+            naviInfo_State = 3;
+            return 3;
+        }
+        else if (((naviInfo_GuidIndex + 1) > (pathData.routes[0].sections[LastSectionIdex].guides.length - 1)))
+        {
+            // console.log("이미 목적지 입니다");
+            // naviInfo_SectionIndex = naviInfo_SectionIndex + 1;
+            // naviInfo_GuidIndex = naviInfo_GuidIndex + 1;
+
+            naviInfo_State = 0;
+            return 0;
+        }
+    }
+
+    if ((naviInfo_GuidIndex + 1) >= pathData.routes[0].sections[naviInfo_SectionIndex].guides.length)
+    {
+        if (add)
+        {
+            naviInfo_SectionIndex = naviInfo_SectionIndex + 1;
+            naviInfo_GuidIndex = 1;
+            naviInfo_ProcessIndex++;
+        }
+
+        // console.log("경유지 도착 => " + naviInfo_SectionIndex + " : " + naviInfo_GuidIndex);
+        naviInfo_State = 2;
+        return 2;
+    }else
+    {
+        if (add)
+        {
+            naviInfo_GuidIndex = naviInfo_GuidIndex + 1;
+            naviInfo_ProcessIndex++;
+        }
+
+        // console.log("안내 지점 =>" + naviInfo_SectionIndex + " : " + naviInfo_GuidIndex);
+        naviInfo_State = 1;
+        return 1;
+    }
+}
+function getGuidPoint(marked = true)
+{
+    var temp_sec = pathData.routes[0].sections[Math.min(naviInfo_SectionIndex, (pathData.routes[0].sections.length - 1))];
+    var temp_gui = temp_sec.guides[Math.min(naviInfo_GuidIndex, (temp_sec.guides.length - 1))];
+
+    if (marked)
+    {
+        var stateText = '';
+        switch (naviInfo_State)
+        {
+            case -1:
+                stateText = '경로가 없음';
+                break;
+            case 0:
+                stateText = '도착 하였습니다';
+                break;
+            case  1:
+                stateText = '다음 안내 지점';
+                break;
+            case  2:
+                stateText = '경유지 도착';
+                break;
+            case 3:
+                stateText = '곧 목적지 입니다';
+                break;
+            default:
+                stateText = '';
+        }
+
+        EditMark(naviInfoMark, naviInfoText, temp_gui.y, temp_gui.x, stateText);
+    }
+
+    return temp_gui;
+}
+
+//=====================================================================================
+// 미사용 , 이전에 썻던 코드
 
 function leftDistance(lat, lng)
 {
@@ -312,7 +783,7 @@ function leftDistance_road(lat, lng)
     }
 
     nextGuidDistacne = leftNextPointDis;
-    nexGuidDuration = (currectPath.duration * (leftNextPointDis/nextLineDis));
+    nextGuidDuration = (currectPath.duration * (leftNextPointDis/nextLineDis));
 
     console.log("==> 목적지 도착까지 남은 거리 : " + pathLeftDistance.toFixed(2) + "m / 남은 시간 : " + pathLeftDuration.toFixed(2) + "s");
 
@@ -332,161 +803,6 @@ function leftDistance_road(lat, lng)
     // 그러니  routes -> 경로 / section -> 다음 경유지까지의 구간 / guid -> 다음 안내 / road -> 도로 / road.vertexes -> (지도 그리기용) 직선 거리
     //  (naviInfo_SectionIndex, naviInfo_GuidIndex) 은 다음 안내 지점부터의 길
     return linePath;
-}
-
-function startNavi()
-{
-    getNextGuidPoint(false);
-    getGuidPoint(true);
-    startCorutine();
-    update_GuidInfo();
-}
-function stopNavi()
-{
-    naviInfo_SectionIndex = 0;
-    naviInfo_GuidIndex = 1;
-    naviInfo_State = -1;
-
-    positionMark.setMap(null);
-    positionText.close();
-    naviInfoMark.setMap(null);
-    naviInfoText.close();
-
-    stopCoroutine();
-    clearPolylines();
-}
-
-//네비게이션 안내 초기화
-function clearNavi()
-{
-    naviInfo_SectionIndex = 0;
-    naviInfo_GuidIndex = 1;
-
-    if (pathData != null)
-        naviInfo_State = getNextGuidPoint(false);
-
-    positionMark.setMap(null);
-    positionText.close();
-    naviInfoMark.setMap(null);
-    naviInfoText.close();
-
-    if (pathData != null)
-        drawPolylines(pathData);
-
-    startCorutine();
-}
-
-function getGuidPoint(marked = true)
-{
-    var temp_sec = pathData.routes[0].sections[Math.min(naviInfo_SectionIndex, (pathData.routes[0].sections.length - 1))];
-    var temp_gui = temp_sec.guides[Math.min(naviInfo_GuidIndex, (temp_sec.guides.length - 1))];
-
-    if (marked)
-    {
-        var stateText = '';
-        switch (naviInfo_State)
-        {
-            case -1:
-                stateText = '경로가 없음';
-                break;
-            case 0:
-                stateText = '도착 하였습니다';
-                break;
-            case  1:
-                stateText = '다음 안내 지점';
-                break;
-            case  2:
-                stateText = '경유지 도착';
-                break;
-            case 3:
-                stateText = '곧 목적지 입니다';
-                break;
-            default:
-                stateText = '';
-        }
-
-        EditMark(naviInfoMark, naviInfoText, temp_gui.y, temp_gui.x, stateText);
-    }
-
-    return temp_gui;
-}
-//다음에 올 안내 정보를 찾음 (Section, Guid 인덱스 을 저장)
-// 반환이 0 일때 이미 도착지점일때 , -1 : 유효하지 않은 경로일때 , 1 : 성공 , 2 : 구간 시작점, 3 : 다음이 도착지점일때
-function getNextGuidPoint(add = true)
-{
-    getGuidPoint(true);
-
-    {
-        try {
-            pathData.routes[0].sections[0].guides[1];
-        }catch (e)
-        {
-            console.log(e.message);
-
-            naviInfo_State = -1;
-            return -1;
-        }
-    }//유효성 검사
-
-    var LastSectionIdex = pathData.routes[0].sections.length - 1;
-
-
-    if (naviInfo_SectionIndex >= LastSectionIdex)
-    {
-        if ((naviInfo_GuidIndex + 1) === (pathData.routes[0].sections[LastSectionIdex].guides.length - 1))
-        {
-            if (add)
-            {
-                // naviInfo_SectionIndex = naviInfo_SectionIndex + 1;/xxx
-                naviInfo_GuidIndex = naviInfo_GuidIndex + 1;
-            }
-
-            // console.log("곧 목적지 입니다. => " + naviInfo_SectionIndex + " : " + naviInfo_GuidIndex);
-            naviInfo_State = 3;
-            return 3;
-        }
-        else if (((naviInfo_GuidIndex + 1) > (pathData.routes[0].sections[LastSectionIdex].guides.length - 1)))
-        {
-            // console.log("이미 목적지 입니다");
-            // naviInfo_SectionIndex = naviInfo_SectionIndex + 1;
-            // naviInfo_GuidIndex = naviInfo_GuidIndex + 1;
-
-            naviInfo_State = 0;
-            return 0;
-        }
-    }
-
-    if ((naviInfo_GuidIndex + 1) >= pathData.routes[0].sections[naviInfo_SectionIndex].guides.length)
-    {
-        if (add)
-        {
-            naviInfo_SectionIndex = naviInfo_SectionIndex + 1;
-            naviInfo_GuidIndex = 1;
-        }
-
-        // console.log("경유지 도착 => " + naviInfo_SectionIndex + " : " + naviInfo_GuidIndex);
-        naviInfo_State = 2;
-        return 2;
-    }else
-    {
-        if (add)
-        {
-            naviInfo_GuidIndex = naviInfo_GuidIndex + 1;
-        }
-
-        // console.log("안내 지점 =>" + naviInfo_SectionIndex + " : " + naviInfo_GuidIndex);
-        naviInfo_State = 1;
-        return 1;
-    }
-}
-
-function panTo(lat , lng) {
-    // 이동할 위도 경도 위치를 생성합니다
-    var moveLatLon = new kakao.maps.LatLng(lat, lng);
-
-    // 지도 중심을 부드럽게 이동시킵니다
-    // 만약 이동할 거리가 지도 화면보다 크면 부드러운 효과 없이 이동합니다
-    map.panTo(moveLatLon);
 }
 
 function getSaveGuidPoint(marked = true)
@@ -587,4 +903,44 @@ function getSaveNextGuidPoint(add = true)
         naviInfo_State = 1;
         return 1;
     }
+}
+
+function reCalculateCurrectToPoint(data)
+{
+    // y -> lat ,x -> lon
+    //data.routes[0].summary.origin.y, data.routes[0].summary.origin.x
+    //반경 기반 랜덤 길찾기 할때 현위치랑 출발기 거리 측정
+
+    // var originAddress = document.getElementById('all-random-originAddress').value;//반경 기반 랜덤 길찾기 - 출발지
+
+    if (data == null)
+    {
+        console.warn("길이 없음");
+        return;
+    }
+
+    // var lat_re = data.routes[0].summary.re.y;
+    // var lon_re = data.routes[0].summary.re.x;
+    var lat_re = data.lat;
+    var lon_re = data.lng;
+    var lat_des = routes[-1].summary.destination.y;
+    var lon_des = routes[-1].summary.destination.x;
+
+    navigator.geolocation.getCurrentPosition(function(position) {
+        // 위치 정보를 표시하기
+        // $("#location2").text("\n, GPS 위치 정보: " + position.coords.latitude + ", " + position.coords.longitude);
+        var C_lat = position.coords.latitude;
+        var C_lon = position.coords.longitude;
+
+        //response.getRoutes()[0].getSummary().getDuration()
+        let spend = data.routes[0].summary.duration;
+
+        console.warn("=====현제위치와 출발지간의 직선거리 : " + calculateDistance(C_lat, C_lon, lat_re, lon_re) + "km" +
+            "\n현제위치와 도착지 간의 직선거리 : " + calculateDistance(C_lat, C_lon, lat_des, lon_des) + "km" +
+            "\n경로 길이 : " + data.routes[0].summary.distance +"m , 소요 시간 : " +
+            Math.floor(spend / 60) + "분" + (spend - (Math.floor(spend / 60) * 60)) + "초");
+
+        //"m / 소요 시간 : " + duration + " -> " + (duration / 60) + "m" + (duration - ((duration/60) * 60)) + "s"
+
+    });
 }

@@ -19,6 +19,7 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/api")
+@ControllerAdvice
 public class HistoryController {
     private final HistoryService historyService;
     @PostMapping("/routes")

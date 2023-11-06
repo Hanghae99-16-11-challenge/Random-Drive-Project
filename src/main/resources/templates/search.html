@@ -22,22 +22,47 @@
             <div class="kr0">기본 길찾기</div>
             <div class="kr1">
                 <form id="search-form">
-                    <label for="originAddress" class="search kr-font">출발지 검색하기</label><br>
-                    <input class="kr2" type="text" id="originAddress" name="originAddress" placeholder="출발지를 입력하세요">
+<!--                    id= "originAddress" -> all-random-originAddress-->
+                    <label for="all-random-originAddress" class="search kr-font">출발지 검색하기</label><br>
+                    <input class="kr2" type="text" id="all-random-originAddress" name="all-random-originAddress" placeholder="출발지를 입력하세요">
                     <div class="btn-group" role="group" aria-label="Default button group">
-                        <button type="button" class="w-btn w-btn-indigo" id='search-origin'>검색</button>
-                        <button type="button" class="w-btn w-btn-indigo" id='current-location'>현재 위치 추가
+                        <button type="button" class="w-btn w-btn-indigo" id='search-origin'>도로명</button>
+                        <button type='button' class='w-btn w-btn-indigo' id='all-random-search-keyword'>키워드</button>
+                        <button type="button" class="w-btn w-btn-indigo" id='current-location'>현 위치
                         </button>
                     </div>
+
+
+                    <!-- 키워드 모달 밖으로 이동 출발지-->
+                    <div id="keyword-modal" class="modal">
+                        <div class="modal-content">
+                            <span class="close-btn">×</span>
+                            <input type="text" id="keyword-input" placeholder="키워드를 입력하세요">
+                            <button type='button' id='keyword-search-btn'>검색</button>
+                        </div>
+                    </div>
+
                     <br>
-                    <label for="destinationAddress" class="search kr-font">목적지 검색하기</label><br>
-                    <input class="kr2" type="text" id="destinationAddress" name="destinationAddress"
+<!--                    id = "destinationAddress -> random-destinationAddress"-->
+                    <label for="random-destinationAddress" class="search kr-font">목적지 검색하기</label><br>
+                    <input class="kr2" type="text" id="random-destinationAddress" name="random-destinationAddress"
                            placeholder="목적지를 입력하세요">
                     <div class="btn-group" role="group" aria-label="Default button group">
-                        <button type='button' class="w-btn w-btn-indigo" id='search-destination'>검색</button>
-                        <button type='submit' class="w-btn w-btn-indigo" id='search'>길 찾기
-                        </button>
+                        <button type='button' class="w-btn w-btn-indigo" id='search-destination'>도로명</button>
+                        <button type='button' class='w-btn w-btn-indigo' id='all-random-search-keyword-destination'>키워드</button>
+
                     </div>
+                    <button type='submit' class="w-btn w-btn-indigo" id='search'>길 찾기</button>
+
+                    <!-- 키워드 모달 밖으로 이동 목적지-->
+                    <div id="keyword-modal-destination" class="modal">
+                        <div class="modal-content">
+                            <span class="close-btn">×</span>
+                            <input type="text" id="keyword-input-destination" placeholder="키워드를 입력하세요">
+                            <button type='button' id='keyword-search-btn-destination'>검색</button>
+                        </div>
+                    </div>
+
                 </form>
             </div>
         </div>
@@ -45,7 +70,9 @@
 </div>
 <!--여기에 실제 자바스크립트 파일 경로를 입력하세요 -->
 <script src="/js/search.js" type="text/javascript"></script>
+<script src="/js/keyword.js" type="text/javascript"></script>
 <!-- 카카오 우편번호 서비스 -->
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script src="/js/staticVariable.js"></script>
 </body>
 </html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>위치 정보</title>
+</head>
+<body>
+<div id="location">-</div>
+<div id="location2">-</div>
+<div id="location3">-</div>
+<div id="location4">-</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+
+    async function  getPosition_Height()
+    {
+        return await navigator.geolocation.watchPosition(success, error, options);
+    }
+    function success_Low(position) {
+        $("#location3").text("GPS : " + position.coords.latitude + " , " + position.coords.longitude
+            + ", heading : " + position.coords.heading + ", speed : " + position.coords.speed + ", altitude : " + position.coords.altitude);
+    }
+    function success(position) {
+        $("#location4").text("GPS : " + position.coords.latitude + " , " + position.coords.longitude
+            + ", heading : " + position.coords.heading + ", speed : " + position.coords.speed + ", altitude : " + position.coords.altitude);
+    }
+
+    function error() {
+        alert("죄송합니다. 위치 정보를 사용할 수 없습니다.");
+    }
+
+    const options = {
+        enableHighAccuracy: true,
+        maximumAge: 0,//위치 정보 수명 , 수명 되기전에는 저장된 값 반환
+        timeout: 27000,
+    };
+
+     function position() {
+
+         $("#location2").text("위치 정보 로드중");
+         $("#location3").text("위치 정보 로드중");
+         $("#location4").text("위치 정보 로드중");
+
+
+        // ISP 위치 정보 가져오기
+        // $.getJSON("https://ipinfo.io/json", function(data) {
+        //     // 위치 정보를 표시하기
+        //     $("#location").html("ISP 위치 정보: " + data.city + ", " + data.country + " , " + data.loc);
+        // });
+
+        // GPS 위치 정보 가져오기
+        navigator.geolocation.getCurrentPosition(function(position) {
+            // 위치 정보를 표시하기
+            $("#location2").text("\n, GPS 위치 정보: " + position.coords.latitude + ", " + position.coords.longitude);
+        });
+        //
+        navigator.geolocation.getCurrentPosition(success_Low, error);
+
+         // const watchID = navigator.geolocation.watchPosition(success, error, options);
+         getPosition_Height();//완료 시간이 제멋대로인데 오래걸림 , 정확도 높은 버전
+
+    }//비동기 처리 방식으로 해야되는데
+
+
+    position();
+
+    //비동기도 안되고 , 정확도도 도심 벋어난곳이라서 오차가 450M 되고
+</script>
+
+<button onclick="position()">위치 정보</button>
+</body>
+</html>
