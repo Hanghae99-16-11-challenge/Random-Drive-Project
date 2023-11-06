@@ -43,9 +43,9 @@ function speakText(ttsInput = "", cancelProcess = true) {
     if (cancelProcess)
         stopText();
 
-    const sentences = text.match(/[^.!?]+(?:[.!?]+(?:\s|$)|\s+$|$)/g) || [text];
+    const sentences = text.match(/[^!?]+(?:[.!?]+(?:\s|$)|\s+$|$)/g) || [text];
 
-    for (let i = currentSentenceIndex; i < sentences.length; i++) {
+    for (let i = 0; i < sentences.length; i++) {
         const sentence = sentences[i];
         const language = detectLanguage(sentence);
         let utterance = new SpeechSynthesisUtterance(sentence);
@@ -53,7 +53,7 @@ function speakText(ttsInput = "", cancelProcess = true) {
         utterance.onstart = function () {
             // updateDisplayText(sentences, i);
         };
-        if (sentence.slice(-1) === "." || sentence.slice(-1) === "。") {
+        if (sentence.slice(-1) === "." || sentence.slice(-1) === "。") {// 원래 -1
             utterance.onend = function () {
                 setTimeout(() => {
                     speechSynthesis.resume();
@@ -71,6 +71,11 @@ function speakText(ttsInput = "", cancelProcess = true) {
             };
         }
 
+        {
+            utterance.volume = 1;
+            utterance.rate = 1.2;
+            utterance.pitch = 1.15;
+        }
         speechSynthesis.speak(utterance);
     }
 }
