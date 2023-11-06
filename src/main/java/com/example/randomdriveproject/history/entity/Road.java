@@ -28,5 +28,4 @@ public class Road {
         this.vertexes = vertexes;
         this.route = route;
     }
-
 }

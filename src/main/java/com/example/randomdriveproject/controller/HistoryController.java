@@ -26,9 +26,12 @@ public class HistoryController {
     @Operation(summary = "경로 저장", description = "경로를 저장합니다.")
     public ResponseEntity<String> saveRoutes(@RequestBody HistoryRequestDto requestDto,
                                              @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        long startTime = System.currentTimeMillis();
         historyService.saveHistory(requestDto.getRequestData(),
                 requestDto.getOriginAddress(), requestDto.getDestinationAddress(), requestDto.getMapType(),
                 userDetails.getUser());
+        long endTime = System.currentTimeMillis();
+        System.out.println("\n\n\n\n\n\n\n실행 시간" + (endTime - startTime));
         return ResponseEntity.ok("Data received successfully"); // 성공 응답
     }
 

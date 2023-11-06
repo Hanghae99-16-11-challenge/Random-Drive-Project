@@ -37,10 +37,10 @@ public class Route extends Timestamped{
     @OneToMany(mappedBy = "route", orphanRemoval = true)
     private List<Bound> bounds = new ArrayList<>();
 
-    @OneToMany(mappedBy = "route", orphanRemoval = true)
+    @OneToMany(mappedBy = "route", orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Road> roads = new ArrayList<>();
 
-    @OneToMany(mappedBy = "route", orphanRemoval = true)
+    @OneToMany(mappedBy = "route", orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Guide> guides = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
