@@ -241,7 +241,8 @@ function update_refact(lat, lng)
                             CurrectToPos = calculateDistance(vex[lastRoadIndex - 1], vex[lastRoadIndex - 2], lat, lng);
                             roadPartLength = calculateDistance(vex[lastRoadIndex - 1], vex[lastRoadIndex - 2],vex[lastRoadIndex + 1], vex[lastRoadIndex]);
                         }
-                        if ((((PastToPos + CurrectToPos) - roadPartLength) * 1000) > offetUserRadius)
+                        let leftroad = (((PastToPos + CurrectToPos) - roadPartLength) * 1000);
+                        if ((leftroad > offetUserRadius * 2))
                         {
                             outOfPath(lat, lng);
                             return;
