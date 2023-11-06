@@ -143,6 +143,8 @@ function update_refact(lat, lng)
             naviInfo_ProcessIndex++;
 
             updateMark();//마크 표시 , getGuidPoint 과 같음
+
+            aunceGuid();//TTS 안내
         }
 
         switch (naviInfo_State)
@@ -152,8 +154,9 @@ function update_refact(lat, lng)
                 stopNavi();
                 // reset();
                 onClick_StopNavi_navi();
-                console.log("길 안내 종료");
 
+                console.log("길 안내 종료");
+                speakText("길 안내를 종료합니다.");//TTS
                 return;
             }
             case -1:
@@ -161,7 +164,10 @@ function update_refact(lat, lng)
                 stopNavi();
                 onClick_StopNavi_navi();
                 console.warn("길 안내 오류");
+                return;
             }
+            // default:
+            //     speakText(routeData.guides[naviInfo_ProcessIndex].guidance + " 입니다.");
         }
 
         {
@@ -241,7 +247,8 @@ function update_refact(lat, lng)
                             CurrectToPos = calculateDistance(vex[lastRoadIndex - 1], vex[lastRoadIndex - 2], lat, lng);
                             roadPartLength = calculateDistance(vex[lastRoadIndex - 1], vex[lastRoadIndex - 2],vex[lastRoadIndex + 1], vex[lastRoadIndex]);
                         }
-                        if ((((PastToPos + CurrectToPos) - roadPartLength) * 1000) > offetUserRadius)
+                        let leftroad = (((PastToPos + CurrectToPos) - roadPartLength) * 1000);
+                        if ((leftroad > offetUserRadius * 2))
                         {
                             outOfPath(lat, lng);
                             return;
@@ -309,6 +316,11 @@ function updateMark()
 
     switch (point.type)
     {
+        // case 100:
+        // {
+        //     naviInfo_State = 4;
+        //     break;
+        // }//출발지
         case 101:
         {
             naviInfo_State = 3;
@@ -361,6 +373,9 @@ function startNavi()
     updateMark();
     startCorutine();
     update_GuidInfo();
+
+    speakText("안내를 시작합니다.");
+    aunceGuid(false);
 }
 function stopNavi()
 {
@@ -427,6 +442,7 @@ function panToStart()
 function outOfPath(lat, lng)
 {
 
+    speakText("경로 재탐색을 합니다.");
     if (pathType() === 'live')
     {
         remakeNavi(lat, lng);//응답시 resetNavi() 실행호출 준비
@@ -436,6 +452,50 @@ function outOfPath(lat, lng)
         remakeRandomNavi(lat, lng);
     }
     console.warn("경로 이탈");
+}
+
+function aunceGuid(cencleProcess = true)
+{
+    if (naviInfo_State >= 1)
+    {
+        {
+            //                if (routeData.guides[naviInfo_ProcessIndex].duration >= 60)
+            //                 {
+            //                     let anceHoure = Math.floor(routeData.guides[naviInfo_ProcessIndex].duration / 3600);
+            //                     let anceMinute = Math.floor((routeData.guides[naviInfo_ProcessIndex].duration % 3600) / 60);
+            //
+            //                     if (routeData.guides[naviInfo_ProcessIndex].duration >= 3600)
+            //                     {
+            //                         speakText("다음 안내까지 약 " + anceHoure + "시간 " + anceMinute + "분 후"
+            //                             + routeData.guides[naviInfo_ProcessIndex].guidance + " 입니다.");
+            //                     }else
+            //                     {
+            //                         speakText("다음 안내까지 약 " + anceMinute + "분 후"
+            //                             + routeData.guides[naviInfo_ProcessIndex].guidance + " 입니다.");
+            //                     }
+            //
+            //
+            //                 }else
+            //                 {
+            //                     speakText(routeData.guides[naviInfo_ProcessIndex].guidance + " 입니다.");
+            //                 }
+        }//TTS 안내 - 시간
+
+        let anceKM = Math.round(routeData.guides[naviInfo_ProcessIndex].distance / 1000);
+        let anceKMDemical = (routeData.guides[naviInfo_ProcessIndex].distance / 1000).toFixed(1);// 1.5 이면 5 라고 읽음
+
+        let anceM = routeData.guides[naviInfo_ProcessIndex].distance % 1000;
+        if (anceKM >= 1)
+        {
+            speakText("다음 안내까지 " + anceKM + "km 뒤  "
+                + routeData.guides[naviInfo_ProcessIndex].guidance + " 입니다.", cencleProcess);
+        }else
+        {
+            speakText("다음 안내까지 " + anceM + "m 뒤  "
+                + routeData.guides[naviInfo_ProcessIndex].guidance + " 입니다.", cencleProcess);
+        }
+
+    }//TTS 안내 / 시간으로 했을때는 너무 유동적
 }
 
 //=======================

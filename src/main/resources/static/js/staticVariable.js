@@ -39,7 +39,7 @@ var naviInfo_GuidIndex = 1;
 
 var naviInfo_ProcessIndex = 1;
 
-//0 : 이미 도착지점일때 , -1 : 유효하지 않은 경로일때 , 1 : 성공 , 2 : 구간 시작점, 3 : 다음이 도착지점일때
+//0 : 이미 도착지점일때 , -1 : 유효하지 않은 경로일때 , 1 : 성공 , 2 : 구간 시작점, 3 : 다음이 도착지점일때 , 4: 출발지
 var naviInfo_State = -1;
 
 var pathLeftDistance = 0;
