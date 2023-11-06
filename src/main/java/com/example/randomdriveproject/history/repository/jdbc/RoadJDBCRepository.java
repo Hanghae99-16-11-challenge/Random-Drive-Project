@@ -1,4 +1,4 @@
-package com.example.randomdriveproject.history.repository;
+package com.example.randomdriveproject.history.repository.jdbc;
 
 import com.example.randomdriveproject.history.entity.Road;
 import org.springframework.beans.factory.annotation.Autowired;

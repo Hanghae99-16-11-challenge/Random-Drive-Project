@@ -1,4 +1,4 @@
-package com.example.randomdriveproject.history.repository;
+package com.example.randomdriveproject.history.repository.entityManager;
 
 import com.example.randomdriveproject.history.entity.Road;
 import jakarta.persistence.EntityManager;
