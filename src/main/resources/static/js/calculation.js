@@ -431,6 +431,7 @@ function stopNavi()
     routeData = null;
     stopCoroutine();
     clearPolylines();
+    stopText();
 }
 
 //네비게이션 안내 초기화
