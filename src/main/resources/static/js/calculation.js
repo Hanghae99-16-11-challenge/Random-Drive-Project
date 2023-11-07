@@ -87,7 +87,7 @@ function updateMap(mouseEvent)
 
 function update_refact(lat, lng)
 {
-    EditMark(positionMark, positionText, lat, lng, '현위치');
+    EditMark(positionMark, positionText, lat, lng, '현재 위치');
 
     if(routeData == null)
     {
@@ -369,7 +369,6 @@ function stopNavi()
     naviInfo_GuidIndex = 1;
     naviInfo_ProcessIndex = 1;
     naviInfo_State = -1;
-    readyToStart = false;
 
     positionMark.setMap(null);
     positionText.close();
@@ -387,7 +386,6 @@ function clearNavi()
     naviInfo_SectionIndex = 0;
     naviInfo_GuidIndex = 1;
     naviInfo_ProcessIndex = 1;
-    readyToStart = false;
 
     positionMark.setMap(null);
     positionText.close();

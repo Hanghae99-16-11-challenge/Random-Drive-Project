@@ -521,9 +521,6 @@ function onClick_StartNavi_navi() {
 
         map.setLevel(3, {animate: true});// 사용시 보이는 위치 달라짐
         panTo(startPoint.y, startPoint.x);
-
-        //startNavi();
-        startCorutine();
     }
 
 }
@@ -556,15 +553,6 @@ function Update_GuidIndo_navi() {
     document.getElementById('guid_left').innerText
         = "도착까지  " + visibilityDistance(pathLeftDistance) + " / " + visibilityTime(pathLeftDuration);
 
-}
-function Update_GuidInfo_NotStart()
-{
-    let nextGuid = routeData.guides[naviInfo_ProcessIndex];
-
-    document.getElementById('guid_ance').innerText
-        = "전방 " + visibilityDistance(nextGuidDistacne) + " 에서\n" + nextGuid.guidance;
-    document.getElementById('guid_left').innerText
-        = " '시작점에 도착 하지 않았습니다.' ";
 }
 
 function visibilityDistance(dis = 0) {
