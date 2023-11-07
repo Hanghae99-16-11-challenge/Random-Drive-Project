@@ -20,15 +20,16 @@ function handleCurrentLocationClick() {
         var lon = position.coords.longitude;
 
         fetch(
-            'https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x=' + lon + '&y=' + lat,
+            'https://dapi.kakao.com/v2/local/geo/coord2address?x=' + lon + '&y=' + lat,
             {
                 headers: { Authorization: 'KakaoAK 4752e5a5b955f574af7718613891f796' }, //rest api 키
             }
         )
             .then((response) => response.json())
             .then((data) => {
+                console.log(data);
                 if (data.documents && data.documents.length > 0) {
-                    document.getElementById('all-random-originAddress').value = data.documents[0].address_name;
+                    document.getElementById('all-random-originAddress').value = data.documents[0].address.address_name;
                 } else {
                     throw new Error('Could not find address for this coordinates.');
                 }
