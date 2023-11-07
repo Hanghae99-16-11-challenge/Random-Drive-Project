@@ -25,7 +25,7 @@ var destinationLocation = {lat : 0, lng : 0};
 var oriAddress = "";
 var desAddress = "";
 
-var offetUserRadius = 20;
+var offetUserRadius = 30;
 
 
 var positionMark = new kakao.maps.Marker();
