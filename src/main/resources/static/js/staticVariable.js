@@ -37,6 +37,7 @@ var naviInfoText = new kakao.maps.InfoWindow();
 var naviInfo_SectionIndex = 0;
 var naviInfo_GuidIndex = 1;
 
+var readyToStart = false;
 var naviInfo_ProcessIndex = 1;
 
 //0 : 이미 도착지점일때 , -1 : 유효하지 않은 경로일때 , 1 : 성공 , 2 : 구간 시작점, 3 : 다음이 도착지점일때
@@ -59,7 +60,36 @@ function startCorutine()
             // 위치 정보를 표시하기
             // $("#location2").text("\n, GPS 위치 정보: " + position.coords.latitude + ", " + position.coords.longitude);
             EditMark(positionMark, positionText, position.coords.latitude, position.coords.longitude, '현위치');
-            update(position.coords.latitude, position.coords.longitude);
+
+            if (readyToStart === false)
+            {
+                //CurrectToStart
+                let CTS = calculateDistance(position.coords.latitude, position.coords.longitude,
+                    routeData.guides[0].y, routeData.guides[0].x) * 1000;
+
+                if (CTS >= offetUserRadius)
+                {
+                    if (intervalId >= 0)
+                    {
+                        console.warn("시작점 근처에 있지가 않음");
+                        Update_GuidInfo_NotStart();
+                    }
+
+                    if (naviInfo_ProcessIndex > 1)
+                    {
+                        console.warn("수동 조작 모드");
+                        stopCoroutine();
+                    }
+                    return;
+                }else
+                {
+                    Update_GuidIndo_navi();
+                    readyToStart = true;
+                }
+            }//======= 처음에 시작점과 일정 거리 미만 인지
+
+            update_refact(position.coords.latitude, position.coords.longitude);
+            
             console.log("위치 업데이트");
         });
     }, 1000);
