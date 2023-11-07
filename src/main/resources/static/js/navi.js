@@ -491,11 +491,11 @@ function onClick_StartNavi_navi() {
     if (type === 'save') {
         // getSaveNextGuidPoint(false);
         // getSaveGuidPoint(true);
-        // startCorutine();
+        startCorutine();
     } else {
         // getNextGuidPoint(false);
         // getGuidPoint(true);
-        // startCorutine();
+        startCorutine();
 
     }
     updateMark();
