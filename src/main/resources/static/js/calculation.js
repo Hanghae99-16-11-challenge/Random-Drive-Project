@@ -224,7 +224,7 @@ function update_refact(lat, lng)
                     }
 
 
-                    if (lastRoadIndex >= 0)
+                    if (lastRoadIndex > 0)
                     {
                         let vex = currectRoads.vertexes;
 
@@ -248,6 +248,30 @@ function update_refact(lat, lng)
                             return;
                         }
                     }//비정확 하지만
+                    else if (lastRoadIndex === 0 && offCourseCount > 0)
+                    {
+                        let vex = currectRoads.vertexes;
+
+                        let roadPartLength = calculateDistance(vex[lastRoadIndex + 3], vex[lastRoadIndex + 2],vex[lastRoadIndex + 1], vex[lastRoadIndex]);
+                        let PastToPos = calculateDistance(vex[lastRoadIndex + 1], vex[lastRoadIndex], lat, lng);
+                        let CurrectToPos = 0;
+                        CurrectToPos = calculateDistance(vex[lastRoadIndex + 3], vex[lastRoadIndex + 2], lat, lng);
+
+                        // console.log("roadPartLength : " + (roadPartLength * 1000).toFixed(2)
+                        //     + " / " + (PastToPos * 1000).toFixed(2) + " - pos - " + (CurrectToPos * 1000).toFixed(2));
+
+                        if (isNaN(CurrectToPos))
+                        {
+                            CurrectToPos = calculateDistance(vex[lastRoadIndex - 1], vex[lastRoadIndex - 2], lat, lng);
+                            roadPartLength = calculateDistance(vex[lastRoadIndex - 1], vex[lastRoadIndex - 2],vex[lastRoadIndex + 1], vex[lastRoadIndex]);
+                        }
+                        let leftroad = (((PastToPos + CurrectToPos) - roadPartLength) * 1000);
+                        if ((leftroad > offetUserRadius * 2))
+                        {
+                            outOfPath(lat, lng);
+                            return;
+                        }
+                    }
 
                 }//지나가고있는 도로의 Vertex 저장 + 경로 이탈 감지
 
@@ -427,7 +451,7 @@ function panToStart()
 }
 function outOfPath(lat, lng)
 {
-
+    offCourseCount++;
     if (pathType() === 'live')
     {
         remakeNavi(lat, lng);//응답시 resetNavi() 실행호출 준비
