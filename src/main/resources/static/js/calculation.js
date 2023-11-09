@@ -451,16 +451,27 @@ function panToStart()
 }
 function outOfPath(lat, lng)
 {
-    offCourseCount++;
-    if (pathType() === 'live')
+    if (researchDelay_intervalId < 0)
     {
-        remakeNavi(lat, lng);//응답시 resetNavi() 실행호출 준비
+        researchDelay_intervalId = setInterval(function () {
+
+            offCourseCount++;
+            if (pathType() === 'live')
+            {
+                remakeNavi(lat, lng);//응답시 resetNavi() 실행호출 준비
+            }
+            else
+            {
+                remakeRandomNavi(lat, lng);
+            }
+            console.warn("경로 이탈");
+
+            clearInterval(researchDelay_intervalId);
+
+            researchDelay_intervalId = -1;
+
+        }, 1000);
     }
-    else
-    {
-        remakeRandomNavi(lat, lng);
-    }
-    console.warn("경로 이탈");
 }
 
 //=======================
