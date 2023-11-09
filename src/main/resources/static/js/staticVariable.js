@@ -49,6 +49,7 @@ var nextGuidDuration = 0;
 var map;
 
 let intervalId;
+let researchDelay_intervalId = -1;
 
 function startCorutine()
 {
