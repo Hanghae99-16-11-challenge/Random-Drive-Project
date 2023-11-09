@@ -216,11 +216,7 @@ function makeHistoryMap(routeId) {
                 }
             }
         )
-        .catch(error => {
-            alert("경로를 생성할 수 없습니다. 다시 시도해 주세요");
-            console.log(error);
-            window.location.href = '/view/home';
-        });
+        .catch(error => failedFindRoute);
 
 }
 
@@ -235,11 +231,7 @@ function makeNavi(originAddress, destinationAddress) {
             makeLiveMap(data)
             makeMarker(data)
         })
-        .catch(error => {
-            alert("경로를 생성할 수 없습니다. 다시 시도해 주세요");
-            console.log(error);
-            window.location.href = '/view/home';
-        });
+        .catch(error => failedFindRoute);
 }
 
 // 목적지 기반 랜덤 길찾기 동작
@@ -254,11 +246,7 @@ function makeRandomNavi(originAddress, destinationAddress, redius) {
                 makeLiveMap(data);
                 makeMarker(data);
             })
-            .catch(error => {
-                alert("경로를 생성할 수 없습니다. 다시 시도해 주세요");
-                console.log(error);
-                window.location.href = '/view/home';
-            });
+            .catch(error => failedFindRoute);
     } else if (secondType === 'zigzag') {
         fetch('/api/zigzag-random-route?originAddress=' + originAddress + '&destinationAddress=' + destinationAddress + '&count=' + waypointNum)
             .then(response => response.json())
@@ -268,11 +256,7 @@ function makeRandomNavi(originAddress, destinationAddress, redius) {
                 makeLiveMap(data)
                 makeMarker(data);
             })
-            .catch(error => {
-                alert("경로를 생성할 수 없습니다. 다시 시도해 주세요");
-                console.log(error);
-                window.location.href = '/view/home';
-            });
+            .catch(error => failedFindRoute);
     } else {
         fetch('/api/random-route?originAddress=' + originAddress + '&destinationAddress=' + destinationAddress + '&redius=' + redius)
             .then(response => response.json())
@@ -282,11 +266,7 @@ function makeRandomNavi(originAddress, destinationAddress, redius) {
                 makeLiveMap(data)
                 makeMarker(data);
             })
-            .catch(error => {
-                alert("경로를 생성할 수 없습니다. 다시 시도해 주세요");
-                console.log(error);
-                window.location.href = '/view/home';
-            });
+            .catch(error => failedFindRoute);
     }
 }
 
@@ -308,11 +288,7 @@ function makeAllRandomNavi(originAddress, redius) {
                 makeLiveMap(data)
                 makeMarker(data);
             })
-            .catch(error => {
-                alert("경로를 생성할 수 없습니다. 다시 시도해 주세요");
-                console.log(error);
-                window.location.href = '/view/home';
-            });
+            .catch(error => failedFindRoute);
     } else if (secondType === 'zigzag') {
         fetch(`/api/zigzag-all-random-route?originAddress=${originAddress}&distance=${redius}&count=${waypointNum}`, {
             method: 'GET',
@@ -327,11 +303,7 @@ function makeAllRandomNavi(originAddress, redius) {
                 makeLiveMap(data)
                 makeMarker(data);
             })
-            .catch(error => {
-                alert("경로를 생성할 수 없습니다. 다시 시도해 주세요");
-                console.log(error);
-                window.location.href = '/view/home';
-            });
+            .catch(error => failedFindRoute);
     } else if (secondType === 'circle') {
         fetch(`/api/circle-all-random-route?originAddress=${originAddress}&distance=${redius}&count=${waypointNum}`, {
             method: 'GET',
@@ -346,11 +318,7 @@ function makeAllRandomNavi(originAddress, redius) {
                 makeLiveMap(data)
                 makeMarker(data);
             })
-            .catch(error => {
-                alert("경로를 생성할 수 없습니다. 다시 시도해 주세요");
-                console.log(error);
-                window.location.href = '/view/home';
-            });
+            .catch(error => failedFindRoute);
     } else {
         fetch(`/api/all-random-route?originAddress=${originAddress}&redius=${redius}`, {
             method: 'GET',
@@ -365,11 +333,7 @@ function makeAllRandomNavi(originAddress, redius) {
                 makeLiveMap(data)
                 makeMarker(data);
             })
-            .catch(error => {
-                alert("경로를 생성할 수 없습니다. 다시 시도해 주세요");
-                console.log(error);
-                window.location.href = '/view/home';
-            });
+            .catch(error => failedFindRoute);
     }
 }
 
@@ -613,11 +577,7 @@ function remakeNavi(lat, lng) {
                             makeLiveMap(data)
                             clearNavi();
                         })
-                        .catch(error => {
-                            alert("경로를 생성할 수 없습니다. 다시 시도해 주세요");
-                            console.log(error);
-                            window.location.href = '/view/home';
-                        });
+                        .catch(error => failedFindRoute);
                 }
 
             } else {
@@ -709,15 +669,32 @@ function remakeRandomNavi(lat, lng) {
                         makeLiveMap(data)
                         clearNavi();
                     })
-                    .catch(error => {
-                        alert("경로를 생성할 수 없습니다. 다시 시도해 주세요");
-                        console.log(error);
-                        window.location.href = '/view/home';
-                    });
+                    .catch(error => failedFindRoute);
             }
         });
 }
 
+function failedFindRoute(error)
+{
+    {
+        const auth = getToken();
+
+        if (auth === undefined || auth === '') {
+
+            alert("다시 로그인 해주세요...");
+            window.location.href = host + '/view/user/login-page';
+            return;
+        }
+
+        //            $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+        //                 jqXHR.setRequestHeader('Authorization', auth);
+        //             });
+    }//우선 토큰 검사
+
+    alert("경로를 생성할 수 없습니다. 다시 시도해 주세요");
+    console.log(error);
+    window.location.href = '/view/home';
+}
 // 마커 표시하기
 function makeMarker(data) {
     // 출발지 도착지 마커 표시하기

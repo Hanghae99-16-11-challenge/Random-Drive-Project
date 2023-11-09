@@ -106,11 +106,42 @@ function adapt_KakaoResponseToRouteData(kakaoRes) {
             printmsg += errormsg[i] + "\n";
         }
 
-        console.error("유효하지 않은 데이터 - 카카오 길찾기 응답 객체가 아닙니다. \n" + e + "\n" + printmsg);
+        try {
+            let Emsg = JSON.parse(printmsg).msg;
+            console.log(Emsg);
+        }catch(msg)
+        {
+            console.warn(msg.message);
+        }
 
-        setTimeout(() => {
-            window.location.href = '/view/home';
-        }, 1000);
+        let disvaildToken = false;
+        let splited = printmsg.split('"');
+        for (let msg in printmsg.split('"'))
+        {
+            if (splited[msg] == "토큰이 유효하지 않습니다.")
+            {
+                console.log("(printmsg == 토큰이 유효하지 않습니다.)");
+                disvaildToken = true;
+                break;
+            }
+        }
+        
+        if(disvaildToken)
+        {
+            console.error("유효하지 않은 토큰");
+            alert("유효하지 않은 인증 정보 입니다.\n 다시 로그인 해주세요.");
+            window.location.href = host + '/view/user/login-page';
+            // setTimeout(() => {
+            //     window.location.href = host + '/view/user/login-page';
+            // }, 1000);
+        }else
+        {
+            console.error("유효하지 않은 데이터 - 카카오 길찾기 응답 객체가 아닙니다. \n" + e + "\n" + printmsg);
+            setTimeout(() => {
+                window.location.href = '/view/home';
+            }, 1000);
+        }
+
         return;
     }
 
