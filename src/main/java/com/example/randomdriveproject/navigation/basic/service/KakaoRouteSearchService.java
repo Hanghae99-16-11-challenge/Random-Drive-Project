@@ -42,13 +42,6 @@ public class KakaoRouteSearchService {
             throw new IllegalArgumentException("출발지 혹은 목적지 주소가 비어있습니다.");
         }
 
-//        // 사용자 인증 정보 확인
-//        User user = userRepository.findById(userId).orElse(null);
-//        if (user == null) {
-//            throw new IllegalArgumentException("사용자 정보가 없거나 일치하지 않습니다.");
-//        }
-
-
         // 기존 kakaoAddressSearchService.requestAddressSearch(destinationAddress).getDocumentDtoList().get(0); -> index 오류
         // 출발지와 도착지 주소 검색
         List<DocumentDto> originList = kakaoAddressSearchService.requestAddressSearch(originAddress).getDocumentDtoList();
@@ -62,8 +55,6 @@ public class KakaoRouteSearchService {
             throw new IllegalArgumentException("도착지 주소를 찾을 수 없습니다.");
         }
         DocumentDto destination = destinationList.get(0);
-
-
 
         // "위도,경도" 형식의 문자열 생성
         String originCoord = origin.getLongitude() + "," + origin.getLatitude();
@@ -88,17 +79,24 @@ public class KakaoRouteSearchService {
     }
 
 
-//    //경로 재생성
-    public KakaoRouteAllResponseDto requestRouteReSearch(double lat, double lng) {
+    //경로 재생성
+    public KakaoRouteAllResponseDto requestRouteReSearch(double originY, double originX, String destinationAddress) {
 
-        if (ObjectUtils.isEmpty(lat) || ObjectUtils.isEmpty(lng)){
-            throw new IllegalArgumentException("좌표가 올바르지 않습니다.");
+        if (ObjectUtils.isEmpty(originY) || ObjectUtils.isEmpty(originX) || ObjectUtils.isEmpty(destinationAddress)) {
+            throw new IllegalArgumentException("출발지 혹은 목적지 주소가 비어있습니다.");
         }
-        log.info("기본 경로 이탈시 준비");
 
-        double startCoord = Double.parseDouble(lat + "," + lng);
+        List<DocumentDto> destinationList = kakaoAddressSearchService.requestAddressSearch(destinationAddress).getDocumentDtoList();
+        if (destinationList.isEmpty()) {
+            throw new IllegalArgumentException("도착지 주소를 찾을 수 없습니다.");
+        }
+        DocumentDto destination = destinationList.get(0);
 
-        URI uri = kakaoUriBuilderService.buildUriByReRouteSearch(startCoord);
+        // "위도,경도" 형식의 문자열 생성
+        String originCoord = originX + "," + originY;
+        String destinationCoord = destination.getLongitude() + "," + destination.getLatitude();
+
+        URI uri = kakaoUriBuilderService.buildUriByRouteSearch(originCoord, destinationCoord);
 
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.AUTHORIZATION, "KakaoAK " + kakaoRestApiKey);

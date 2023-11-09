@@ -393,6 +393,7 @@ function stopNavi()
     naviInfo_GuidIndex = 1;
     naviInfo_ProcessIndex = 1;
     naviInfo_State = -1;
+    offCourseCount = 0;
 
     positionMark.setMap(null);
     positionText.close();

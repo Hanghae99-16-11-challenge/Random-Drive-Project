@@ -119,4 +119,15 @@ public class RandomRouteController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @GetMapping("/offCourse-coordinate")
+    public ResponseEntity<KakaoRouteAllResponseDto> getOffCourseWay(@RequestParam double originY, @RequestParam double originX,
+                                                                     @RequestParam double destinationY, @RequestParam double destinationX,
+                                                                     @RequestParam String waypointsY, @RequestParam String waypointsX) {
+        KakaoRouteAllResponseDto response = randomOffCourseService.requestOffCourseCoordinateSearch(originY, originX, destinationY, destinationX, waypointsY, waypointsX);
+        if (response == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 적절한 HTTP 상태 코드로 응답
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }
