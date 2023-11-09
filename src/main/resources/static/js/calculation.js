@@ -143,6 +143,10 @@ function update_refact(lat, lng)
             naviInfo_ProcessIndex++;
 
             updateMark();//마크 표시 , getGuidPoint 과 같음
+
+            // aunceGuid();//TTS 안내
+            speakText(point.guidance + " 입니다.");
+            Anuce_State = 2; // 교차로 진입 안내
         }
 
         switch (naviInfo_State)
@@ -152,8 +156,9 @@ function update_refact(lat, lng)
                 stopNavi();
                 // reset();
                 onClick_StopNavi_navi();
-                console.log("길 안내 종료");
 
+                console.log("길 안내 종료");
+                speakText("길 안내를 종료합니다.");//TTS
                 return;
             }
             case -1:
@@ -161,7 +166,10 @@ function update_refact(lat, lng)
                 stopNavi();
                 onClick_StopNavi_navi();
                 console.warn("길 안내 오류");
+                return;
             }
+            // default:
+            //     speakText(routeData.guides[naviInfo_ProcessIndex].guidance + " 입니다.");
         }
 
         {
@@ -306,6 +314,42 @@ function update_refact(lat, lng)
 
             polylines.push(polyline); // 선을 배열에 추가
         }//경로 그리기 + 경로 계산
+
+        console.log("다음 안내까지 남은 비율 : " + (nextGuidDistacne / routeData.guides[naviInfo_ProcessIndex].distance).toFixed(1) * 100 + "%");
+        //======
+        // 도로 길이가 일정 크기(200M) 이상일때 100m 전에도 안내 (잠시후 어느 방향)
+        //  일정 크기 미만 일때는 50M 전에 안내 (어느 방향으로 )
+
+        // 다음 안내 지점 안내 하면 --> 다음 안내지점 대해 어느방향 가야할지 알려주고 , 다음에 얼마나 가야할지 알려줌
+        // ===> 100m 들어올때 : 잠시후 어느방향으로 우회전 입니다.
+        // ===> 30m 들어올때 : 어느방향으로 우회전 입니다.
+        // ===> 30m 나갈때 : 다음 안내까지 몇m , 약 몇초 소요 됩니다.
+
+        // ===> AnuceState = {경로 시작 , 미리 안내, 교차로 진입전 , 교차로 벗어남 , 경로 종료}
+
+        {
+            if (nextGuidDistacne <= 100 && Anuce_State !== -1 && routeData.guides[naviInfo_ProcessIndex].distance > 200)
+            {
+                speakText("잠시후 " + routeData.guides[naviInfo_ProcessIndex].guidance + " 입니다.");
+                Anuce_State = 1;
+            }//사전 안내 , 도로가 200m 보다 길때 한번만
+
+            if (calculateDistance(lat, lng, point.y, point.x) >= (offetUserRadius * 0.001) && Anuce_State === 2)
+            {
+                let anceKM = Math.floor(routeData.guides[naviInfo_ProcessIndex].distance / 1000);
+                let anceM = routeData.guides[naviInfo_ProcessIndex].distance - (anceKM * 1000);
+                let anceKMDemical = (routeData.guides[naviInfo_ProcessIndex].distance / 1000).toFixed(1);// 1.5 이면 5 라고 읽음
+
+                if (anceKM > 0)
+                {
+                    speakText(anceKMDemical + "km 후 다음 안내지점 입니다.");
+                }else
+                {
+                    speakText(Math.round(nextGuidDistacne) + "m 후 다음 안내지점 입니다.");
+                }
+                Anuce_State = 3; // 교차로 진출 안내
+            }
+        }
     }
 }
 
@@ -334,6 +378,11 @@ function updateMark()
 
     switch (point.type)
     {
+        // case 100:
+        // {
+        //     naviInfo_State = 4;
+        //     break;
+        // }//출발지
         case 101:
         {
             naviInfo_State = 3;
@@ -386,6 +435,9 @@ function startNavi()
     updateMark();
     startCorutine();
     update_GuidInfo();
+
+    speakText("안내를 시작합니다.");
+    aunceGuid(false);
 }
 function stopNavi()
 {
@@ -394,6 +446,8 @@ function stopNavi()
     naviInfo_ProcessIndex = 1;
     naviInfo_State = -1;
     offCourseCount = 0;
+    Anuce_State = 0;
+
 
     positionMark.setMap(null);
     positionText.close();
@@ -403,6 +457,7 @@ function stopNavi()
     routeData = null;
     stopCoroutine();
     clearPolylines();
+    stopText();
 }
 
 //네비게이션 안내 초기화
@@ -411,6 +466,7 @@ function clearNavi()
     naviInfo_SectionIndex = 0;
     naviInfo_GuidIndex = 1;
     naviInfo_ProcessIndex = 1;
+    Anuce_State = 0;
 
     positionMark.setMap(null);
     positionText.close();
@@ -473,6 +529,50 @@ function outOfPath(lat, lng)
 
         }, 1000);
     }
+}
+
+function aunceGuid(cencleProcess = true)
+{
+    if (naviInfo_State >= 1)
+    {
+        {
+            //                if (routeData.guides[naviInfo_ProcessIndex].duration >= 60)
+            //                 {
+            //                     let anceHoure = Math.floor(routeData.guides[naviInfo_ProcessIndex].duration / 3600);
+            //                     let anceMinute = Math.floor((routeData.guides[naviInfo_ProcessIndex].duration % 3600) / 60);
+            //
+            //                     if (routeData.guides[naviInfo_ProcessIndex].duration >= 3600)
+            //                     {
+            //                         speakText("다음 안내까지 약 " + anceHoure + "시간 " + anceMinute + "분 후"
+            //                             + routeData.guides[naviInfo_ProcessIndex].guidance + " 입니다.");
+            //                     }else
+            //                     {
+            //                         speakText("다음 안내까지 약 " + anceMinute + "분 후"
+            //                             + routeData.guides[naviInfo_ProcessIndex].guidance + " 입니다.");
+            //                     }
+            //
+            //
+            //                 }else
+            //                 {
+            //                     speakText(routeData.guides[naviInfo_ProcessIndex].guidance + " 입니다.");
+            //                 }
+        }//TTS 안내 - 시간
+
+        let anceKM = Math.round(routeData.guides[naviInfo_ProcessIndex].distance / 1000);
+        let anceKMDemical = (routeData.guides[naviInfo_ProcessIndex].distance / 1000).toFixed(1);// 1.5 이면 5 라고 읽음
+
+        let anceM = routeData.guides[naviInfo_ProcessIndex].distance % 1000;
+        if (anceKM >= 1)
+        {
+            speakText("다음 안내까지 " + anceKMDemical + "km 후\n"
+                + routeData.guides[naviInfo_ProcessIndex].guidance + " 입니다.", cencleProcess);
+        }else
+        {
+            speakText("다음 안내까지 " + anceM + "m 후\n"
+                + routeData.guides[naviInfo_ProcessIndex].guidance + " 입니다.", cencleProcess);
+        }
+
+    }//TTS 안내 / 시간으로 했을때는 너무 유동적
 }
 
 //=======================

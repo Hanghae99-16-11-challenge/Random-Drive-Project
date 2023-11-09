@@ -451,8 +451,8 @@ function getToken() {
 // 상세교통상황 표시
 // map.addOverlayMapTypeId(kakao.maps.MapTypeId.TRAFFIC);
 
-function onClick_StartNavi_navi() {
-    startCorutine();
+
+function onClick_StartNavi_navi(updateLocation = true) {
 
     updateMark();
 
@@ -477,6 +477,12 @@ function onClick_StartNavi_navi() {
 
         map.setLevel(3, {animate: true});// 사용시 보이는 위치 달라짐
         panTo(startPoint.y, startPoint.x);
+
+        speakText("안내를 시작합니다.");
+        aunceGuid(false);
+
+        if (updateLocation)
+            startCorutine();
     }
 
 }

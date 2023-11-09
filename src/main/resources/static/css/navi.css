@@ -302,7 +302,7 @@ html {
     text-align: center;
     font-family: "SDSamliphopangche_Basic", sans-serif;
     font-size: 1rem;
-    line-height: 3rem; /* 버튼의 행 높이와 일치하도록 설정 */
+    line-height: 1.25rem; /* 버튼의 행 높이와 일치하도록 설정 */
     border-radius: 2rem;
     padding: 0 1rem; /* 텍스트 내용에 대한 좌우 패딩을 추가합니다. */
     align-items: center; /* 수직 가운데 정렬을 위해 추가 */

@@ -39,8 +39,12 @@ var naviInfo_GuidIndex = 1;
 
 var naviInfo_ProcessIndex = 1;
 
-//0 : 이미 도착지점일때 , -1 : 유효하지 않은 경로일때 , 1 : 성공 , 2 : 구간 시작점, 3 : 다음이 도착지점일때
+// 0 : 이미 도착지점일때 , -1 : 유효하지 않은 경로일때 , 1 : 성공 , 2 : 구간 시작점, 3 : 다음이 도착지점일때 , 4: 출발지
 var naviInfo_State = -1;
+// 0 : 경로 종료 , 1 : 경로 시작 , 2 : 교차로 진입 안내 , 3 : 교차로 진출 안내
+// 음수 -> 사전 안내 (100m , 50% 일때 안내)
+// {경로 시작 , 미리 안내, 교차로 진입전 , 교차로 벗어남 , 경로 종료}
+var Anuce_State = 0;
 
 var pathLeftDistance = 0;
 var pathLeftDuration = 0;
