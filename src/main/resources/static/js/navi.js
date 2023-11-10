@@ -473,13 +473,6 @@ function onClick_StartNavi_navi(updateLocation = true) {
 
 
     if (routeData != null) {
-        if (type === 'save') {
-            // update(pathData.roads(0).vertexes[1], pathData.roads(0).vertexes[0]);
-            // map.setLevel(3, {animate: true});// 사용시 보이는 위치 달라짐
-            // panTo(pathData.roads(0).vertexes[1], pathData.roads(0).vertexes[0]);
-        } else {
-
-        }
 
         let startPoint = routeData.guides[0];
         update(startPoint.y, startPoint.x);
@@ -546,8 +539,21 @@ function pathType() {
 
 // 추가 경로 재생성 동작
 function remakeNavi(lat, lng) {
+    let destinationLatitude = destinationLocation.lat;
+    let destinationLongitude = destinationLocation.lng;
+
+    if (type === 'save' && offCourseCount === 0) {
+        // routeData.guides 배열의 맨 마지막 요소가 목적지
+        let destinationGuide = routeData.guides[routeData.guides.length - 1];
+        destinationLatitude = destinationGuide.y;
+        destinationLongitude = destinationGuide.x;
+    }
+
+    console.log(destinationLongitude);
+    console.log(destinationLatitude);
+
     setToken();
-    fetch('/api/reroute?originY=' + lat + '&originX=' + lng + '&destinationAddress=' + destinationAddress)
+    fetch('/api/reroute?originY=' + lat + '&originX=' + lng + '&destinationY=' + destinationLatitude + '&destinationX=' + destinationLongitude)
         .then(response => response.json())
         .then(data => {
             responseData = data;
@@ -565,6 +571,9 @@ function remakeNavi(lat, lng) {
 function remakeRandomNavi(lat, lng) {
     let destinationLatitude = destinationLocation.lat;
     let destinationLongitude = destinationLocation.lng;
+
+    console.log(routeData);
+    console.log(offCourseCount);
 
     if (type === 'save' && offCourseCount === 0) {
         // routeData.guides 배열의 맨 마지막 요소가 목적지
@@ -591,8 +600,7 @@ function remakeRandomNavi(lat, lng) {
     }
 
     if (!isexist) {
-        waypointsX = "0";
-        waypointsY = "0";
+        remakeNavi(lat, lng);
     }
 
     fetch('/api/offCourse-coordinate?originY=' + lat + '&originX=' + lng

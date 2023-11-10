@@ -80,21 +80,21 @@ public class KakaoRouteSearchService {
 
 
     //경로 재생성
-    public KakaoRouteAllResponseDto requestRouteReSearch(double originY, double originX, String destinationAddress) {
+    public KakaoRouteAllResponseDto requestRouteReSearch(double originY, double originX, double destinationY, double destinationX) {
 
-        if (ObjectUtils.isEmpty(originY) || ObjectUtils.isEmpty(originX) || ObjectUtils.isEmpty(destinationAddress)) {
+        if (ObjectUtils.isEmpty(originY) || ObjectUtils.isEmpty(originX) || ObjectUtils.isEmpty(destinationY)|| ObjectUtils.isEmpty(destinationX)) {
             throw new IllegalArgumentException("출발지 혹은 목적지 주소가 비어있습니다.");
         }
 
-        List<DocumentDto> destinationList = kakaoAddressSearchService.requestAddressSearch(destinationAddress).getDocumentDtoList();
-        if (destinationList.isEmpty()) {
-            throw new IllegalArgumentException("도착지 주소를 찾을 수 없습니다.");
-        }
-        DocumentDto destination = destinationList.get(0);
+//        List<DocumentDto> destinationList = kakaoAddressSearchService.requestAddressSearch(destinationAddress).getDocumentDtoList();
+//        if (destinationList.isEmpty()) {
+//            throw new IllegalArgumentException("도착지 주소를 찾을 수 없습니다.");
+//        }
+//        DocumentDto destination = destinationList.get(0);
 
         // "위도,경도" 형식의 문자열 생성
         String originCoord = originX + "," + originY;
-        String destinationCoord = destination.getLongitude() + "," + destination.getLatitude();
+        String destinationCoord = destinationX + "," + destinationY;
 
         URI uri = kakaoUriBuilderService.buildUriByRouteSearch(originCoord, destinationCoord);
 

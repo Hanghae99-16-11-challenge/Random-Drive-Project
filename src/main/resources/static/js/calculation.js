@@ -512,7 +512,6 @@ function outOfPath(lat, lng)
     {
         researchDelay_intervalId = setInterval(function () {
 
-            offCourseCount++;
             if (pathType() === 'live')
             {
                 remakeNavi(lat, lng);//응답시 resetNavi() 실행호출 준비

@@ -47,8 +47,8 @@ public class RouteController {
 
      // 기본 경로 재생성
     @GetMapping("/reroute")
-    public ResponseEntity<KakaoRouteAllResponseDto> getReRoute(@RequestParam double originY, double originX, String destinationAddress) {
-        KakaoRouteAllResponseDto response = kakaoRouteSearchService.requestRouteReSearch(originY, originX, destinationAddress);
+    public ResponseEntity<KakaoRouteAllResponseDto> getReRoute(@RequestParam double originY, double originX, double destinationY, double destinationX) {
+        KakaoRouteAllResponseDto response = kakaoRouteSearchService.requestRouteReSearch(originY, originX, destinationY, destinationX);
 
         if (response == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

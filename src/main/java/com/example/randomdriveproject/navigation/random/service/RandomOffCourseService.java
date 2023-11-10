@@ -88,7 +88,7 @@ public class RandomOffCourseService {
         uriData.put("origin",new DocumentDto( "현 출발지" , originY, originX));
         uriData.put("destination",new DocumentDto("이전 목적지", destinationY, destinationX));
 
-        if (!waypointsX.equals("0")) {
+        if (!waypointsX.isEmpty()) {
             List<DocumentDto> waypoints = new ArrayList<>();
 
             Queue<Double> waypointsYQueue = new LinkedList<>();
