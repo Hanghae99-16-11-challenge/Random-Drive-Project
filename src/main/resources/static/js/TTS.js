@@ -57,7 +57,7 @@ function speakText(ttsInput = "", cancelProcess = true) {
             utterance.onend = function () {
                 setTimeout(() => {
                     speechSynthesis.resume();
-                }, 500);
+                }, 200);
             };
         }
 
@@ -73,7 +73,7 @@ function speakText(ttsInput = "", cancelProcess = true) {
 
         {
             utterance.volume = 1;
-            utterance.rate = 1.2;
+            utterance.rate = 1;
             utterance.pitch = 1.15;
         }
         speechSynthesis.speak(utterance);
