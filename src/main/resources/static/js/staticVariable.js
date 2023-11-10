@@ -141,6 +141,11 @@ function adapt_KakaoResponseToRouteData(kakaoRes) {
             // }, 1000);
         }else
         {
+            if (kakaoRes.result_msg !== null || kakaoRes.result_msg !== undefined)
+            {
+                alert("오류 : " + kakaoRes.result_msg);
+            }
+
             console.error("유효하지 않은 데이터 - 카카오 길찾기 응답 객체가 아닙니다. \n" + e + "\n" + printmsg);
             setTimeout(() => {
                 window.location.href = '/view/home';
