@@ -511,7 +511,7 @@ function outOfPath(lat, lng)
     if (researchDelay_intervalId < 0)
     {
         researchDelay_intervalId = setInterval(function () {
-            speakText("경로를 재생성합니다.");
+            speakText("경로를 이탈하여 재생성합니다.");
             if (pathType() === 'live')
             {
                 remakeNavi(lat, lng);//응답시 resetNavi() 실행호출 준비
