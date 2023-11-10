@@ -24,20 +24,6 @@ $(document).ready(function () {
     }
 });
 
-// 예 버튼
-// document.getElementsByClassName('button-yes')[0].addEventListener('click', function () {
-//     console.log(type);
-//     if (type === 'live') {
-//         saveRoute(responseData, originAddress, destinationAddress)
-//     } else if (type === 'live-random') {
-//         saveRoute(responseData, originAddress, destinationAddress)
-//     } else if (type === 'live-all-random') {
-//         saveRoute(responseData, originAddress, '무작위 주소')
-//     } else {
-//         return;
-//     }
-// });
-
 // 아니오 버튼
 document.getElementsByClassName('button-no')[0].addEventListener('click', function () {
     window.location.href = '/view/home';
@@ -521,18 +507,7 @@ function onClick_StopNavi_navi() {
 }
 
 function Update_GuidIndo_navi() {
-    // let nextGuid = getGuidPoint(false);
     let nextGuid = routeData.guides[naviInfo_ProcessIndex];
-
-    // document.getElementById('guid-Distance').innerText = "전방 " + nextGuidDistacne.toFixed(1) + "m 에서 " + data.guidance;
-    // document.getElementById('guid-EnterTime').innerText = "다음 안내 까지 : " + nexGuidDuration.toFixed(1) + "s";
-    // document.getElementById('guid-Des-Distance').innerText = pathLeftDistance.toFixed(1) + "m";
-    // document.getElementById('guid-Des-Time').innerText = pathLeftDuration.toFixed(1) + "s";
-
-    // console.log("전방 " + visibilityDistance(nextGuidDistacne) + " 에서 " + nextGuid.guidance);
-    // console.log("다음 안내까지 : " + visibilityTime(nextGuidDuration));
-    // console.log("도착까지  " + visibilityDistance(pathLeftDistance) + " / " + visibilityTime(pathLeftDuration));
-
     document.getElementById('guid_ance').innerText
         = "전방 " + visibilityDistance(nextGuidDistacne) + " 에서\n" + nextGuid.guidance;
     document.getElementById('guid_left').innerText
@@ -571,44 +546,6 @@ function pathType() {
 
 // 추가 경로 재생성 동작
 function remakeNavi(lat, lng) {
-    // setToken();
-    //
-    // let currectAddress = "";
-    //
-    // fetch(
-    //     'https://dapi.kakao.com/v2/local/geo/coord2address?x=' + lng + '&y=' + lat,
-    //     {
-    //         headers: {Authorization: 'KakaoAK 4752e5a5b955f574af7718613891f796'}, //rest api 키
-    //     }
-    // )
-    //     .then((response) => response.json())
-    //     .then((data) => {
-    //         if (data.documents && data.documents.length > 0) {
-    //
-    //             currectAddress = data.documents[0].address.address_name; // 이
-    //
-    //             console.warn(currectAddress + " / " + destinationAddress + " OR " + routeData.destinationAddress);
-    //             {
-    //                 setToken();
-    //                 fetch('/api/route?originAddress=' + currectAddress + '&destinationAddress=' + destinationAddress)
-    //                     .then(response => response.json())
-    //                     .then(data => {
-    //                         responseData = data;
-    //                         adapt_KakaoResponseToRouteData(data);
-    //                         makeLiveMap(data)
-    //                         clearNavi();
-    //                     })
-    //                     .catch(error => {
-    //                         alert("경로를 생성할 수 없습니다. 다시 시도해 주세요");
-    //                         console.log(error);
-    //                         window.location.href = '/view/home';
-    //                     });
-    //             }
-    //
-    //         } else {
-    //             throw new Error('Could not find address for this coordinates.');
-    //         }
-    //     });
     setToken();
     fetch('/api/reroute?originY=' + lat + '&originX=' + lng + '&destinationAddress=' + destinationAddress)
         .then(response => response.json())
@@ -626,79 +563,6 @@ function remakeNavi(lat, lng) {
 }
 
 function remakeRandomNavi(lat, lng) {
-    // setToken();
-    //
-    // let currentAddress = "";
-    //
-    // fetch(
-    //     'https://dapi.kakao.com/v2/local/geo/coord2address?x=' + lng + '&y=' + lat,
-    //     {
-    //         headers: {Authorization: 'KakaoAK 4752e5a5b955f574af7718613891f796'}, //rest api 키
-    //     }
-    // )
-    //     .then((response) => response.json())
-    //     .then((data) => {
-    //         currentAddress = data.documents[0].address.address_name;
-    //         console.log(data);
-    //
-    //         let destinationLatitude = destinationLocation.lat;
-    //         let destinationLongitude = destinationLocation.lng;
-    //
-    //         if (type === 'save' && offCourseCount === 0) {
-    //             // routeData.guides 배열의 맨 마지막 요소가 목적지
-    //             let destinationGuide = routeData.guides[routeData.guides.length - 1];
-    //             destinationLatitude = destinationGuide.y;
-    //             destinationLongitude = destinationGuide.x;
-    //         }
-    //
-    //         console.log(routeData.guides
-    //             .filter(guide => guide.type === 1000));
-    //
-    //         offCourseCount++;
-    //
-    //         let waypointsX, waypointsY;
-    //
-    //         waypointsX = "";
-    //         waypointsY = "";
-    //         let isexist = false;
-    //
-    //
-    //         for (let i = naviInfo_ProcessIndex; i < routeData.guides.length; i++) {
-    //             if (routeData.guides[i].type === 1000 && routeData.guides[i].road_index === -1) {
-    //                 isexist = true;
-    //                 waypointsX += routeData.guides[i].x + " ";
-    //                 waypointsY += routeData.guides[i].y + " ";
-    //             }
-    //         }
-    //
-    //         if (!isexist) {
-    //             waypointsX = "0";
-    //             waypointsY = "0";
-    //         }
-    //
-    //         console.log("주소: " + currentAddress);
-    //         console.log("경유지 y: " + waypointsY + ", 경유지 x:" + waypointsX);
-    //         console.log("목적지 y: " + destinationLatitude + ", 경유지 x:" + destinationLongitude);
-    //
-    //         {
-    //             fetch('/api/offCourse?currentAddress=' + currentAddress
-    //                 + '&destinationY=' + destinationLatitude + '&destinationX=' + destinationLongitude
-    //                 + '&waypointsY=' + waypointsY + '&waypointsX=' + waypointsX)
-    //                 .then(response => response.json())
-    //                 .then(data => {
-    //                     responseData = data;
-    //                     adapt_KakaoResponseToRouteData(data);
-    //                     makeLiveMap(data)
-    //                     clearNavi();
-    //                 })
-    //                 .catch(error => {
-    //                     alert("경로를 생성할 수 없습니다. 다시 시도해 주세요");
-    //                     console.log(error);
-    //                     window.location.href = '/view/home';
-    //                 });
-    //         }
-    //     });
-
     let destinationLatitude = destinationLocation.lat;
     let destinationLongitude = destinationLocation.lng;
 
@@ -856,71 +720,6 @@ function historiesMakeMarker(data) {
         }
 
     }
-
-//     // 출발지 도착지 마커 표시하기
-//     for (var i = 0; i < data.guides.length; i++) {
-//         var guide = guides[i];
-//         if (guide.type === 100) {
-//             var lat_ori = guide.y;
-//             var lon_ori = guide.x;
-//         }
-//
-//         if (guide.type === 101) {
-//             var lat_des = guide.y;
-//             var lon_des = guide.x;
-//         }
-//     }
-//
-//     var positions = [
-//         {
-//             title: '출발',
-//             latlng: new kakao.maps.LatLng(lat_ori, lon_ori),
-//             image: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/red_b.png'
-//             //"https://cdn-icons-png.flaticon.com/512/6213/6213694.png"
-//         },
-//         {
-//             title: '도착',
-//             latlng: new kakao.maps.LatLng(lat_des, lon_des),
-//             image: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/blue_b.png'
-//             //"https://cdn-icons-png.flaticon.com/512/4856/4856582.png"
-//         }
-//
-//     ]
-// // 마커를 지도에 표시하기
-//     for (var i = 0; i < positions.length; i++) {
-//         // 마커 이미지 크기
-//         var imageSize = new kakao.maps.Size(30, 40);
-//         var markerImage = new kakao.maps.MarkerImage(positions[i].image, imageSize);
-//         var marker = new kakao.maps.Marker({
-//             map: map,
-//             position: positions[i].latlng,
-//             title: positions[i].title,
-//             image: markerImage,
-//         })
-//     }
-//
-// // 경유지 마커 표시
-//     var imageWay = 'https://file.notion.so/f/f/0bb6a7f0-5b10-43e2-ad69-0657263c6dff/ccc1ee90-0fa2-4d98-a1a6-80f40600896f/%EA%B2%BD%EC%9C%A0%EC%A7%80-01.png?id=6eaca2df-ea86-468a-bf07-51df643bf11b&table=block&spaceId=0bb6a7f0-5b10-43e2-ad69-0657263c6dff&expirationTimestamp=1698933600000&signature=256uSQ0yL4SEQ_vhA4Ejx0_PTykB_Nj-2KJev6apoOI&downloadName=%EA%B2%BD%EC%9C%A0%EC%A7%80-01.png';
-//     var imageSize = new kakao.maps.Size(40, 35);
-//     // 마커 이미지를 생성합니다
-//     var markerImage = new kakao.maps.MarkerImage(imageWay, imageSize);
-//
-//     // 경유지 마커 표시하기
-//     for (var j = 0; j < data.guides.length; j++) {
-//         var guide = guides[j];
-//         if (guide.type === 1000) {
-//             var lat_way = guide.y;
-//             var lon_way = guide.x;
-//
-//             var latlng = new kakao.maps.LatLng(lat_way, lon_way)
-//
-//             var marker = new kakao.maps.Marker({
-//                 map: map,
-//                 position: latlng,
-//                 image: markerImage
-//             });
-//         }
-//     }
 
 }
 
