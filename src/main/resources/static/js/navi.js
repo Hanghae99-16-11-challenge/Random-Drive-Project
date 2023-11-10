@@ -336,27 +336,6 @@ function makeAllRandomNavi(originAddress, redius) {
             .catch(error => failedFindRoute);
     }
 }
-function failedFindRoute(error)
-{
-    {
-        const auth = getToken();
-
-        if (auth === undefined || auth === '') {
-
-            alert("다시 로그인 해주세요...");
-            window.location.href = host + '/view/user/login-page';
-            return;
-        }
-
-        //            $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
-        //                 jqXHR.setRequestHeader('Authorization', auth);
-        //             });
-    }//우선 토큰 검사
-
-    alert("경로를 생성할 수 없습니다. 다시 시도해 주세요");
-    console.log(error);
-    window.location.href = '/view/home';
-}
 
 // 신규 길찾기, 랜덤 길찾기에서 얻은 response를 가공해서 Map에 띄워줌
 function makeLiveMap(data) {
@@ -615,11 +594,7 @@ function remakeNavi(lat, lng) {
             makeLiveMap(data)
             clearNavi();
         })
-        .catch(error => {
-            alert("경로를 생성할 수 없습니다. 다시 시도해 주세요");
-            console.log(error);
-            window.location.href = '/view/home';
-        });
+        .catch(error => failedFindRoute);
 }
 
 function remakeRandomNavi(lat, lng) {
@@ -738,11 +713,29 @@ function remakeRandomNavi(lat, lng) {
             makeLiveMap(data)
             clearNavi();
         })
-        .catch(error => {
-            alert("경로를 생성할 수 없습니다. 다시 시도해 주세요");
-            console.log(error);
-            window.location.href = '/view/home';
-        });
+        .catch(error => failedFindRoute);
+}
+
+function failedFindRoute(error)
+{
+    {
+        const auth = getToken();
+
+        if (auth === undefined || auth === '') {
+
+            alert("다시 로그인 해주세요...");
+            window.location.href = host + '/view/user/login-page';
+            return;
+        }
+
+        //            $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+        //                 jqXHR.setRequestHeader('Authorization', auth);
+        //             });
+    }//우선 토큰 검사
+
+    alert("경로를 생성할 수 없습니다. 다시 시도해 주세요");
+    console.log(error);
+    window.location.href = '/view/home';
 }
 
 // 마커 표시하기
