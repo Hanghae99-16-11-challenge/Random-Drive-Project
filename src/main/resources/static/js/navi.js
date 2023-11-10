@@ -539,15 +539,10 @@ function pathType() {
 
 // 추가 경로 재생성 동작
 function remakeNavi(lat, lng) {
-    let destinationLatitude = destinationLocation.lat;
-    let destinationLongitude = destinationLocation.lng;
-
-    if (type === 'save' && offCourseCount === 0) {
-        // routeData.guides 배열의 맨 마지막 요소가 목적지
-        let destinationGuide = routeData.guides[routeData.guides.length - 1];
-        destinationLatitude = destinationGuide.y;
-        destinationLongitude = destinationGuide.x;
-    }
+    // routeData.guides 배열의 맨 마지막 요소가 목적지
+    let destinationGuide = routeData.guides[routeData.guides.length - 1];
+    let destinationLatitude = destinationGuide.y;
+    let destinationLongitude = destinationGuide.x;
 
     console.log(destinationLongitude);
     console.log(destinationLatitude);
@@ -569,18 +564,11 @@ function remakeNavi(lat, lng) {
 }
 
 function remakeRandomNavi(lat, lng) {
-    let destinationLatitude = destinationLocation.lat;
-    let destinationLongitude = destinationLocation.lng;
 
-    console.log(routeData);
-    console.log(offCourseCount);
-
-    if (type === 'save' && offCourseCount === 0) {
-        // routeData.guides 배열의 맨 마지막 요소가 목적지
-        let destinationGuide = routeData.guides[routeData.guides.length - 1];
-        destinationLatitude = destinationGuide.y;
-        destinationLongitude = destinationGuide.x;
-    }
+    // routeData.guides 배열의 맨 마지막 요소가 목적지
+    let destinationGuide = routeData.guides[routeData.guides.length - 1];
+    let destinationLatitude = destinationGuide.y;
+    let destinationLongitude = destinationGuide.x;
 
     offCourseCount++;
 
