@@ -25,17 +25,18 @@ $(document).ready(function () {
 });
 
 // 예 버튼
-document.getElementsByClassName('button-yes')[0].addEventListener('click', function () {
-    if (type === 'live') {
-        saveRoute(responseData, originAddress, destinationAddress)
-    } else if (type === 'live-random') {
-        saveRoute(responseData, originAddress, destinationAddress)
-    } else if (type === 'live-all-random') {
-        saveRoute(responseData, originAddress, '무작위 주소')
-    } else {
-        return;
-    }
-});
+// document.getElementsByClassName('button-yes')[0].addEventListener('click', function () {
+//     console.log(type);
+//     if (type === 'live') {
+//         saveRoute(responseData, originAddress, destinationAddress)
+//     } else if (type === 'live-random') {
+//         saveRoute(responseData, originAddress, destinationAddress)
+//     } else if (type === 'live-all-random') {
+//         saveRoute(responseData, originAddress, '무작위 주소')
+//     } else {
+//         return;
+//     }
+// });
 
 // 아니오 버튼
 document.getElementsByClassName('button-no')[0].addEventListener('click', function () {
@@ -423,6 +424,7 @@ function saveRoute(data, originAddress, destinationAddress) {
     var decodedOriginAddress = decodeURIComponent(originAddress);
     var decodedDestinationAddress = decodeURIComponent(destinationAddress);
 
+    console.log(decodedOriginAddress);
 
     fetch('/api/routes', {
         method: 'POST',
@@ -474,6 +476,7 @@ function getToken() {
 
 function onClick_StartNavi_navi(updateLocation = true) {
 
+    saveNavi();
     updateMark();
 
     //guid_info
@@ -919,4 +922,16 @@ function historiesMakeMarker(data) {
 //         }
 //     }
 
+}
+
+function saveNavi() {
+    if (type === 'live') {
+        saveRoute(responseData, originAddress, destinationAddress)
+    } else if (type === 'live-random') {
+        saveRoute(responseData, originAddress, destinationAddress)
+    } else if (type === 'live-all-random') {
+        saveRoute(responseData, originAddress, '무작위 주소')
+    } else {
+        return;
+    }
 }

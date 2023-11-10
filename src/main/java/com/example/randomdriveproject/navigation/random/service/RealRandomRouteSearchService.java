@@ -204,9 +204,9 @@ public class RealRandomRouteSearchService {
         double realDistance = distance * 100;
         List<RandomDocumentDto> wayPoints = new ArrayList<>();
         for (int i = 1; i <= count; i++) {
-            double tempY = originY + (destinationY - originY) * i / count;
-            double tempX = originX + (destinationX - originX) * i / count;
-            double redius = Math.min(realDistance/count, 20);
+            double tempY = originY + (destinationY - originY) * i / (count+1);
+            double tempX = originX + (destinationX - originX) * i / (count+1);
+            double redius = Math.min(realDistance/(count+1), 20);
             RandomDocumentDto wayPoint = getRandomWayPoint(tempY, tempX, redius);
             if (wayPoint != null)
                 wayPoints.add(wayPoint);
