@@ -54,20 +54,24 @@ var map;
 
 let intervalId;
 let researchDelay_intervalId = -1;
+let CoroutineLoop = false;
 
 function startCorutine()
 {
-    clearInterval(intervalId);
+    // clearInterval(intervalId);
+    //
+    // intervalId = setInterval(function () {
+    //     navigator.geolocation.getCurrentPosition(function(position) {
+    //         // 위치 정보를 표시하기
+    //         // $("#location2").text("\n, GPS 위치 정보: " + position.coords.latitude + ", " + position.coords.longitude);
+    //         EditMark(positionMark, positionText, position.coords.latitude, position.coords.longitude, '현위치');
+    //         update(position.coords.latitude, position.coords.longitude);
+    //         console.log("위치 업데이트");
+    //     });
+    // }, 1000);
+    CoroutineLoop = false;
+    Coroutine();
 
-    intervalId = setInterval(function () {
-        navigator.geolocation.getCurrentPosition(function(position) {
-            // 위치 정보를 표시하기
-            // $("#location2").text("\n, GPS 위치 정보: " + position.coords.latitude + ", " + position.coords.longitude);
-            EditMark(positionMark, positionText, position.coords.latitude, position.coords.longitude, '현위치');
-            update(position.coords.latitude, position.coords.longitude);
-            console.log("위치 업데이트");
-        });
-    }, 1000);
 }
 function stopCoroutine()
 {
@@ -75,9 +79,25 @@ function stopCoroutine()
 
     intervalId = -1;
 
+    CoroutineLoop = true;
+
     console.warn("Stop Coroutine");
 }
 
+function Coroutine() {
+    navigator.geolocation.getCurrentPosition(function(position) {
+        // 위치 정보를 표시하기
+        // $("#location2").text(", GPS 위치 정보: " + position.coords.latitude + ", " + position.coords.longitude);
+        EditMark(positionMark, positionText, position.coords.latitude, position.coords.longitude, '현위치');
+        update(position.coords.latitude, position.coords.longitude);
+        console.log("위치 업데이트");
+
+        // 위치 정보를 가져오는 데 성공하면 다음 호출을 예약합니다.
+        if (!CoroutineLoop) {
+            setTimeout(startCorutine, 1000);
+        }
+    });
+}
 
 async function adapt_histories(route_id = -1)
 {
