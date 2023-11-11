@@ -331,7 +331,7 @@ function update_refact(lat, lng)
             if (nextGuidDistacne <= 100 && Anuce_State !== -1 && routeData.guides[naviInfo_ProcessIndex].distance > 200)
             {
                 speakText("잠시후 " + routeData.guides[naviInfo_ProcessIndex].guidance + " 입니다.");
-                Anuce_State = 1;
+                Anuce_State = -1;
             }//사전 안내 , 도로가 200m 보다 길때 한번만
 
             if (calculateDistance(lat, lng, point.y, point.x) >= (offetUserRadius * 0.001) && Anuce_State === 2)
