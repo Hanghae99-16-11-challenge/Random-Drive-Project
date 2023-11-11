@@ -61,6 +61,8 @@ const selectWaypointNumber = document.getElementById("all-random-waypoint-number
 function getSelectedWaypointNumber() {
     const selectedValue = selectWaypointNumber.value;
     switch (selectedValue) {
+        case "0":
+            return 0;
         case "1":
             return 1;
         case "2":

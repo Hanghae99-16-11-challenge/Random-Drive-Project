@@ -53,6 +53,8 @@ const selectElement = document.getElementById("all-random-redius");
 function getSelectedRadius() {
     const selectedValue = selectElement.value;
     switch (selectedValue) {
+        case "very-very-short":
+            return 1;
         case "very-short":
             return 4;
         case "short":
@@ -64,7 +66,7 @@ function getSelectedRadius() {
         case "very-long":
             return 40;
         default:
-            return 10;
+            return 1;
     }
 }
 
@@ -74,6 +76,8 @@ const selectWaypointNumber = document.getElementById("all-random-waypoint-number
 function getSelectedWaypointNumber() {
     const selectedValue = selectWaypointNumber.value;
     switch (selectedValue) {
+        case "0":
+            return 0;
         case "1":
             return 1;
         case "2":
