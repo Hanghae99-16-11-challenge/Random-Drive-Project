@@ -94,7 +94,7 @@ function Coroutine() {
 
         // 위치 정보를 가져오는 데 성공하면 다음 호출을 예약합니다.
         if (!CoroutineLoop) {
-            setTimeout(startCorutine, 1000);
+            setTimeout(startCorutine, 500);
         }
     });
 }
