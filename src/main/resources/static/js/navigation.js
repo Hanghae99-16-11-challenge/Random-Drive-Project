@@ -53,14 +53,6 @@ document.getElementById('search-origin').addEventListener('click', function() {
     }).open();
 });
 
-// // 출발지 주소 검색 버튼----------------------------------------------------------------------------------------------------//
-// document.getElementById('search-origin').addEventListener('click', function() {
-//     new daum.Postcode({
-//         oncomplete: function(data) {
-//             document.getElementById('originAddress').value = data.address;
-//         }
-//     }).open();
-// });
 // 목적지 주소 검색 버튼----------------------------------------------------------------------------------------------------//
 document.getElementById('search-destination').addEventListener('click', function() {
     new daum.Postcode({

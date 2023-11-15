@@ -84,5 +84,3 @@ function stopText() {
     speechSynthesis.cancel();
 }
 
-// speakButton.addEventListener("click", speakText);
-// stopButton.addEventListener("click", stopText);

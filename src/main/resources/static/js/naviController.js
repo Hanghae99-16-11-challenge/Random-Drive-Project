@@ -98,48 +98,6 @@ function onClick_StartGuid()
                                 level: 3
                             });
                         }
-
-                        // drawPolylines(data);
-
-                        // "아니오" 버튼 생성
-                        // let noButton = document.createElement('button');
-                        // noButton.textContent = '아니오';
-                        // document.getElementById('search-form').insertAdjacentElement('afterend', noButton);
-                        // noButton.addEventListener('click', function() {
-                        //     // 여기에 "아니오" 버튼을 눌렀을 때 실행할 동작 추가 가능
-                        //     confirmationMessage.remove(); // 문구와 버튼 제거
-                        //     yesButton.remove();
-                        //     noButton.remove();
-                        // });
-                        //
-                        // // "예" 버튼 생성
-                        // let yesButton = document.createElement('button');
-                        // yesButton.textContent = '예';
-                        // document.getElementById('search-form').insertAdjacentElement('afterend', yesButton);
-                        // yesButton.addEventListener('click', function() {
-                        //
-                        //     fetch('/api/routes', {
-                        //         method: 'POST',
-                        //         headers: {
-                        //             'Content-Type': 'application/json',
-                        //             'Authorization': auth // 인증 토큰을 Authorization 헤더에 추가
-                        //         },
-                        //         body: JSON.stringify({
-                        //             requestData: data, // KakaoRouteAllResponseDto 객체
-                        //             originAddress: originAddress,
-                        //             destinationAddress: destinationAddress
-                        //         })
-                        //     })
-                        //
-                        //     confirmationMessage.remove(); // 문구와 버튼 제거
-                        //     yesButton.remove();
-                        //     noButton.remove();
-                        // });
-                        //
-                        // // "해당 경로로 안내해 드릴까요?" 문구 표시
-                        // let confirmationMessage = document.createElement('p');
-                        // confirmationMessage.textContent = '해당 경로로 안내해 드릴까요?';
-                        // document.getElementById('search-form').insertAdjacentElement('afterend', confirmationMessage);
                     })
                     .catch(except =>
                     {
@@ -169,48 +127,7 @@ function onClick_StartGuid()
                             });
                         }
 
-                        // drawPolylines(data);
-
-                        // // "아니오" 버튼 생성
-                        // let noButton = document.createElement('button');
-                        // noButton.textContent = '아니오';
-                        // document.getElementById('all-random-search-form').insertAdjacentElement('afterend', noButton);
-                        // noButton.addEventListener('click', function() {
-                        //     // 여기에 "아니오" 버튼을 눌렀을 때 실행할 동작 추가 가능
-                        //     confirmationMessage.remove(); // 문구와 버튼 제거
-                        //     yesButton.remove();
-                        //     noButton.remove();
-                        // });
-                        //
-                        // // "예" 버튼 생성
-                        // let yesButton = document.createElement('button');
-                        // yesButton.textContent = '예';
-                        // document.getElementById('all-random-search-form').insertAdjacentElement('afterend', yesButton);
-                        // yesButton.addEventListener('click', function() {
-                        //
-                        //     fetch('/api/routes', {
-                        //         method: 'POST',
-                        //         headers: {
-                        //             'Content-Type': 'application/json',
-                        //             'Authorization': auth // 인증 토큰을 Authorization 헤더에 추가
-                        //         },
-                        //         body: JSON.stringify({
-                        //             requestData: data, // KakaoRouteAllResponseDto 객체
-                        //             originAddress: originAddress,
-                        //             destinationAddress: "무작위 주소"
-                        //         })
-                        //     })
-                        //
-                        //     confirmationMessage.remove(); // 문구와 버튼 제거
-                        //     yesButton.remove();
-                        //     noButton.remove();
-                        // });
-                        //
-                        // // "해당 경로로 안내해 드릴까요?" 문구 표시
-                        // let confirmationMessage = document.createElement('p');
-                        // confirmationMessage.textContent = '해당 경로로 안내해 드릴까요?';
-                        // document.getElementById('all-random-search-form').insertAdjacentElement('afterend', confirmationMessage);
-                    })
+                                           })
                     .catch(except =>
                     {
                         alert("길을 찾지 못함 " + except.message);
@@ -243,48 +160,7 @@ function onClick_StartGuid()
                             });
                         }
 
-                        // drawPolylines(data);
-
-                        // // "아니오" 버튼 생성
-                        // let noButton = document.createElement('button');
-                        // noButton.textContent = '아니오';
-                        // document.getElementById('random-search-form').insertAdjacentElement('afterend', noButton);
-                        // noButton.addEventListener('click', function() {
-                        //     // 여기에 "아니오" 버튼을 눌렀을 때 실행할 동작 추가 가능
-                        //     confirmationMessage.remove(); // 문구와 버튼 제거
-                        //     yesButton.remove();
-                        //     noButton.remove();
-                        // });
-                        //
-                        // // "예" 버튼 생성
-                        // let yesButton = document.createElement('button');
-                        // yesButton.textContent = '예';
-                        // document.getElementById('random-search-form').insertAdjacentElement('afterend', yesButton);
-                        // yesButton.addEventListener('click', function() {
-                        //
-                        //     fetch('/api/routes', {
-                        //         method: 'POST',
-                        //         headers: {
-                        //             'Content-Type': 'application/json',
-                        //             'Authorization': auth // 인증 토큰을 Authorization 헤더에 추가
-                        //         },
-                        //         body: JSON.stringify({
-                        //             requestData: data, // KakaoRouteAllResponseDto 객체
-                        //             originAddress: originAddress,
-                        //             destinationAddress: destinationAddress
-                        //         })
-                        //     })
-                        //
-                        //     confirmationMessage.remove(); // 문구와 버튼 제거
-                        //     yesButton.remove();
-                        //     noButton.remove();
-                        // });
-                        //
-                        // // "해당 경로로 안내해 드릴까요?" 문구 표시
-                        // let confirmationMessage = document.createElement('p');
-                        // confirmationMessage.textContent = '해당 경로로 안내해 드릴까요?';
-                        // document.getElementById('random-search-form').insertAdjacentElement('afterend', confirmationMessage);
-                    })
+                                            })
                     .catch(except =>
                     {
                         alert("길을 찾지 못함 " + except.message);

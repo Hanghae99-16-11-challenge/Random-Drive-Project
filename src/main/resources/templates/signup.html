@@ -131,46 +131,6 @@
         });
     }
 
-    //-> validexceptionhandler만 사용하면 해당 데이터를 json으로 가져오나
-    // 다른 exception 클래스를 키면 안된다.
-    // response에서 JSON 데이터 추출
-    // var errors = JSON.parse(response.responseText);
-    //
-    // // 오류 메시지를 보기 좋게 줄 바꿈하여 표시
-    // var errorMessage = "";
-    // if(errors.password) {
-    //     errorMessage += "password: " + errors.password + "\n"; // 비밀번호 오류 메시지
-    // }
-    // if(errors.email) {
-    //     errorMessage += "email: " + errors.email + "\n"; // 이메일 오류 메시지
-    // }
-    // if(errors.username) {
-    //     errorMessage += "username: " + errors.username + "\n"; // 사용자 이름 오류 메시지
-    // }
-    // // 구성된 오류 메시지를 alert 창에 표시
-    // alert(errorMessage);
-
-
-    // 다른 exception 클래스를 키면 -> 모든 응답에 대해서 보여주는 곳
-    // if (response.status === 400) {
-    //     var message = "오류:\n";
-    //     if(response.responseJSON) { // 서버 응답이 JSON 형태인 경우
-    //         var errors = response.responseJSON;
-    //         if(errors.errors) { // 'errors' 필드가 존재하는 경우
-    //             errors.errors.forEach(function(error) {
-    //                 message += "- " + error.defaultMessage + "\n";
-    //             });
-    //         } else {
-    //             message += errors.message; // 'message' 필드가 있는 경우
-    //         }
-    //     } else { // 서버 응답이 단순 문자열인 경우
-    //         message += response.responseText;
-    //     }
-    //     alert(message); // 생성된 문자열을 사용자에게 표시합니다.
-    // } else {
-    //     // 기타 오류 처리
-    //     alert('서버 오류가 발생했습니다. 나중에 다시 시도해 주세요.');
-
 
 </script>
 </html>

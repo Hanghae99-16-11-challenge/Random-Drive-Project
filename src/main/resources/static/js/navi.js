@@ -61,34 +61,6 @@ function makeHistoryMap(routeId) {
                         level: 3
                     });
                 }
-                // 히스토리 마커용 추가
-
-                // // Initialize markers for departure and arrival
-                // let departureMarker, arrivalMarker;
-                //
-                // for (var i = 0; i < data.guides.length; i++) {
-                //     if (data.guides[i].type === 100) {
-                //         var lat_ori = data.guides[i].y;
-                //         var lng_ori = data.guides[i].x;
-                //
-                //         departureMarker = new kakao.maps.Marker({
-                //             position: new kakao.maps.LatLng(lat_ori, lng_ori),
-                //             title: '출발',
-                //             image: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/red_b.png'
-                //         });
-                //     }
-                //
-                //     if (data.guides[i].type === 101) {
-                //         var lat_des = data.guides[i].y;
-                //         var lng_des = data.guides[i].x;
-                //
-                //         arrivalMarker = new kakao.maps.Marker({
-                //             position: new kakao.maps.LatLng(lat_des, lng_des),
-                //             title: '도착',
-                //             image: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/blue_b.png'
-                //         });
-                //     }
-                // }
 
                 var imageSize = new kakao.maps.Size(30, 40);
                 for (var i = 0; i < data.guides.length; i++) {

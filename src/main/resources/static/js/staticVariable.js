@@ -58,17 +58,6 @@ let CoroutineLoop = false;
 
 function startCorutine()
 {
-    // clearInterval(intervalId);
-    //
-    // intervalId = setInterval(function () {
-    //     navigator.geolocation.getCurrentPosition(function(position) {
-    //         // 위치 정보를 표시하기
-    //         // $("#location2").text("\n, GPS 위치 정보: " + position.coords.latitude + ", " + position.coords.longitude);
-    //         EditMark(positionMark, positionText, position.coords.latitude, position.coords.longitude, '현위치');
-    //         update(position.coords.latitude, position.coords.longitude);
-    //         console.log("위치 업데이트");
-    //     });
-    // }, 1000);
     CoroutineLoop = false;
     Coroutine();
 
@@ -237,30 +226,7 @@ function adapt_KakaoResponseToRouteData(kakaoRes) {
 
                 routeData.roads.push(vertexes);
             }
-        }//=================
-
-
-        // for (let sec = 0; sec < pathData.routes[0].sections.length; sec++) {
-        //     for (let road = 0; road < pathData.routes[0].sections[sec].roads.length; road++) {
-        //         for(let i = 0; i < pathData.routes[0].sections[sec].roads[road].vertexes.length; i += 2)
-        //         {
-        //             let lroads = pathData.routes[0].sections[sec].roads[road];
-        //
-        //             if (i > 1)
-        //             {
-        //                 if ((lroads.vertexes[i] === lroads.vertexes[i - 2]) && (lroads.vertexes[i + 1] === lroads.vertexes[i - 1]))
-        //                 {
-        //                     console.log("Equal road");
-        //                     continue;
-        //                 }
-        //             }
-        //
-        //             routeData.roads.push(pathData.routes[0].sections[sec].roads[road].vertexes[i]);
-        //             routeData.roads.push(pathData.routes[0].sections[sec].roads[road].vertexes[i + 1]);
-        //         }
-        //     }
-        // }
-
+        }
 
         routeData.guides = [];
         routeData.guides.push(kakaoRes.routes[0].sections[0].guides[0]);
@@ -279,11 +245,6 @@ function adapt_KakaoResponseToRouteData(kakaoRes) {
         }
 
     }
-    // catch (e)
-    // {
-    //     console.warn(e.message);
-    //     routeData = null;
-    // }
 
 }
 
