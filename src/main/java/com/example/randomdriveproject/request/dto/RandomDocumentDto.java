@@ -12,12 +12,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RandomDocumentDto {
 
-//    @JsonProperty("place_name") // 카테고리
-//    private String placeName;
-//
-//    @JsonProperty("distance") // 카테고리
-//    private double distance;
-
     @JsonProperty("address_name")
     private String name;
 

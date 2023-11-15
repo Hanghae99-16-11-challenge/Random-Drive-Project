@@ -1,6 +1,5 @@
 package com.example.randomdriveproject.request.service;
 
-import com.example.randomdriveproject.history.repository.RouteRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;

@@ -20,19 +20,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/view")
 @ControllerAdvice
 public class HomeController {
-    //https://adjh54.tistory.com/m/72
-    //http://localhost:8080/swagger-ui/index.html#/
 
     @GetMapping("/")
     public String index(Model model){
         model.addAttribute("message", "안녕하세요!");
         return "index"; // 뷰 이름은 templates 폴더에 있는 템플릿 파일명과 일치해야 합니다.
     }
-
-//    @GetMapping("/user/login")
-//    public String login() {
-//        return "home";
-//    }
 
     @GetMapping("/user/login-page")
     public String loginPage() {

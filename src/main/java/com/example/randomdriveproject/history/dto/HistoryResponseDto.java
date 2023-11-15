@@ -1,6 +1,5 @@
 package com.example.randomdriveproject.history.dto;
 
-import com.example.randomdriveproject.history.entity.Guide;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

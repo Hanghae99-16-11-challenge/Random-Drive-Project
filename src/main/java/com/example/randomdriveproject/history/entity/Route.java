@@ -1,7 +1,6 @@
 package com.example.randomdriveproject.history.entity;
 
 import com.example.randomdriveproject.user.entity.User;
-import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
